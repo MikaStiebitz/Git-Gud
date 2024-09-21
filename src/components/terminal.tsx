@@ -33,7 +33,10 @@ export function GitTerminal({
 
     if (terminalRef.current) {
       term.open(terminalRef.current);
-      fitAddon.fit();
+      // Delay the fitAddon.fit() call to ensure the terminal is fully rendered
+      setTimeout(() => {
+        fitAddon.fit();
+      }, 0);
     }
 
     term.writeln("Welcome to the Git terminal simulator!");
@@ -118,7 +121,7 @@ export function GitTerminal({
         term.writeln(JSON.stringify(status, null, 2));
         break;
       case "add":
-        await git.add({ fs, dir: currentDir, filepath: subargs[0] });
+        await git.add({ fs, dir: currentDir, filepath: subargs[0] ?? "." });
         term.writeln(`Added ${subargs[0]} to staging area`);
         onCommandSuccess();
         break;
@@ -141,7 +144,7 @@ export function GitTerminal({
     }
   };
 
-  const handleCdCommand = (dir: string, term: Terminal) => {
+  const handleCdCommand = (dir: string | undefined, term: Terminal) => {
     if (dir === "..") {
       const newDir = currentDir.split("/").slice(0, -1).join("/") || "/";
       setCurrentDir(newDir);
