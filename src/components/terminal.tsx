@@ -1,166 +1,453 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-import * as git from "isomorphic-git";
-import LightningFS from "@isomorphic-git/lightning-fs";
-import "xterm/css/xterm.css";
+import { useState, useEffect } from "react";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
-interface GitTerminalProps {
-  onCommandSuccess: () => void;
-}
+type FileSystem = {
+  [key: string]: string | FileSystem;
+};
+
+type FileStatus = {
+  [key: string]: "modified" | "added" | "untracked";
+};
 
 export function GitTerminal({
   onCommandSuccess,
-}: GitTerminalProps): React.ReactElement {
-  const terminalRef = useRef<HTMLDivElement>(null);
-  const [fs, setFs] = useState<LightningFS | null>(null);
-  const [currentDir, setCurrentDir] = useState<string>("/");
+  currentLevel,
+  onNanoCommand,
+  onSaveFile,
+}) {
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState([
+    "Willkommen im Git Terminal Simulator!",
+  ]);
+  const [currentDirectory, setCurrentDirectory] = useState("/");
+  const [fileSystem, setFileSystem] = useState<FileSystem>({
+    "/": {
+      "README.md":
+        "# Willkommen zum Git Lernspiel\n\nDies ist ein Beispielprojekt.",
+      src: {
+        "index.js": 'console.log("Hallo, Git!");',
+      },
+    },
+  });
+  const [isGitInitialized, setIsGitInitialized] = useState(false);
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [fileStatus, setFileStatus] = useState<FileStatus>({});
 
   useEffect(() => {
-    const fs = new LightningFS("fs");
-    setFs(fs);
+    setOutput([
+      "Willkommen im Git Terminal Simulator!",
+      `\nLevel ${currentLevel} gestartet. Geben Sie 'help' ein für verfügbare Befehle.`,
+    ]);
+  }, [currentLevel]);
 
-    const term = new Terminal({
-      cursorBlink: true,
-      theme: {
-        background: "#1E1E1E",
-      },
-    });
-    const fitAddon = new FitAddon();
-    term.loadAddon(fitAddon);
+  const handleCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+    const command = input.trim();
+    setOutput((prev) => [...prev, `$ ${command}`]);
 
-    if (terminalRef.current) {
-      term.open(terminalRef.current);
-      // Delay the fitAddon.fit() call to ensure the terminal is fully rendered
-      setTimeout(() => {
-        fitAddon.fit();
-      }, 0);
-    }
-
-    term.writeln("Welcome to the Git terminal simulator!");
-    term.writeln("Type your Git commands below:");
-    term.write("\r\n$ ");
-
-    term.onKey(
-      ({ key, domEvent }: { key: string; domEvent: KeyboardEvent }) => {
-        const printable =
-          !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
-
-        if (domEvent.keyCode === 13) {
-          const line = term.buffer.active.getLine(term.buffer.active.cursorY);
-          if (line) {
-            const command = line.translateToString().replace(/^\$\s*/, "");
-            executeCommand(command, term, fs);
-          }
-        } else if (printable) {
-          term.write(key);
-        }
-      },
-    );
-
-    return () => {
-      term.dispose();
-    };
-  }, []);
-
-  const executeCommand = async (
-    command: string,
-    term: Terminal,
-    fs: LightningFS | null,
-  ) => {
-    term.writeln("");
     const [cmd, ...args] = command.split(" ");
 
-    try {
-      switch (cmd) {
-        case "git":
-          await handleGitCommand(args, term, fs);
-          break;
-        case "cd":
-          handleCdCommand(args[0], term);
-          break;
-        case "ls":
-          await handleLsCommand(term, fs);
-          break;
-        case "pwd":
-          term.writeln(currentDir);
-          break;
-        default:
-          term.writeln(`Command not found: ${cmd}`);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        term.writeln(`Error: ${error.message}`);
-      } else {
-        term.writeln("An unknown error occurred");
-      }
-    }
-
-    term.write("\r\n$ ");
-  };
-
-  const handleGitCommand = async (
-    args: string[],
-    term: Terminal,
-    fs: LightningFS | null,
-  ) => {
-    if (!fs) return;
-
-    const [subcommand, ...subargs] = args;
-
-    switch (subcommand) {
-      case "init":
-        await git.init({ fs, dir: currentDir });
-        term.writeln("Initialized empty Git repository");
-        onCommandSuccess();
+    switch (cmd) {
+      case "git":
+        handleGitCommand(args);
         break;
-      case "status":
-        const status = await git.status({ fs, dir: currentDir, filepath: "." });
-        term.writeln(JSON.stringify(status, null, 2));
+      case "cd":
+        handleCdCommand(args[0]);
         break;
-      case "add":
-        await git.add({ fs, dir: currentDir, filepath: subargs[0] ?? "." });
-        term.writeln(`Added ${subargs[0]} to staging area`);
-        onCommandSuccess();
+      case "cat":
+        handleCatCommand(args[0]);
         break;
-      case "commit":
-        if (subargs[0] === "-m") {
-          await git.commit({
-            fs,
-            dir: currentDir,
-            message: subargs[1],
-            author: { name: "User", email: "user@example.com" },
-          });
-          term.writeln(`Created commit with message: ${subargs[1]}`);
-          onCommandSuccess();
-        } else {
-          term.writeln('Usage: git commit -m "commit message"');
-        }
+      case "nano":
+        handleNanoCommand(args[0]);
+        break;
+      case "ls":
+        handleLsCommand();
+        break;
+      case "help":
+        handleHelpCommand();
+        break;
+      case "clear":
+        handleClearCommand();
         break;
       default:
-        term.writeln(`Git subcommand not implemented: ${subcommand}`);
+        setOutput((prev) => [
+          ...prev,
+          "Befehl nicht erkannt. Versuchen Sie es erneut.",
+        ]);
+    }
+
+    setInput("");
+  };
+
+  const handleGitCommand = (args: string[]) => {
+    if (args[0] === "help") {
+      handleGitHelpCommand();
+      return;
+    }
+
+    if (!isGitInitialized && args[0] !== "init") {
+      setOutput((prev) => [
+        ...prev,
+        'Fehler: Git ist noch nicht initialisiert. Verwenden Sie zuerst "git init".',
+      ]);
+      return;
+    }
+
+    switch (args[0]) {
+      case "init":
+        if (currentLevel === 1 && !completedLevels.includes(1)) {
+          setIsGitInitialized(true);
+          setOutput((prev) => [...prev, "Leeres Git-Repository initialisiert"]);
+          setCompletedLevels((prev) => [...prev, 1]);
+          onCommandSuccess();
+        } else {
+          setOutput((prev) => [
+            ...prev,
+            "Git-Repository ist bereits initialisiert.",
+          ]);
+        }
+        break;
+      case "status":
+        handleGitStatus();
+        break;
+      case "add":
+        handleGitAdd(args[1]);
+        break;
+      case "commit":
+        handleGitCommit(args.slice(1).join(" "));
+        break;
+      default:
+        setOutput((prev) => [
+          ...prev,
+          "Git-Befehl nicht erkannt. Versuchen Sie es erneut.",
+        ]);
     }
   };
 
-  const handleCdCommand = (dir: string | undefined, term: Terminal) => {
-    if (dir === "..") {
-      const newDir = currentDir.split("/").slice(0, -1).join("/") || "/";
-      setCurrentDir(newDir);
-      term.writeln(`Changed directory to ${newDir}`);
+  const handleGitStatus = () => {
+    const modifiedFiles = Object.entries(fileStatus)
+      .filter(([_, status]) => status === "modified")
+      .map(([file, _]) => file);
+    const addedFiles = Object.entries(fileStatus)
+      .filter(([_, status]) => status === "added")
+      .map(([file, _]) => file);
+    const untrackedFiles = Object.entries(fileStatus)
+      .filter(([_, status]) => status === "untracked")
+      .map(([file, _]) => file);
+
+    const statusOutput = [
+      "Auf Branch main",
+      modifiedFiles.length > 0
+        ? "Änderungen, die nicht zum Commit vorgemerkt sind:"
+        : "",
+      ...modifiedFiles.map((file) => `\tgeändert:    ${file}`),
+      addedFiles.length > 0 ? "Zum Commit vorgemerkte Änderungen:" : "",
+      ...addedFiles.map((file) => `\tneu:        ${file}`),
+      untrackedFiles.length > 0 ? "Unversionierte Dateien:" : "",
+      ...untrackedFiles.map((file) => `\t${file}`),
+      modifiedFiles.length === 0 &&
+      addedFiles.length === 0 &&
+      untrackedFiles.length === 0
+        ? "nichts zu committen, Arbeitsverzeichnis sauber"
+        : "",
+    ].filter(Boolean);
+
+    setOutput((prev) => [...prev, ...statusOutput]);
+
+    if (currentLevel === 2 && !completedLevels.includes(2)) {
+      setCompletedLevels((prev) => [...prev, 2]);
+      onCommandSuccess();
+    }
+  };
+
+  const handleGitAdd = (file: string) => {
+    if (file === ".") {
+      Object.keys(fileStatus).forEach((f) => {
+        setFileStatus((prev) => ({ ...prev, [f]: "added" }));
+      });
+      setOutput((prev) => [...prev, "Alle Änderungen zum Commit vorgemerkt"]);
     } else {
-      const newDir = `${currentDir === "/" ? "" : currentDir}/${dir}`;
-      setCurrentDir(newDir);
-      term.writeln(`Changed directory to ${newDir}`);
+      if (fileStatus[file]) {
+        setFileStatus((prev) => ({ ...prev, [file]: "added" }));
+        setOutput((prev) => [
+          ...prev,
+          `Änderungen für ${file} zum Commit vorgemerkt`,
+        ]);
+      } else {
+        setOutput((prev) => [...prev, `Fehler: Datei ${file} nicht gefunden`]);
+      }
+    }
+
+    if (currentLevel === 8 && !completedLevels.includes(8)) {
+      setCompletedLevels((prev) => [...prev, 8]);
+      onCommandSuccess();
     }
   };
 
-  const handleLsCommand = async (term: Terminal, fs: LightningFS | null) => {
-    if (!fs) return;
-    const files = await fs.promises.readdir(currentDir);
-    term.writeln(files.join("  "));
+  const handleGitCommit = (message: string) => {
+    if (!message) {
+      setOutput((prev) => [
+        ...prev,
+        "Fehler: Bitte geben Sie eine Commit-Nachricht an",
+      ]);
+      return;
+    }
+
+    const addedFiles = Object.entries(fileStatus)
+      .filter(([_, status]) => status === "added")
+      .map(([file, _]) => file);
+
+    if (addedFiles.length === 0) {
+      setOutput((prev) => [
+        ...prev,
+        "Fehler: Keine Änderungen zum Commit vorgemerkt",
+      ]);
+      return;
+    }
+
+    setFileStatus((prev) => {
+      const newStatus = { ...prev };
+      addedFiles.forEach((file) => {
+        delete newStatus[file];
+      });
+      return newStatus;
+    });
+
+    setOutput((prev) => [
+      ...prev,
+      `[main ${Math.random().toString(36).substring(2, 8)}] ${message}`,
+      `${addedFiles.length} Dateien geändert`,
+    ]);
+
+    if (currentLevel === 9 && !completedLevels.includes(9)) {
+      setCompletedLevels((prev) => [...prev, 9]);
+      onCommandSuccess();
+    }
   };
 
-  return <div ref={terminalRef} style={{ height: "400px" }} />;
+  const handleCdCommand = (dir: string) => {
+    if (!dir) {
+      setOutput((prev) => [
+        ...prev,
+        `Aktuelles Verzeichnis: ${currentDirectory}`,
+      ]);
+      return;
+    }
+    if (dir === "..") {
+      const parentDir =
+        currentDirectory.split("/").slice(0, -1).join("/") || "/";
+      setCurrentDirectory(parentDir);
+      setOutput((prev) => [...prev, `Verzeichnis gewechselt zu ${parentDir}`]);
+      if (
+        currentLevel === 6 &&
+        !completedLevels.includes(6) &&
+        parentDir === "/"
+      ) {
+        setCompletedLevels((prev) => [...prev, 6]);
+        onCommandSuccess();
+      }
+    } else {
+      const newPath = `${currentDirectory}/${dir}`.replace("//", "/");
+      if (getDirectoryContents(newPath)) {
+        setCurrentDirectory(newPath);
+        setOutput((prev) => [...prev, `Verzeichnis gewechselt zu ${newPath}`]);
+        if (
+          currentLevel === 4 &&
+          !completedLevels.includes(4) &&
+          newPath === "/src"
+        ) {
+          setCompletedLevels((prev) => [...prev, 4]);
+          onCommandSuccess();
+        }
+      } else {
+        setOutput((prev) => [
+          ...prev,
+          `Fehler: Verzeichnis ${dir} nicht gefunden`,
+        ]);
+      }
+    }
+  };
+
+  const handleCatCommand = (file: string) => {
+    if (!file) {
+      setOutput((prev) => [
+        ...prev,
+        "Fehler: Bitte geben Sie einen Dateinamen an",
+      ]);
+      return;
+    }
+    const contents = getFileContents(`${currentDirectory}/${file}`);
+    if (contents) {
+      setOutput((prev) => [...prev, contents]);
+      if (
+        currentLevel === 5 &&
+        !completedLevels.includes(5) &&
+        file === "index.js" &&
+        currentDirectory === "/src"
+      ) {
+        setCompletedLevels((prev) => [...prev, 5]);
+        onCommandSuccess();
+      }
+    } else {
+      setOutput((prev) => [...prev, `Fehler: Datei ${file} nicht gefunden`]);
+    }
+  };
+
+  const handleNanoCommand = (file: string) => {
+    if (!file) {
+      setOutput((prev) => [
+        ...prev,
+        "Fehler: Bitte geben Sie einen Dateinamen an",
+      ]);
+      return;
+    }
+    const filePath = `${currentDirectory}/${file}`;
+    const contents = getFileContents(filePath) || "";
+    onNanoCommand(file, contents);
+    if (
+      currentLevel === 7 &&
+      !completedLevels.includes(7) &&
+      file === "README.md" &&
+      currentDirectory === "/"
+    ) {
+      setCompletedLevels((prev) => [...prev, 7]);
+      onCommandSuccess();
+    }
+  };
+
+  const handleLsCommand = () => {
+    const contents = getDirectoryContents(currentDirectory);
+    if (contents) {
+      setOutput((prev) => [...prev, ...Object.keys(contents)]);
+      if (currentLevel === 3 && !completedLevels.includes(3)) {
+        setCompletedLevels((prev) => [...prev, 3]);
+        onCommandSuccess();
+      }
+    } else {
+      setOutput((prev) => [
+        ...prev,
+        "Fehler: Verzeichnisinhalt kann nicht aufgelistet werden",
+      ]);
+    }
+  };
+
+  const handleHelpCommand = () => {
+    setOutput((prev) => [
+      ...prev,
+      "Verfügbare Befehle:",
+      "help - Zeigt diese Hilfe an",
+      "git help - Zeigt Git-spezifische Hilfe an",
+      "ls - Listet Dateien und Verzeichnisse auf",
+      "cd [verzeichnis] - Wechselt das Verzeichnis",
+      "cat [datei] - Zeigt den Inhalt einer Datei an",
+      "nano [datei] - Bearbeitet eine Datei",
+      "git [befehl] - Führt Git-Befehle aus",
+      "clear - Löscht den Terminalinhalt",
+    ]);
+  };
+
+  const handleGitHelpCommand = () => {
+    setOutput((prev) => [
+      ...prev,
+      "Verfügbare Git-Befehle:",
+      "git init - Initialisiert ein neues Git-Repository",
+      "git status - Zeigt den Status des Repositories an",
+      "git add [datei] - Fügt Änderungen zum Staging-Bereich hinzu",
+      'git commit -m "[nachricht]" - Erstellt einen neuen Commit mit den staged Änderungen',
+    ]);
+  };
+
+  const handleClearCommand = () => {
+    setOutput([]);
+  };
+
+  const getDirectoryContents = (path: string): FileSystem | null => {
+    const parts = path.split("/").filter(Boolean);
+    let current: FileSystem | string = fileSystem["/"];
+    for (const part of parts) {
+      if (typeof current === "object" && part in current) {
+        current = current[part];
+      } else {
+        return null;
+      }
+    }
+    return typeof current === "object" ? current : null;
+  };
+
+  const getFileContents = (path: string): string | null => {
+    const parts = path.split("/").filter(Boolean);
+    let current: FileSystem | string = fileSystem["/"];
+    for (const part of parts.slice(0, -1)) {
+      if (typeof current === "object" && part in current) {
+        current = current[part];
+      } else {
+        return null;
+      }
+    }
+    const fileName = parts[parts.length - 1];
+    if (typeof current === "object" && fileName in current) {
+      return current[fileName] as string;
+    }
+    return null;
+  };
+
+  const updateFileSystem = (path: string, content: string) => {
+    const parts = path.split("/").filter(Boolean);
+    const fileName = parts.pop();
+    if (!fileName) return;
+
+    let current = fileSystem["/"];
+    for (const part of parts) {
+      if (!(part in current) || typeof current[part] !== "object") {
+        current[part] = {};
+      }
+      current = current[part] as FileSystem;
+    }
+    current[fileName] = content;
+    setFileSystem({ ...fileSystem });
+
+    // Update file status
+    const fullPath = `/${parts.join("/")}/${fileName}`.replace("//", "/");
+    if (fileStatus[fullPath]) {
+      setFileStatus((prev) => ({ ...prev, [fullPath]: "modified" }));
+    } else {
+      setFileStatus((prev) => ({ ...prev, [fullPath]: "untracked" }));
+    }
+  };
+
+  // Add this function to handle file saves from the NanoModal
+  const handleSaveFile = (fileName: string, newContent: string) => {
+    const filePath = `${currentDirectory}/${fileName}`;
+    updateFileSystem(filePath, newContent);
+    setOutput((prev) => [...prev, `Datei ${fileName} gespeichert.`]);
+  };
+
+  // Pass handleSaveFile to the parent component
+  useEffect(() => {
+    onSaveFile(handleSaveFile);
+  }, [onSaveFile, currentDirectory]);
+
+  return (
+    <div className="flex h-[300px] flex-col">
+      <ScrollArea className="mb-4 flex-grow bg-black p-2 font-mono text-sm text-green-500">
+        {output.map((line, index) => (
+          <div key={index}>{line}</div>
+        ))}
+      </ScrollArea>
+      <form onSubmit={handleCommand} className="flex">
+        <Input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Befehl eingeben..."
+          className="mr-2 flex-grow"
+        />
+        <Button type="submit">Ausführen</Button>
+      </form>
+    </div>
+  );
 }

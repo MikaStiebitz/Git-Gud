@@ -1,17 +1,11 @@
-import React from "react";
-
-interface ProgressBarProps {
-  score: number;
-}
-
-export function ProgressBar({ score }: ProgressBarProps): React.ReactElement {
-  const maxScore = 100; // Adjust as needed
+export function ProgressBar({ score, className }) {
+  const maxScore = 100; // Bei Bedarf anpassen
   const percentage = (score / maxScore) * 100;
 
   return (
-    <div>
+    <div className={className}>
       <div className="mb-1 flex justify-between">
-        <span className="text-primary text-base font-medium">Progress</span>
+        <span className="text-primary text-base font-medium">Fortschritt</span>
         <span className="text-primary text-sm font-medium">
           {score}/{maxScore}
         </span>
