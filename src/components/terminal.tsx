@@ -9,12 +9,15 @@ type FileSystem = {
   [key: string]: string | FileSystem;
 };
 
-type FileStatus = {
-  [key: string]: "modified" | "added" | "untracked";
+type FileStatus = "untracked" | "modified" | "staged";
+
+type GitStatus = {
+  [key: string]: FileStatus;
 };
 
-export function GitTerminal({
+export function Terminal({
   onCommandSuccess,
+  currentGroup,
   currentLevel,
   onNanoCommand,
   onSaveFile,
@@ -34,19 +37,20 @@ export function GitTerminal({
     },
   });
   const [isGitInitialized, setIsGitInitialized] = useState(false);
+  const [gitStatus, setGitStatus] = useState<GitStatus>({});
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
-  const [fileStatus, setFileStatus] = useState<FileStatus>({});
 
   useEffect(() => {
     setOutput([
       "Willkommen im Git Terminal Simulator!",
-      `\nLevel ${currentLevel} gestartet. Geben Sie 'help' ein für verfügbare Befehle.`,
+      `
+${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für verfügbare Befehle.`,
     ]);
-  }, [currentLevel]);
+  }, [currentGroup, currentLevel]);
 
   const handleCommand = (e: React.FormEvent) => {
     e.preventDefault();
-    const command = input.trim();
+    const command = input.trim().toLowerCase();
     setOutput((prev) => [...prev, `$ ${command}`]);
 
     const [cmd, ...args] = command.split(" ");
@@ -99,7 +103,11 @@ export function GitTerminal({
 
     switch (args[0]) {
       case "init":
-        if (currentLevel === 1 && !completedLevels.includes(1)) {
+        if (
+          currentGroup === "Intro" &&
+          currentLevel === 1 &&
+          !completedLevels.includes(1)
+        ) {
           setIsGitInitialized(true);
           setOutput((prev) => [...prev, "Leeres Git-Repository initialisiert"]);
           setCompletedLevels((prev) => [...prev, 1]);
@@ -112,13 +120,176 @@ export function GitTerminal({
         }
         break;
       case "status":
-        handleGitStatus();
+        if (
+          currentGroup === "Intro" &&
+          currentLevel === 2 &&
+          !completedLevels.includes(2)
+        ) {
+          const statusOutput = getGitStatusOutput();
+          setOutput((prev) => [...prev, ...statusOutput]);
+          setCompletedLevels((prev) => [...prev, 2]);
+          onCommandSuccess();
+        } else {
+          const statusOutput = getGitStatusOutput();
+          setOutput((prev) => [...prev, ...statusOutput]);
+        }
         break;
       case "add":
-        handleGitAdd(args[1]);
+        if (args[1] === ".") {
+          const stagedFiles = handleGitAddAll();
+          if (stagedFiles.length > 0) {
+            setOutput((prev) => [
+              ...prev,
+              `${stagedFiles.length} Datei(en) zum Commit vorgemerkt:`,
+            ]);
+            stagedFiles.forEach((file) => {
+              setOutput((prev) => [...prev, `  ${file}`]);
+            });
+            if (
+              currentGroup === "Files" &&
+              currentLevel === 1 &&
+              !completedLevels.includes(3)
+            ) {
+              setCompletedLevels((prev) => [...prev, 3]);
+              onCommandSuccess();
+            }
+          } else {
+            setOutput((prev) => [
+              ...prev,
+              "Keine Änderungen zum Vormerken gefunden.",
+            ]);
+          }
+        } else if (args[1]) {
+          const file = args[1];
+          if (gitStatus[file] && gitStatus[file] !== "staged") {
+            setGitStatus((prev) => ({ ...prev, [file]: "staged" }));
+            setOutput((prev) => [
+              ...prev,
+              `Änderungen für ${file} zum Commit vorgemerkt`,
+            ]);
+          } else {
+            setOutput((prev) => [
+              ...prev,
+              `Fehler: Datei ${file} nicht gefunden oder bereits vorgemerkt`,
+            ]);
+          }
+        } else {
+          setOutput((prev) => [
+            ...prev,
+            "Fehler: Bitte geben Sie eine Datei zum Vormerken an",
+          ]);
+        }
         break;
       case "commit":
-        handleGitCommit(args.slice(1).join(" "));
+        if (
+          args[1] === "-m" &&
+          args[2] &&
+          currentGroup === "Files" &&
+          currentLevel === 2 &&
+          !completedLevels.includes(4)
+        ) {
+          const stagedFiles = Object.entries(gitStatus).filter(
+            ([_, status]) => status === "staged",
+          );
+          if (stagedFiles.length > 0) {
+            setOutput((prev) => [
+              ...prev,
+              `[main (Basis-Commit) f7d1e1d] ${args[2]}`,
+              `${stagedFiles.length} Datei(en) geändert`,
+            ]);
+            setGitStatus({});
+            setCompletedLevels((prev) => [...prev, 4]);
+            onCommandSuccess();
+          } else {
+            setOutput((prev) => [
+              ...prev,
+              "Fehler: Keine Änderungen zum Committen",
+            ]);
+          }
+        } else if (args[1] === "-m" && args[2]) {
+          const stagedFiles = Object.entries(gitStatus).filter(
+            ([_, status]) => status === "staged",
+          );
+          if (stagedFiles.length > 0) {
+            setOutput((prev) => [
+              ...prev,
+              `[main f7d1e1d] ${args[2]}`,
+              `${stagedFiles.length} Datei(en) geändert`,
+            ]);
+            setGitStatus({});
+          } else {
+            setOutput((prev) => [
+              ...prev,
+              "Fehler: Keine Änderungen zum Committen",
+            ]);
+          }
+        } else {
+          setOutput((prev) => [
+            ...prev,
+            "Fehler: Bitte geben Sie eine Commit-Nachricht an",
+          ]);
+        }
+        break;
+      case "branch":
+        if (
+          currentGroup === "Branches" &&
+          currentLevel === 1 &&
+          !completedLevels.includes(5)
+        ) {
+          setOutput((prev) => [...prev, "* main"]);
+          setCompletedLevels((prev) => [...prev, 5]);
+          onCommandSuccess();
+        } else {
+          setOutput((prev) => [...prev, "* main"]);
+        }
+        break;
+      case "checkout":
+        if (
+          args[0] === "-b" &&
+          args[1] &&
+          currentGroup === "Branches" &&
+          currentLevel === 2 &&
+          !completedLevels.includes(6)
+        ) {
+          setOutput((prev) => [
+            ...prev,
+            `Switched to a new branch '${args[1]}'`,
+          ]);
+          setCompletedLevels((prev) => [...prev, 6]);
+          onCommandSuccess();
+        } else if (args[0] === "-b" && args[1]) {
+          setOutput((prev) => [
+            ...prev,
+            `Switched to a new branch '${args[1]}'`,
+          ]);
+        } else {
+          setOutput((prev) => [...prev, "Fehler: Ungültiger checkout Befehl"]);
+        }
+        break;
+      case "merge":
+        if (
+          args[0] &&
+          currentGroup === "Merge" &&
+          currentLevel === 1 &&
+          !completedLevels.includes(7)
+        ) {
+          setOutput((prev) => [
+            ...prev,
+            `Merging branch '${args[0]}' into current branch`,
+          ]);
+          setCompletedLevels((prev) => [...prev, 7]);
+          onCommandSuccess();
+        } else if (args[0]) {
+          setOutput((prev) => [
+            ...prev,
+            `Merging branch '${args[0]}' into current branch`,
+          ]);
+        } else {
+          setOutput((prev) => [
+            ...prev,
+            "Fehler: Bitte geben Sie einen Branch-Namen zum Mergen an",
+          ]);
+        }
         break;
       default:
         setOutput((prev) => [
@@ -128,105 +299,74 @@ export function GitTerminal({
     }
   };
 
-  const handleGitStatus = () => {
-    const modifiedFiles = Object.entries(fileStatus)
-      .filter(([_, status]) => status === "modified")
-      .map(([file, _]) => file);
-    const addedFiles = Object.entries(fileStatus)
-      .filter(([_, status]) => status === "added")
-      .map(([file, _]) => file);
-    const untrackedFiles = Object.entries(fileStatus)
-      .filter(([_, status]) => status === "untracked")
-      .map(([file, _]) => file);
+  const handleGitAddAll = () => {
+    const stagedFiles: string[] = [];
+    const newGitStatus = { ...gitStatus };
 
-    const statusOutput = [
-      "Auf Branch main",
-      modifiedFiles.length > 0
-        ? "Änderungen, die nicht zum Commit vorgemerkt sind:"
-        : "",
-      ...modifiedFiles.map((file) => `\tgeändert:    ${file}`),
-      addedFiles.length > 0 ? "Zum Commit vorgemerkte Änderungen:" : "",
-      ...addedFiles.map((file) => `\tneu:        ${file}`),
-      untrackedFiles.length > 0 ? "Unversionierte Dateien:" : "",
-      ...untrackedFiles.map((file) => `\t${file}`),
-      modifiedFiles.length === 0 &&
-      addedFiles.length === 0 &&
-      untrackedFiles.length === 0
-        ? "nichts zu committen, Arbeitsverzeichnis sauber"
-        : "",
-    ].filter(Boolean);
+    const addFilesRecursively = (dir: string, path: string) => {
+      const contents = getDirectoryContents(dir);
+      if (contents) {
+        Object.entries(contents).forEach(([name, content]) => {
+          const fullPath = `${path}/${name}`.replace(/^\//, "");
+          if (typeof content === "string") {
+            if (newGitStatus[fullPath] !== "staged") {
+              newGitStatus[fullPath] = "staged";
+              stagedFiles.push(fullPath);
+            }
+          } else {
+            addFilesRecursively(`${dir}/${name}`, fullPath);
+          }
+        });
+      }
+    };
 
-    setOutput((prev) => [...prev, ...statusOutput]);
-
-    if (currentLevel === 2 && !completedLevels.includes(2)) {
-      setCompletedLevels((prev) => [...prev, 2]);
-      onCommandSuccess();
-    }
+    addFilesRecursively("/", "");
+    setGitStatus(newGitStatus);
+    return stagedFiles;
   };
 
-  const handleGitAdd = (file: string) => {
-    if (file === ".") {
-      Object.keys(fileStatus).forEach((f) => {
-        setFileStatus((prev) => ({ ...prev, [f]: "added" }));
-      });
-      setOutput((prev) => [...prev, "Alle Änderungen zum Commit vorgemerkt"]);
+  const getGitStatusOutput = () => {
+    const output = ["Auf Branch main"];
+    const untracked: string[] = [];
+    const modified: string[] = [];
+    const staged: string[] = [];
+
+    Object.entries(gitStatus).forEach(([file, status]) => {
+      switch (status) {
+        case "untracked":
+          untracked.push(file);
+          break;
+        case "modified":
+          modified.push(file);
+          break;
+        case "staged":
+          staged.push(file);
+          break;
+      }
+    });
+
+    if (
+      untracked.length === 0 &&
+      modified.length === 0 &&
+      staged.length === 0
+    ) {
+      output.push("Nichts zu committen, Arbeitsverzeichnis sauber");
     } else {
-      if (fileStatus[file]) {
-        setFileStatus((prev) => ({ ...prev, [file]: "added" }));
-        setOutput((prev) => [
-          ...prev,
-          `Änderungen für ${file} zum Commit vorgemerkt`,
-        ]);
-      } else {
-        setOutput((prev) => [...prev, `Fehler: Datei ${file} nicht gefunden`]);
+      if (staged.length > 0) {
+        output.push("Zum Commit vorgemerkte Änderungen:");
+        staged.forEach((file) => output.push(`  ${file}`));
+      }
+      if (modified.length > 0) {
+        output.push("Änderungen, die nicht zum Commit vorgemerkt sind:");
+        modified.forEach((file) => output.push(`  ${file}`));
+      }
+      if (untracked.length > 0) {
+        output.push("Unversionierte Dateien:");
+        untracked.forEach((file) => output.push(`  ${file}`));
       }
     }
 
-    if (currentLevel === 8 && !completedLevels.includes(8)) {
-      setCompletedLevels((prev) => [...prev, 8]);
-      onCommandSuccess();
-    }
-  };
-
-  const handleGitCommit = (message: string) => {
-    if (!message) {
-      setOutput((prev) => [
-        ...prev,
-        "Fehler: Bitte geben Sie eine Commit-Nachricht an",
-      ]);
-      return;
-    }
-
-    const addedFiles = Object.entries(fileStatus)
-      .filter(([_, status]) => status === "added")
-      .map(([file, _]) => file);
-
-    if (addedFiles.length === 0) {
-      setOutput((prev) => [
-        ...prev,
-        "Fehler: Keine Änderungen zum Commit vorgemerkt",
-      ]);
-      return;
-    }
-
-    setFileStatus((prev) => {
-      const newStatus = { ...prev };
-      addedFiles.forEach((file) => {
-        delete newStatus[file];
-      });
-      return newStatus;
-    });
-
-    setOutput((prev) => [
-      ...prev,
-      `[main ${Math.random().toString(36).substring(2, 8)}] ${message}`,
-      `${addedFiles.length} Dateien geändert`,
-    ]);
-
-    if (currentLevel === 9 && !completedLevels.includes(9)) {
-      setCompletedLevels((prev) => [...prev, 9]);
-      onCommandSuccess();
-    }
+    return output;
   };
 
   const handleCdCommand = (dir: string) => {
@@ -238,31 +378,17 @@ export function GitTerminal({
       return;
     }
     if (dir === "..") {
-      const parentDir =
-        currentDirectory.split("/").slice(0, -1).join("/") || "/";
-      setCurrentDirectory(parentDir);
-      setOutput((prev) => [...prev, `Verzeichnis gewechselt zu ${parentDir}`]);
-      if (
-        currentLevel === 6 &&
-        !completedLevels.includes(6) &&
-        parentDir === "/"
-      ) {
-        setCompletedLevels((prev) => [...prev, 6]);
-        onCommandSuccess();
-      }
+      const parentDir = currentDirectory.split("/").slice(0, -1).join("/");
+      setCurrentDirectory(parentDir || "/");
+      setOutput((prev) => [
+        ...prev,
+        `Verzeichnis gewechselt zu ${parentDir || "/"}`,
+      ]);
     } else {
       const newPath = `${currentDirectory}/${dir}`.replace("//", "/");
       if (getDirectoryContents(newPath)) {
         setCurrentDirectory(newPath);
         setOutput((prev) => [...prev, `Verzeichnis gewechselt zu ${newPath}`]);
-        if (
-          currentLevel === 4 &&
-          !completedLevels.includes(4) &&
-          newPath === "/src"
-        ) {
-          setCompletedLevels((prev) => [...prev, 4]);
-          onCommandSuccess();
-        }
       } else {
         setOutput((prev) => [
           ...prev,
@@ -283,15 +409,6 @@ export function GitTerminal({
     const contents = getFileContents(`${currentDirectory}/${file}`);
     if (contents) {
       setOutput((prev) => [...prev, contents]);
-      if (
-        currentLevel === 5 &&
-        !completedLevels.includes(5) &&
-        file === "index.js" &&
-        currentDirectory === "/src"
-      ) {
-        setCompletedLevels((prev) => [...prev, 5]);
-        onCommandSuccess();
-      }
     } else {
       setOutput((prev) => [...prev, `Fehler: Datei ${file} nicht gefunden`]);
     }
@@ -308,25 +425,12 @@ export function GitTerminal({
     const filePath = `${currentDirectory}/${file}`;
     const contents = getFileContents(filePath) || "";
     onNanoCommand(file, contents);
-    if (
-      currentLevel === 7 &&
-      !completedLevels.includes(7) &&
-      file === "README.md" &&
-      currentDirectory === "/"
-    ) {
-      setCompletedLevels((prev) => [...prev, 7]);
-      onCommandSuccess();
-    }
   };
 
   const handleLsCommand = () => {
     const contents = getDirectoryContents(currentDirectory);
     if (contents) {
       setOutput((prev) => [...prev, ...Object.keys(contents)]);
-      if (currentLevel === 3 && !completedLevels.includes(3)) {
-        setCompletedLevels((prev) => [...prev, 3]);
-        onCommandSuccess();
-      }
     } else {
       setOutput((prev) => [
         ...prev,
@@ -358,6 +462,9 @@ export function GitTerminal({
       "git status - Zeigt den Status des Repositories an",
       "git add [datei] - Fügt Änderungen zum Staging-Bereich hinzu",
       'git commit -m "[nachricht]" - Erstellt einen neuen Commit mit den staged Änderungen',
+      "git branch - Zeigt alle Branches an",
+      "git checkout -b [branch-name] - Erstellt einen neuen Branch und wechselt zu ihm",
+      "git merge [branch-name] - Führt den angegebenen Branch in den aktuellen Branch zusammen",
     ]);
   };
 
@@ -410,13 +517,14 @@ export function GitTerminal({
     current[fileName] = content;
     setFileSystem({ ...fileSystem });
 
-    // Update file status
-    const fullPath = `/${parts.join("/")}/${fileName}`.replace("//", "/");
-    if (fileStatus[fullPath]) {
-      setFileStatus((prev) => ({ ...prev, [fullPath]: "modified" }));
-    } else {
-      setFileStatus((prev) => ({ ...prev, [fullPath]: "untracked" }));
-    }
+    // Update git status when a file is modified
+    setGitStatus((prev) => ({
+      ...prev,
+      [parts.join("/") + "/" + fileName]:
+        prev[parts.join("/") + "/" + fileName] === "staged"
+          ? "staged"
+          : "modified",
+    }));
   };
 
   // Add this function to handle file saves from the NanoModal

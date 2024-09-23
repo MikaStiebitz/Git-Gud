@@ -1,5 +1,5 @@
 export function ProgressBar({ score, className }) {
-  const maxScore = 100; // Bei Bedarf anpassen
+  const maxScore = 100; // Adjust as needed
   const percentage = (score / maxScore) * 100;
 
   return (

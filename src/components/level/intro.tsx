@@ -1,0 +1,42 @@
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+
+export function Intro({ currentLevel }) {
+  const challenges = [
+    {
+      level: 1,
+      description: "Initialisiere ein neues Git-Repository",
+      command: "git init",
+    },
+    {
+      level: 2,
+      description: "Überprüfe den Status deines Repositories",
+      command: "git status",
+    },
+  ];
+
+  const currentChallenge =
+    challenges.find((challenge) => challenge.level === currentLevel) ||
+    challenges[challenges.length - 1];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Einführung in Git</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <h2 className="mb-2 text-xl font-semibold">
+          Level {currentChallenge.level}
+        </h2>
+        <p className="mb-4">{currentChallenge.description}</p>
+        {currentChallenge.command && (
+          <p className="text-muted-foreground text-sm">
+            Tipp: Versuche den Befehl{" "}
+            <code className="bg-muted rounded p-1">
+              {currentChallenge.command}
+            </code>
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

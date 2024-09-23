@@ -2,20 +2,46 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { GitTerminal } from "~/components/terminal";
-import { GameLogic } from "~/components/game-logic";
+import { Terminal } from "~/components/terminal";
+import { Intro } from "~/components/level/intro";
+import { Files } from "~/components/level/files";
+import { Branches } from "~/components/level/branches";
+import { Merge } from "~/components/level/merge";
 import { ProgressBar } from "~/components/progress-bar";
 import { NanoModal } from "~/components/nano-modal";
+import { Button } from "~/components/ui/button";
+
+const groups = ["Intro", "Files", "Branches", "Merge"];
 
 export default function GitLearningGame() {
+  const [currentGroup, setCurrentGroup] = useState(groups[0]);
   const [currentLevel, setCurrentLevel] = useState(1);
   const [score, setScore] = useState(0);
   const [isNanoModalOpen, setIsNanoModalOpen] = useState(false);
   const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
+  const [isLevelCompleted, setIsLevelCompleted] = useState(false);
 
   const handleCommandSuccess = () => {
     setScore((prevScore) => prevScore + 10);
-    setCurrentLevel((prevLevel) => prevLevel + 1);
+    setIsLevelCompleted(true);
+  };
+
+  const handleNextLevel = () => {
+    if (currentLevel < 2) {
+      setCurrentLevel((prevLevel) => prevLevel + 1);
+    } else {
+      const currentGroupIndex = groups.indexOf(currentGroup);
+      if (currentGroupIndex < groups.length - 1) {
+        setCurrentGroup(groups[currentGroupIndex + 1]);
+        setCurrentLevel(1);
+      } else {
+        // Game completed
+        alert(
+          "Herzlichen Glückwunsch! Sie haben das Git-Lernspiel abgeschlossen!",
+        );
+      }
+    }
+    setIsLevelCompleted(false);
   };
 
   const handleNanoCommand = (fileName: string, fileContent: string) => {
@@ -24,8 +50,23 @@ export default function GitLearningGame() {
   };
 
   const handleSaveFile = (fileName: string, newContent: string) => {
-    // This function will be passed down to the GitTerminal component
+    // This function will be passed down to the Terminal component
     // to update the file system
+  };
+
+  const renderCurrentGroup = () => {
+    switch (currentGroup) {
+      case "Intro":
+        return <Intro currentLevel={currentLevel} />;
+      case "Files":
+        return <Files currentLevel={currentLevel} />;
+      case "Branches":
+        return <Branches currentLevel={currentLevel} />;
+      case "Merge":
+        return <Merge currentLevel={currentLevel} />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -37,8 +78,9 @@ export default function GitLearningGame() {
             <CardTitle>Git Terminal</CardTitle>
           </CardHeader>
           <CardContent>
-            <GitTerminal
+            <Terminal
               onCommandSuccess={handleCommandSuccess}
+              currentGroup={currentGroup}
               currentLevel={currentLevel}
               onNanoCommand={handleNanoCommand}
               onSaveFile={handleSaveFile}
@@ -50,7 +92,12 @@ export default function GitLearningGame() {
             <CardTitle>Aktuelle Herausforderung</CardTitle>
           </CardHeader>
           <CardContent>
-            <GameLogic currentLevel={currentLevel} />
+            {renderCurrentGroup()}
+            {isLevelCompleted && (
+              <Button className="mt-4 w-full" onClick={handleNextLevel}>
+                Nächstes Level
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -60,8 +107,8 @@ export default function GitLearningGame() {
         onClose={() => setIsNanoModalOpen(false)}
         fileName={currentFile.name}
         fileContent={currentFile.content}
-        onSave={(newContent) => {
-          handleSaveFile(currentFile.name, newContent);
+        onSave={(fileName, newContent) => {
+          handleSaveFile(fileName, newContent);
           setIsNanoModalOpen(false);
         }}
       />
