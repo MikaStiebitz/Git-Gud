@@ -84,6 +84,8 @@ export default function GitLearningGame() {
               currentLevel={currentLevel}
               onNanoCommand={handleNanoCommand}
               onSaveFile={handleSaveFile}
+              isLevelCompleted={isLevelCompleted}
+              handleNextLevel={handleNextLevel}
             />
           </CardContent>
         </Card>

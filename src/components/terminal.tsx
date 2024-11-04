@@ -21,6 +21,8 @@ export function Terminal({
   currentLevel,
   onNanoCommand,
   onSaveFile,
+  isLevelCompleted,
+  handleNextLevel,
 }) {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState([
@@ -76,6 +78,13 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         break;
       case "clear":
         handleClearCommand();
+        break;
+      case "next":
+        if (!isLevelCompleted) {
+          setOutput((prev) => [...prev, "Fehler: Level nicht abgeschlossen"]);
+          break;
+        }
+        handleNextLevel();
         break;
       default:
         setOutput((prev) => [
@@ -244,23 +253,24 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         }
         break;
       case "checkout":
+        console.log("args", args);
         if (
-          args[0] === "-b" &&
-          args[1] &&
+          args[1] === "-b" &&
+          args[2] &&
           currentGroup === "Branches" &&
           currentLevel === 2 &&
           !completedLevels.includes(6)
         ) {
           setOutput((prev) => [
             ...prev,
-            `Switched to a new branch '${args[1]}'`,
+            `Switched to a new branch '${args[2]}'`,
           ]);
           setCompletedLevels((prev) => [...prev, 6]);
           onCommandSuccess();
-        } else if (args[0] === "-b" && args[1]) {
+        } else if (args[1] === "-b" && args[2]) {
           setOutput((prev) => [
             ...prev,
-            `Switched to a new branch '${args[1]}'`,
+            `Switched to a new branch '${args[2]}'`,
           ]);
         } else {
           setOutput((prev) => [...prev, "Fehler: Ungültiger checkout Befehl"]);
