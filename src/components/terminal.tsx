@@ -1,9 +1,9 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { stages } from "~/components/level/stages";
 
 type FileSystem = {
     [key: string]: string | FileSystem;
@@ -11,9 +11,26 @@ type FileSystem = {
 
 type FileStatus = "untracked" | "modified" | "staged";
 
-type GitStatus = {
-    [key: string]: FileStatus;
-};
+type GitStatus = Record<string, FileStatus>;
+
+type StageLevel = Record<number, Requirement>;
+
+type Stages = Record<string, StageLevel>;
+
+interface TerminalProps {
+    onCommandSuccess: () => void;
+    currentGroup: string;
+    currentLevel: number;
+    onNanoCommand: (file: string, contents: string) => void;
+    onSaveFile: (callback: (fileName: string, content: string) => void) => void;
+    isLevelCompleted: boolean;
+    handleNextLevel: () => void;
+}
+
+interface Requirement {
+    command: string;
+    requiresArgs?: string[];
+}
 
 export function Terminal({
     onCommandSuccess,
@@ -23,7 +40,7 @@ export function Terminal({
     onSaveFile,
     isLevelCompleted,
     handleNextLevel,
-}) {
+}: TerminalProps) {
     const [input, setInput] = useState("");
     const [output, setOutput] = useState(["Willkommen im Git Terminal Simulator!"]);
     const [currentDirectory, setCurrentDirectory] = useState("/");
@@ -37,7 +54,6 @@ export function Terminal({
     });
     const [isGitInitialized, setIsGitInitialized] = useState(false);
     const [gitStatus, setGitStatus] = useState<GitStatus>({});
-    const [completedLevels, setCompletedLevels] = useState<number[]>([]);
 
     useEffect(() => {
         setOutput([
@@ -90,6 +106,34 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         setInput("");
     };
 
+    const checkLevelCompletion = (args: string[]) => {
+        // Type assertion for stages object
+        const stagesLevel = stages as Stages;
+
+        // Safe property access with type checking
+        const currentStage = stagesLevel[currentGroup];
+        if (!currentStage) return false;
+
+        const requirement = currentStage[currentLevel];
+        if (!requirement) return false;
+
+        // Type guard for requirement with args
+        const hasRequiredArgs = (req: Requirement): req is Required<Requirement> => {
+            return Array.isArray(req.requiresArgs);
+        };
+
+        if (hasRequiredArgs(requirement)) {
+            return requirement.requiresArgs.every((reqArg: string) => {
+                if (reqArg === "any") {
+                    return args.length > 0;
+                }
+                return args.includes(reqArg);
+            });
+        }
+
+        return true;
+    };
+
     const handleGitCommand = (args: string[]) => {
         if (args[0] === "help") {
             handleGitHelpCommand();
@@ -103,25 +147,16 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
 
         switch (args[0]) {
             case "init":
-                if (currentGroup === "Intro" && currentLevel === 1 && !completedLevels.includes(1)) {
+                if (!isGitInitialized) {
                     setIsGitInitialized(true);
                     setOutput(prev => [...prev, "Leeres Git-Repository initialisiert"]);
-                    setCompletedLevels(prev => [...prev, 1]);
-                    onCommandSuccess();
                 } else {
                     setOutput(prev => [...prev, "Git-Repository ist bereits initialisiert."]);
                 }
                 break;
             case "status":
-                if (currentGroup === "Intro" && currentLevel === 2 && !completedLevels.includes(2)) {
-                    const statusOutput = getGitStatusOutput();
-                    setOutput(prev => [...prev, ...statusOutput]);
-                    setCompletedLevels(prev => [...prev, 2]);
-                    onCommandSuccess();
-                } else {
-                    const statusOutput = getGitStatusOutput();
-                    setOutput(prev => [...prev, ...statusOutput]);
-                }
+                const statusOutput = getGitStatusOutput();
+                setOutput(prev => [...prev, ...statusOutput]);
                 break;
             case "add":
                 if (args[1] === ".") {
@@ -131,10 +166,6 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
                         stagedFiles.forEach(file => {
                             setOutput(prev => [...prev, `  ${file}`]);
                         });
-                        if (currentGroup === "Files" && currentLevel === 1 && !completedLevels.includes(3)) {
-                            setCompletedLevels(prev => [...prev, 3]);
-                            onCommandSuccess();
-                        }
                     } else {
                         setOutput(prev => [...prev, "Keine Änderungen zum Vormerken gefunden."]);
                     }
@@ -151,27 +182,7 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
                 }
                 break;
             case "commit":
-                if (
-                    args[1] === "-m" &&
-                    args[2] &&
-                    currentGroup === "Files" &&
-                    currentLevel === 2 &&
-                    !completedLevels.includes(4)
-                ) {
-                    const stagedFiles = Object.entries(gitStatus).filter(([_, status]) => status === "staged");
-                    if (stagedFiles.length > 0) {
-                        setOutput(prev => [
-                            ...prev,
-                            `[main (Basis-Commit) f7d1e1d] ${args[2]}`,
-                            `${stagedFiles.length} Datei(en) geändert`,
-                        ]);
-                        setGitStatus({});
-                        setCompletedLevels(prev => [...prev, 4]);
-                        onCommandSuccess();
-                    } else {
-                        setOutput(prev => [...prev, "Fehler: Keine Änderungen zum Committen"]);
-                    }
-                } else if (args[1] === "-m" && args[2]) {
+                if (args[1] === "-m" && args[2]) {
                     const stagedFiles = Object.entries(gitStatus).filter(([_, status]) => status === "staged");
                     if (stagedFiles.length > 0) {
                         setOutput(prev => [
@@ -188,38 +199,18 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
                 }
                 break;
             case "branch":
-                if (currentGroup === "Branches" && currentLevel === 1 && !completedLevels.includes(5)) {
-                    setOutput(prev => [...prev, "* main"]);
-                    setCompletedLevels(prev => [...prev, 5]);
-                    onCommandSuccess();
-                } else {
-                    setOutput(prev => [...prev, "* main"]);
-                }
+                setOutput(prev => [...prev, "* main"]);
                 break;
             case "checkout":
                 console.log("args", args);
-                if (
-                    args[1] === "-b" &&
-                    args[2] &&
-                    currentGroup === "Branches" &&
-                    currentLevel === 2 &&
-                    !completedLevels.includes(6)
-                ) {
-                    setOutput(prev => [...prev, `Switched to a new branch '${args[2]}'`]);
-                    setCompletedLevels(prev => [...prev, 6]);
-                    onCommandSuccess();
-                } else if (args[1] === "-b" && args[2]) {
+                if (args[1] === "-b" && args[2]) {
                     setOutput(prev => [...prev, `Switched to a new branch '${args[2]}'`]);
                 } else {
                     setOutput(prev => [...prev, "Fehler: Ungültiger checkout Befehl"]);
                 }
                 break;
             case "merge":
-                if (args[0] && currentGroup === "Merge" && currentLevel === 1 && !completedLevels.includes(7)) {
-                    setOutput(prev => [...prev, `Merging branch '${args[0]}' into current branch`]);
-                    setCompletedLevels(prev => [...prev, 7]);
-                    onCommandSuccess();
-                } else if (args[0]) {
+                if (args[0]) {
                     setOutput(prev => [...prev, `Merging branch '${args[0]}' into current branch`]);
                 } else {
                     setOutput(prev => [...prev, "Fehler: Bitte geben Sie einen Branch-Namen zum Mergen an"]);
@@ -227,6 +218,10 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
                 break;
             default:
                 setOutput(prev => [...prev, "Git-Befehl nicht erkannt. Versuchen Sie es erneut."]);
+        }
+
+        if (checkLevelCompletion(args.slice(1))) {
+            onCommandSuccess();
         }
     };
 
@@ -296,7 +291,7 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         return output;
     };
 
-    const handleCdCommand = (dir: string) => {
+    const handleCdCommand = (dir: string | undefined) => {
         if (!dir) {
             setOutput(prev => [...prev, `Aktuelles Verzeichnis: ${currentDirectory}`]);
             return;
@@ -316,7 +311,7 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         }
     };
 
-    const handleCatCommand = (file: string) => {
+    const handleCatCommand = (file: string | undefined) => {
         if (!file) {
             setOutput(prev => [...prev, "Fehler: Bitte geben Sie einen Dateinamen an"]);
             return;
@@ -329,13 +324,13 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         }
     };
 
-    const handleNanoCommand = (file: string) => {
+    const handleNanoCommand = (file: string | undefined) => {
         if (!file) {
             setOutput(prev => [...prev, "Fehler: Bitte geben Sie einen Dateinamen an"]);
             return;
         }
         const filePath = `${currentDirectory}/${file}`;
-        const contents = getFileContents(filePath) || "";
+        const contents = getFileContents(filePath) ?? "";
         onNanoCommand(file, contents);
     };
 
@@ -383,7 +378,7 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
 
     const getDirectoryContents = (path: string): FileSystem | null => {
         const parts = path.split("/").filter(Boolean);
-        let current: FileSystem | string = fileSystem["/"];
+        let current: FileSystem | string | undefined = fileSystem["/"];
         for (const part of parts) {
             if (typeof current === "object" && part in current) {
                 current = current[part];
@@ -396,7 +391,7 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
 
     const getFileContents = (path: string): string | null => {
         const parts = path.split("/").filter(Boolean);
-        let current: FileSystem | string = fileSystem["/"];
+        let current: FileSystem | string | undefined = fileSystem["/"];
         for (const part of parts.slice(0, -1)) {
             if (typeof current === "object" && part in current) {
                 current = current[part];
@@ -404,7 +399,7 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
                 return null;
             }
         }
-        const fileName = parts[parts.length - 1];
+        const fileName = parts[parts.length - 1] ?? "";
         if (typeof current === "object" && fileName in current) {
             return current[fileName] as string;
         }
@@ -416,12 +411,12 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         const fileName = parts.pop();
         if (!fileName) return;
 
-        let current = fileSystem["/"];
+        let current: FileSystem = fileSystem["/"] as FileSystem;
         for (const part of parts) {
-            if (!(part in current) || typeof current[part] !== "object") {
-                current[part] = {};
+            if (!(part in current) || typeof current[part] === "string") {
+                current[part] = {} as FileSystem;
             }
-            current = current[part] as FileSystem;
+            current = current[part]!;
         }
         current[fileName] = content;
         setFileSystem({ ...fileSystem });
@@ -444,6 +439,7 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
     // Pass handleSaveFile to the parent component
     useEffect(() => {
         onSaveFile(handleSaveFile);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onSaveFile, currentDirectory]);
 
     return (
