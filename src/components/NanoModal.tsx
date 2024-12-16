@@ -3,7 +3,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 
-export function NanoModal({ isOpen, onClose, fileName, fileContent, onSave }) {
+interface NanoModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    fileName: string;
+    fileContent: string;
+    onSave: (fileName: string, fileContent: string) => void;
+}
+
+export function NanoModal({ isOpen, onClose, fileName, fileContent, onSave }: NanoModalProps) {
     const [editedContent, setEditedContent] = useState(fileContent);
 
     useEffect(() => {

@@ -6,7 +6,7 @@ import { type Metadata } from "next";
 export const metadata: Metadata = {
     title: "Git Gud",
     description: "A GIT gameified learning platform",
-    icons: [{ rel: "icon", url: "/favicon.ico" }],
+    icons: [{ rel: "icon", url: "/gitIcon.ico" }],
 };
 
 export const dynamic = "force-dynamic";

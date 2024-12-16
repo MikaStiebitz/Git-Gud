@@ -1,4 +1,9 @@
-export function ProgressBar({ score, className }) {
+interface ProgressBarProps {
+    score: number;
+    className?: string;
+}
+
+export function ProgressBar({ score, className }: ProgressBarProps) {
     const maxScore = 100; // Adjust as needed
     const percentage = (score / maxScore) * 100;
 

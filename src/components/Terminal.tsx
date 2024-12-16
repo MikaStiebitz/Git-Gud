@@ -22,7 +22,7 @@ interface TerminalProps {
     currentGroup: string;
     currentLevel: number;
     onNanoCommand: (file: string, contents: string) => void;
-    onSaveFile: (callback: (fileName: string, content: string) => void) => void;
+    onSaveFile: (fileName: string, content: string) => void;
     isLevelCompleted: boolean;
     handleNextLevel: () => void;
 }
@@ -435,12 +435,6 @@ ${currentGroup} - Level ${currentLevel} gestartet. Geben Sie 'help' ein für ver
         updateFileSystem(filePath, newContent);
         setOutput(prev => [...prev, `Datei ${fileName} gespeichert.`]);
     };
-
-    // Pass handleSaveFile to the parent component
-    useEffect(() => {
-        onSaveFile(handleSaveFile);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [onSaveFile, currentDirectory]);
 
     return (
         <div className="flex h-[300px] flex-col">
