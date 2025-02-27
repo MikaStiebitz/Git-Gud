@@ -1,3 +1,6 @@
+// src/models/CommandProcessor.ts
+// Klasse zur Verarbeitung von Terminal-Befehlen
+
 import { FileSystem } from "./FileSystem";
 import { GitRepository } from "./GitRepository";
 
@@ -5,7 +8,7 @@ export class CommandProcessor {
     constructor(
         private fileSystem: FileSystem,
         private gitRepository: GitRepository,
-        private currentDirectory = "/",
+        private currentDirectory: string = "/",
     ) {}
 
     // Process a command and return the output
@@ -24,8 +27,9 @@ export class CommandProcessor {
             case "cat":
                 return this.processCatCommand(cmdArgs[0]);
             case "nano":
+                return this.processNanoCommand(cmdArgs[0]);
             case "touch":
-                return [`Use the editor to modify ${cmdArgs[0] || "file"}`];
+                return this.processTouchCommand(cmdArgs[0]);
             case "mkdir":
                 return this.processMkdirCommand(cmdArgs[0]);
             case "pwd":
@@ -34,6 +38,9 @@ export class CommandProcessor {
                 return this.processHelpCommand();
             case "clear":
                 return [];
+            case "next":
+                // "next" ist ein spezieller Befehl, der nur im UI verwendet wird
+                return ["Wechsle zum nächsten Level..."];
             default:
                 return [`Command not found: ${cmd}`];
         }
@@ -263,6 +270,34 @@ export class CommandProcessor {
         return contents !== null ? [contents] : [`File not found: ${file}`];
     }
 
+    // Process nano command - Jetzt mit speziellem Handling
+    private processNanoCommand(file?: string): string[] {
+        if (!file) {
+            return ["Please specify a file."];
+        }
+
+        // Wir geben nur eine Nachricht zurück - die eigentliche Bearbeitung passiert in der Terminal-Komponente
+        return [`Opening file ${file} in editor...`];
+    }
+
+    // Process touch command
+    private processTouchCommand(file?: string): string[] {
+        if (!file) {
+            return ["Please specify a file name."];
+        }
+
+        const filePath = this.resolvePath(file);
+        const success = this.fileSystem.writeFile(filePath, "");
+
+        if (success) {
+            // Aktualisiere den Git-Status für die neue Datei
+            this.gitRepository.updateFileStatus(file, "untracked");
+            return [`Created file: ${file}`];
+        } else {
+            return [`Failed to create file: ${file}`];
+        }
+    }
+
     // Process mkdir command
     private processMkdirCommand(dir?: string): string[] {
         if (!dir) {
@@ -281,12 +316,12 @@ export class CommandProcessor {
             "Available commands:",
             "  git - Git version control commands",
             "  ls - List directory contents",
-            "  cd <directory> - Change directory",
+            "  cd [directory] - Change directory",
             "  pwd - Print working directory",
-            "  cat <file> - Display file contents",
-            "  nano <file> - Edit file",
-            "  touch <file> - Create empty file",
-            "  mkdir <directory> - Create directory",
+            "  cat [file] - Display file contents",
+            "  nano [file] - Edit file",
+            "  touch [file] - Create empty file",
+            "  mkdir [directory] - Create directory",
             "  help - Display this help message",
             "  clear - Clear the terminal",
         ];
@@ -302,6 +337,12 @@ export class CommandProcessor {
         if (this.fileSystem.getDirectoryContents(dir)) {
             this.currentDirectory = dir;
         }
+    }
+
+    // Get files in the current directory (für Autocomplete)
+    public getCurrentDirectoryFiles(): string[] {
+        const contents = this.fileSystem.getDirectoryContents(this.currentDirectory);
+        return contents ? Object.keys(contents) : [];
     }
 
     // Get all files in a directory recursively

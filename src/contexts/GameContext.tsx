@@ -1,11 +1,12 @@
 "use client";
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CommandProcessor } from "~/models/CommandProcessor";
 import { FileSystem } from "~/models/FileSystem";
 import { LevelManager } from "~/models/LevelManager";
 import { ProgressManager } from "~/models/ProgressManager";
 import { GitRepository } from "~/models/GitRepository";
-import { type GameContextProps } from "~/types";
+import type { GameContextProps } from "~/types";
 
 const GameContext = createContext<GameContextProps | undefined>(undefined);
 
@@ -26,6 +27,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         `Level ${currentLevel} von ${currentStage} gestartet. Gib 'help' ein für Hilfe.`,
     ]);
 
+    // Zustand für den FileEditor
+    const [isFileEditorOpen, setIsFileEditorOpen] = useState(false);
+    const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
+
     // Load saved progress on mount
     useEffect(() => {
         const savedProgress = progressManager.getProgress();
@@ -36,7 +41,24 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Process a command and update the state
     const handleCommand = (command: string) => {
+        // Spezialfall für nano-Befehl
+        if (command.trim().startsWith("nano ")) {
+            const args = command.trim().split(/\s+/);
+            if (args.length > 1) {
+                const fileName = args[1];
+                setTerminalOutput(prev => [...prev, `$ ${command}`, `Opening ${fileName} in editor...`]);
+                openFileEditor(fileName);
+                return;
+            }
+        }
+
         setTerminalOutput(prev => [...prev, `$ ${command}`]);
+
+        // Spezialfall für "next"-Befehl
+        if (command.trim() === "next" && isLevelCompleted) {
+            handleNextLevel();
+            return;
+        }
 
         // Prozessiere den Befehl und erhalte die Ausgabe
         const output = commandProcessor.processCommand(command);
@@ -100,6 +122,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    // Öffne den FileEditor für eine Datei
+    const openFileEditor = (fileName: string) => {
+        const currentDir = commandProcessor.getCurrentDirectory();
+        const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
+        const content = fileSystem.getFileContents(filePath) || "";
+
+        // Setze die aktuellen Dateideaten und öffne den Editor
+        setCurrentFile({ name: filePath, content });
+        setIsFileEditorOpen(true);
+    };
+
     // Handle file edit (for nano command)
     const handleFileEdit = (path: string, content: string) => {
         const fullPath = path.startsWith("/") ? path : `${commandProcessor.getCurrentDirectory()}/${path}`;
@@ -148,12 +181,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         currentLevel,
         isLevelCompleted,
         terminalOutput,
+        isFileEditorOpen,
+        currentFile,
 
         handleCommand,
         handleNextLevel,
         handleFileEdit,
         resetCurrentLevel,
         resetAllProgress,
+        openFileEditor,
+        setIsFileEditorOpen,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

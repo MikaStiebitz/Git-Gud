@@ -4,7 +4,7 @@ import { type Metadata } from "next";
 import { GameProvider } from "~/contexts/GameContext";
 
 export const metadata: Metadata = {
-    title: "GitGame - Learn Git Through Play",
+    title: "GitGud - Learn Git Through Play",
     description:
         "A gamified Git learning platform that helps you master Git commands and concepts through interactive challenges.",
     icons: [{ rel: "icon", url: "/gitIcon.ico" }],

@@ -283,7 +283,7 @@ export default function EnhancedLevelPage() {
                 <nav className="container mx-auto flex h-16 items-center px-4">
                     <Link href="/" className="flex items-center space-x-2">
                         <GitBranch className="h-6 w-6 text-purple-400" />
-                        <span className="text-xl font-bold text-white">GitGame</span>
+                        <span className="text-xl font-bold text-white">GitGud</span>
                     </Link>
                     <span className="ml-4 text-purple-300">
                         Level {currentLevel} - {currentStage}
@@ -354,7 +354,7 @@ export default function EnhancedLevelPage() {
             {/* Footer */}
             <footer className="mt-8 border-t border-purple-900/20 py-4">
                 <div className="container mx-auto px-4 text-center text-purple-400">
-                    <p>&copy; {new Date().getFullYear()} GitGame. All rights reserved.</p>
+                    <p>GitGud</p>
                 </div>
             </footer>
         </div>

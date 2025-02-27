@@ -1,17 +1,10 @@
-import { CommandProcessor } from "~/models/CommandProcessor";
-import { FileSystem } from "~/models/FileSystem";
-import { LevelManager } from "~/models/LevelManager";
-import { ProgressManager } from "~/models/ProgressManager";
-import { GitRepository } from "~/models/GitRepository";
+import type { CommandProcessor } from "~/models/CommandProcessor";
+import type { FileSystem } from "~/models/FileSystem";
+import type { LevelManager } from "~/models/LevelManager";
+import type { ProgressManager } from "~/models/ProgressManager";
+import type { GitRepository } from "~/models/GitRepository";
 
-export interface FileSystemItem {
-    type: "file" | "directory";
-    name: string;
-    content?: string;
-    children?: Record<string, FileSystemItem>;
-    lastModified?: Date;
-}
-
+// GameContext Props Definition
 export interface GameContextProps {
     // Modelle
     fileSystem: FileSystem;
@@ -34,8 +27,7 @@ export interface GameContextProps {
     resetAllProgress: () => void;
 }
 
-// Für die Vollständigkeit hier nochmal alle in den Models verwendeten Typen
-
+// Basis-Typen
 export type CommandType = {
     name: string;
     description: string;
@@ -64,11 +56,30 @@ export interface FileSystemItem {
     lastModified?: Date;
 }
 
+// Neu: Story-Kontext für jedes Level
+export type StoryContext = {
+    title: string;
+    narrative: string;
+    realWorldContext: string;
+    taskIntroduction: string;
+};
+
 export type LevelRequirement = {
     command: string;
     requiresArgs?: string[];
     description: string;
     successMessage?: string;
+};
+
+// Erweitert: Level mit Story-Kontext
+export type LevelType = {
+    id: number;
+    name: string;
+    description: string;
+    objectives: string[];
+    hints: string[];
+    requirements: LevelRequirement[];
+    story: StoryContext; // Neu: Story-Kontext für jedes Level
 };
 
 export type StageType = {
@@ -77,15 +88,6 @@ export type StageType = {
     description: string;
     icon: string;
     levels: Record<number, LevelType>;
-};
-
-export type LevelType = {
-    id: number;
-    name: string;
-    description: string;
-    objectives: string[];
-    hints: string[];
-    requirements: LevelRequirement[];
 };
 
 export type UserProgress = {

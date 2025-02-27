@@ -1,4 +1,7 @@
-import type { StageType, LevelType } from "~/types";
+// src/models/LevelManager.ts
+// Klasse zur Verwaltung der Spiellevel und Challenges - Mit integriertem StoryContext
+
+import { StageType, LevelType } from "~/types";
 
 export class LevelManager {
     private stages: Record<string, StageType>;
@@ -24,6 +27,18 @@ export class LevelManager {
                                 successMessage: "Gut gemacht! Du hast ein Git-Repository erstellt.",
                             },
                         ],
+                        // Neu: Story-Kontext für jedes Level
+                        story: {
+                            title: "Willkommen im Team",
+                            narrative: `Herzlich willkommen in deinem neuen Job als Entwickler bei TechStart! Ich bin Alex, dein Team-Lead.
+
+              Es ist dein erster Tag und wir wollen dir helfen, schnell produktiv zu werden. Wir nutzen Git für unsere Versionskontrolle - damit verfolgen wir Änderungen im Code und arbeiten im Team zusammen.
+
+              Als erstes musst du ein neues Repository für dein Onboarding-Projekt anlegen. Dafür nutzen wir den Befehl 'git init'.`,
+                            realWorldContext:
+                                "In echten Entwicklerteams ist Git unverzichtbar. Es ist das erste Tool, das du bei einem neuen Projekt einrichtest.",
+                            taskIntroduction: "Lass uns ein neues Repository für dein Projekt erstellen.",
+                        },
                     },
                     2: {
                         id: 2,
@@ -41,6 +56,15 @@ export class LevelManager {
                                 successMessage: "Perfekt! Du kannst nun den Status deines Repositories sehen.",
                             },
                         ],
+                        story: {
+                            title: "Was ist los in deinem Repo?",
+                            narrative: `Großartig! Du hast dein erstes Git-Repository erstellt. Das versteckte .git-Verzeichnis enthält nun alle Informationen, die Git braucht.
+
+              Alex schaut vorbei: "Super! Als nächstes solltest du dir anschauen, was in deinem Repository passiert. Mit 'git status' kannst du jederzeit den aktuellen Zustand überprüfen."`,
+                            realWorldContext:
+                                "Entwickler führen 'git status' mehrmals täglich aus, um zu sehen, welche Dateien geändert wurden und welche für den nächsten Commit bereit sind.",
+                            taskIntroduction: "Überprüfe den Status deines Repositories mit git status.",
+                        },
                     },
                 },
             },
@@ -67,6 +91,15 @@ export class LevelManager {
                                 successMessage: "Großartig! Du hast alle Dateien zur Staging-Area hinzugefügt.",
                             },
                         ],
+                        story: {
+                            title: "Code-Änderungen vorbereiten",
+                            narrative: `"Hey!" ruft Sarah, deine Kollegin, "ich sehe, du hast schon mit Git angefangen. Als nächstes solltest du lernen, wie man Änderungen staged."
+
+              Sie erklärt: "Wenn du Dateien änderst, musst du Git explizit sagen, welche Änderungen in den nächsten Commit aufgenommen werden sollen. Das nennt man 'Staging' und funktioniert mit 'git add'."`,
+                            realWorldContext:
+                                "Das Staging-Konzept ist ein mächtiges Feature von Git. Es erlaubt dir, nur ausgewählte Änderungen zu committen, während andere noch in Bearbeitung bleiben können.",
+                            taskIntroduction: "Füge alle Dateien zur Staging-Area hinzu mit git add .",
+                        },
                     },
                     2: {
                         id: 2,
@@ -85,6 +118,15 @@ export class LevelManager {
                                 successMessage: "Ausgezeichnet! Du hast erfolgreich einen Commit erstellt.",
                             },
                         ],
+                        story: {
+                            title: "Dein erster Commit",
+                            narrative: `"Super gemacht!" sagt Alex, als er deine Fortschritte sieht. "Du hast Änderungen zur Staging-Area hinzugefügt. Jetzt ist es Zeit für deinen ersten Commit."
+
+              Er erklärt: "Ein Commit ist wie ein Snapshot deines Projekts zu einem bestimmten Zeitpunkt. Jeder Commit braucht eine Nachricht, die beschreibt, was geändert wurde. Das ist wichtig für die Nachvollziehbarkeit."`,
+                            realWorldContext:
+                                "Gute Commit-Nachrichten sind in Entwicklerteams extrem wichtig. Sie helfen allen zu verstehen, warum eine Änderung gemacht wurde, nicht nur was geändert wurde.",
+                            taskIntroduction: "Erstelle deinen ersten Commit mit einer aussagekräftigen Nachricht.",
+                        },
                     },
                 },
             },
@@ -107,6 +149,15 @@ export class LevelManager {
                                 successMessage: "Sehr gut! Du kannst nun alle Branches in deinem Repository sehen.",
                             },
                         ],
+                        story: {
+                            title: "Verzweigungen im Code",
+                            narrative: `"Zeit für etwas Fortgeschritteneres", sagt Alex und zeichnet einen Baum mit Zweigen auf ein Whiteboard. "Diese Zweige sind wie Git-Branches. Sie erlauben dir, an verschiedenen Versionen deines Codes gleichzeitig zu arbeiten."
+
+              Er erklärt weiter: "Derzeit arbeitest du auf dem 'main'-Branch. Lass uns zuerst überprüfen, welche Branches wir haben."`,
+                            realWorldContext:
+                                "Branches sind ein fundamentales Konzept in Git. Sie ermöglichen parallele Entwicklung, Feature-Isolation und experimentelles Arbeiten ohne den Hauptcode zu beeinträchtigen.",
+                            taskIntroduction: "Zeige dir alle vorhandenen Branches mit git branch an.",
+                        },
                     },
                     2: {
                         id: 2,
@@ -126,6 +177,15 @@ export class LevelManager {
                                     "Hervorragend! Du hast einen neuen Branch erstellt und zu ihm gewechselt.",
                             },
                         ],
+                        story: {
+                            title: "Neue Feature-Entwicklung",
+                            narrative: `"Perfekt! Jetzt wollen wir ein neues Feature implementieren", sagt Alex. "Dafür erstellen wir einen neuen Branch namens 'feature', damit unsere Änderungen den Hauptcode nicht beeinflussen."
+
+              Er zeigt dir, wie man gleichzeitig einen Branch erstellt und zu ihm wechselt: "Mit 'git checkout -b' kannst du beides in einem Schritt erledigen."`,
+                            realWorldContext:
+                                "In professionellen Entwicklungsteams arbeitet man fast nie direkt im main-Branch. Stattdessen erstellt man Feature-Branches für neue Funktionen, um den Hauptcode stabil zu halten.",
+                            taskIntroduction: "Erstelle einen neuen Branch namens 'feature' und wechsle zu ihm.",
+                        },
                     },
                 },
             },
@@ -152,6 +212,15 @@ export class LevelManager {
                                 successMessage: "Ausgezeichnet! Du hast erfolgreich einen Branch zusammengeführt.",
                             },
                         ],
+                        story: {
+                            title: "Code-Integration",
+                            narrative: `"Super! Dein Feature ist fertig und getestet", sagt Alex. "Jetzt ist es Zeit, diese Änderungen zurück in den Hauptcode zu integrieren."
+
+              Er erklärt: "Wechsle zuerst zum main-Branch mit 'git checkout main' und führe dann den feature-Branch mit 'git merge feature' zusammen."`,
+                            realWorldContext:
+                                "Das Zusammenführen (Merging) ist ein kritischer Teil des Git-Workflows. In größeren Teams wird dies oft durch Pull Requests und Code Reviews formalisiert.",
+                            taskIntroduction: "Führe den 'feature'-Branch in den 'main'-Branch zusammen.",
+                        },
                     },
                 },
             },
@@ -195,8 +264,13 @@ export class LevelManager {
                 console.log("Checking requirement:", requirement);
 
                 // Überprüfe, ob dies der richtige Git-Befehl ist
-                // Bei git init wird direkt "git init" überprüft
-                if (requirement.command === `git ${gitCommand}` || requirement.command === command) {
+                if (
+                    requirement.command === `git ${gitCommand}` ||
+                    requirement.command === command ||
+                    requirement.command === gitCommand
+                ) {
+                    // Dieser Fall ist wichtig für "git init" etc.
+
                     console.log("Command matches!");
 
                     // Überprüfe die Argumente, falls erforderlich
@@ -217,6 +291,9 @@ export class LevelManager {
                     return true;
                 }
             }
+        } else if (command === "next") {
+            // Spezieller Fall für den "next"-Befehl
+            return false; // Der "next"-Befehl schließt kein Level ab, sondern navigiert zum nächsten
         } else {
             // Nicht-Git-Befehle
             for (const requirement of level.requirements) {

@@ -128,7 +128,6 @@ export default function Home() {
 
                             return (
                                 <div key={stageId} className="relative">
-                                    {/* Icon-Kreis - besser zentriert */}
                                     <div
                                         className={`absolute left-1/2 top-0 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full ${
                                             isUnlocked ? "bg-purple-600" : "bg-gray-700"
@@ -136,7 +135,6 @@ export default function Home() {
                                         {getStageIcon(stageId)}
                                     </div>
 
-                                    {/* Karte - nicht mehr überlappend mit der Linie */}
                                     <div
                                         className={`ml-8 rounded-lg border p-6 ${
                                             isUnlocked
