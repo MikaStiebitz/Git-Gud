@@ -1,20 +1,21 @@
 import "~/styles/globals.css";
-
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import { GameProvider } from "~/contexts/GameContext";
 
 export const metadata: Metadata = {
-    title: "Git Gud",
-    description: "A GIT gameified learning platform",
+    title: "GitGame - Learn Git Through Play",
+    description:
+        "A gamified Git learning platform that helps you master Git commands and concepts through interactive challenges.",
     icons: [{ rel: "icon", url: "/gitIcon.ico" }],
 };
-
-export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" className={`${GeistSans.variable}`}>
-            <body>{children}</body>
+            <body className="dark">
+                <GameProvider>{children}</GameProvider>
+            </body>
         </html>
     );
 }

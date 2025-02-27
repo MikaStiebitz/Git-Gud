@@ -1,3 +1,41 @@
+import { CommandProcessor } from "~/models/CommandProcessor";
+import { FileSystem } from "~/models/FileSystem";
+import { LevelManager } from "~/models/LevelManager";
+import { ProgressManager } from "~/models/ProgressManager";
+import { GitRepository } from "~/models/GitRepository";
+
+export interface FileSystemItem {
+    type: "file" | "directory";
+    name: string;
+    content?: string;
+    children?: Record<string, FileSystemItem>;
+    lastModified?: Date;
+}
+
+export interface GameContextProps {
+    // Modelle
+    fileSystem: FileSystem;
+    gitRepository: GitRepository;
+    commandProcessor: CommandProcessor;
+    levelManager: LevelManager;
+    progressManager: ProgressManager;
+
+    // Zustandsvariablen
+    currentStage: string;
+    currentLevel: number;
+    isLevelCompleted: boolean;
+    terminalOutput: string[];
+
+    // Funktionen
+    handleCommand: (command: string) => void;
+    handleNextLevel: () => void;
+    handleFileEdit: (path: string, content: string) => void;
+    resetCurrentLevel: () => void;
+    resetAllProgress: () => void;
+}
+
+// Für die Vollständigkeit hier nochmal alle in den Models verwendeten Typen
+
 export type CommandType = {
     name: string;
     description: string;

@@ -1,4 +1,4 @@
-import { LevelType, StageType } from "../types";
+import type { StageType, LevelType } from "~/types";
 
 export class LevelManager {
     private stages: Record<string, StageType>;
@@ -175,24 +175,65 @@ export class LevelManager {
 
     // Check if a command completes a level requirement
     public checkLevelCompletion(stageId: string, levelId: number, command: string, args: string[]): boolean {
+        console.log(`Checking level completion for stage: ${stageId}, level: ${levelId}`);
+        console.log(`Command: ${command}, args:`, args);
+
         const level = this.getLevel(stageId, levelId);
-        if (!level) return false;
+        if (!level) {
+            console.log("Level not found");
+            return false;
+        }
 
-        for (const requirement of level.requirements) {
-            if (requirement.command === command) {
-                // Check if args are required and match
-                if (requirement.requiresArgs) {
-                    const allArgsMatch = requirement.requiresArgs.every(reqArg => {
-                        if (reqArg === "any") {
-                            return args.length > 0;
-                        }
-                        return args.includes(reqArg);
-                    });
+        // Spezialfall für Git-Befehle
+        if (command === "git") {
+            const gitCommand = args[0]; // z.B. "init", "status", etc.
+            const gitArgs = args.slice(1); // Die restlichen Parameter
 
-                    if (!allArgsMatch) return false;
+            console.log(`Git command: ${gitCommand}, Git args:`, gitArgs);
+
+            for (const requirement of level.requirements) {
+                console.log("Checking requirement:", requirement);
+
+                // Überprüfe, ob dies der richtige Git-Befehl ist
+                // Bei git init wird direkt "git init" überprüft
+                if (requirement.command === `git ${gitCommand}` || requirement.command === command) {
+                    console.log("Command matches!");
+
+                    // Überprüfe die Argumente, falls erforderlich
+                    if (requirement.requiresArgs) {
+                        const allArgsMatch = requirement.requiresArgs.every(reqArg => {
+                            if (reqArg === "any") {
+                                return gitArgs.length > 0;
+                            }
+                            return gitArgs.includes(reqArg);
+                        });
+
+                        console.log("Args required:", requirement.requiresArgs);
+                        console.log("Args match:", allArgsMatch);
+
+                        if (!allArgsMatch) return false;
+                    }
+
+                    return true;
                 }
+            }
+        } else {
+            // Nicht-Git-Befehle
+            for (const requirement of level.requirements) {
+                if (requirement.command === command) {
+                    if (requirement.requiresArgs) {
+                        const allArgsMatch = requirement.requiresArgs.every(reqArg => {
+                            if (reqArg === "any") {
+                                return args.length > 0;
+                            }
+                            return args.includes(reqArg);
+                        });
 
-                return true;
+                        if (!allArgsMatch) return false;
+                    }
+
+                    return true;
+                }
             }
         }
 

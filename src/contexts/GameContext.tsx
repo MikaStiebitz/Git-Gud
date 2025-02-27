@@ -1,29 +1,11 @@
+"use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CommandProcessor } from "~/models/CommandProcessor";
 import { FileSystem } from "~/models/FileSystem";
 import { LevelManager } from "~/models/LevelManager";
 import { ProgressManager } from "~/models/ProgressManager";
 import { GitRepository } from "~/models/GitRepository";
-
-interface GameContextProps {
-    fileSystem: FileSystem;
-    gitRepository: GitRepository;
-    commandProcessor: CommandProcessor;
-    levelManager: LevelManager;
-    progressManager: ProgressManager;
-    currentStage: string;
-    currentLevel: number;
-    isLevelCompleted: boolean;
-    terminalOutput: string[];
-
-    handleCommand: (command: string) => void;
-    handleNextLevel: () => void;
-    handleFileEdit: (path: string, content: string) => void;
-    resetCurrentLevel: () => void;
-    resetAllProgress: () => void;
-
-    // Add more functions as needed
-}
+import { type GameContextProps } from "~/types";
 
 const GameContext = createContext<GameContextProps | undefined>(undefined);
 
@@ -50,28 +32,52 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setCurrentStage(savedProgress.currentStage);
         setCurrentLevel(savedProgress.currentLevel);
         setIsLevelCompleted(progressManager.isLevelCompleted(savedProgress.currentStage, savedProgress.currentLevel));
-    }, []);
+    }, [progressManager]);
 
     // Process a command and update the state
     const handleCommand = (command: string) => {
         setTerminalOutput(prev => [...prev, `$ ${command}`]);
 
-        const [cmd, ...args] = command.trim().split(/\s+/);
+        // Prozessiere den Befehl und erhalte die Ausgabe
         const output = commandProcessor.processCommand(command);
-
         setTerminalOutput(prev => [...prev, ...output]);
 
-        // Check if the command completes the current level
-        if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
-            if (!isLevelCompleted) {
-                setIsLevelCompleted(true);
-                progressManager.completeLevel(currentStage, currentLevel);
-                setTerminalOutput(prev => [
-                    ...prev,
-                    "🎉 Level abgeschlossen! Gut gemacht! 🎉",
-                    "Tippe 'next' ein oder klicke auf 'Nächstes Level', um fortzufahren.",
-                ]);
+        // Überprüfe, ob der Befehl das Level abschließt
+        // Wichtig: die Befehlsverarbeitung erfolgt in zwei Schritten:
+        // 1. Splitten des Befehls in Befehl und Argumente
+        const [cmd, ...args] = command.trim().split(/\s+/);
+
+        console.log("Checking command:", cmd, "with args:", args);
+
+        // Handle special case for git commands
+        if (cmd === "git") {
+            const gitCommand = args[0]; // Der eigentliche Git-Befehl (init, status, etc.)
+            const gitArgs = args.slice(1); // Die Argumente des Git-Befehls
+
+            console.log("Git command:", gitCommand, "with git args:", gitArgs);
+
+            // Prüfe Git Befehl mit dem LevelManager
+            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
+                markLevelAsCompleted();
             }
+        } else {
+            // Für Nicht-Git-Befehle - direkte Überprüfung
+            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
+                markLevelAsCompleted();
+            }
+        }
+    };
+
+    // Hilfsfunktion zum Markieren eines Levels als abgeschlossen
+    const markLevelAsCompleted = () => {
+        if (!isLevelCompleted) {
+            setIsLevelCompleted(true);
+            progressManager.completeLevel(currentStage, currentLevel);
+            setTerminalOutput(prev => [
+                ...prev,
+                "🎉 Level abgeschlossen! Gut gemacht! 🎉",
+                "Tippe 'next' ein oder klicke auf 'Nächstes Level', um fortzufahren.",
+            ]);
         }
     };
 

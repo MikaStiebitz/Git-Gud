@@ -8,7 +8,9 @@ export class GitRepository {
     private status: GitStatus = {};
     private commits: Record<string, { message: string; timestamp: Date; files: string[] }> = {};
 
-    constructor() {}
+    constructor() {
+        this.init();
+    }
 
     // Initialize a new Git repository
     public init(): boolean {
