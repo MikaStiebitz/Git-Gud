@@ -1,14 +1,11 @@
-// src/models/CommandProcessor.ts
-// Klasse zur Verarbeitung von Terminal-Befehlen
-
-import { FileSystem } from "./FileSystem";
-import { GitRepository } from "./GitRepository";
+import type { FileSystem } from "./FileSystem";
+import type { GitRepository } from "./GitRepository";
 
 export class CommandProcessor {
     constructor(
         private fileSystem: FileSystem,
         private gitRepository: GitRepository,
-        private currentDirectory: string = "/",
+        private currentDirectory = "/",
     ) {}
 
     // Process a command and return the output
@@ -276,7 +273,8 @@ export class CommandProcessor {
             return ["Please specify a file."];
         }
 
-        // Wir geben nur eine Nachricht zurück - die eigentliche Bearbeitung passiert in der Terminal-Komponente
+        // Just return a confirmation message
+        // The actual file opening is handled by the Terminal component
         return [`Opening file ${file} in editor...`];
     }
 
@@ -346,7 +344,7 @@ export class CommandProcessor {
     }
 
     // Get all files in a directory recursively
-    private getAllFiles(directory: string, prefix: string = ""): string[] {
+    private getAllFiles(directory: string, prefix = ""): string[] {
         const files: string[] = [];
         const contents = this.fileSystem.getDirectoryContents(directory);
 

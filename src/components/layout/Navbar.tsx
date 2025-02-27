@@ -1,13 +1,23 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "~/components/ui/button";
-import { GitBranch, Terminal, BookCopy } from "lucide-react";
+import { GitBranch, Terminal, BookCopy, Home, Code } from "lucide-react";
+import { useGameContext } from "~/contexts/GameContext";
+import { ClientOnly } from "~/components/ClientOnly";
 
 interface NavbarProps {
-    showTerminalButton?: boolean;
-    showStartButton?: boolean;
+    showLevelInfo?: boolean;
 }
 
-export function Navbar({ showTerminalButton = true, showStartButton = true }: NavbarProps) {
+export function Navbar({ showLevelInfo = false }: NavbarProps) {
+    const pathname = usePathname();
+    const { currentStage, currentLevel } = useGameContext();
+
+    // Determine which page we're on
+    const isHomePage = pathname === "/";
+    const isLevelPage = pathname.includes("/level") || pathname === "/[level]";
+    const isPlaygroundPage = pathname === "/playground";
+
     return (
         <header className="border-b border-purple-900/20 bg-[#1a1625]">
             <nav className="container mx-auto flex h-16 items-center px-4">
@@ -15,8 +25,30 @@ export function Navbar({ showTerminalButton = true, showStartButton = true }: Na
                     <GitBranch className="h-6 w-6 text-purple-400" />
                     <span className="text-xl font-bold text-white">GitGud</span>
                 </Link>
+
+                {showLevelInfo && (
+                    <ClientOnly>
+                        <span className="ml-4 text-purple-300">
+                            Level {currentLevel} - {currentStage}
+                        </span>
+                    </ClientOnly>
+                )}
+
+                {isPlaygroundPage && <span className="ml-4 text-purple-300">Playground</span>}
+
                 <div className="ml-auto flex space-x-4">
-                    {showTerminalButton && (
+                    {!isHomePage && (
+                        <Link href="/">
+                            <Button
+                                variant="ghost"
+                                className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <Home className="mr-2 h-4 w-4" />
+                                Home
+                            </Button>
+                        </Link>
+                    )}
+
+                    {!isLevelPage && (
                         <Link href="/level">
                             <Button
                                 variant="ghost"
@@ -26,7 +58,8 @@ export function Navbar({ showTerminalButton = true, showStartButton = true }: Na
                             </Button>
                         </Link>
                     )}
-                    {showTerminalButton && (
+
+                    {!isPlaygroundPage && (
                         <Link href="/playground">
                             <Button
                                 variant="ghost"
@@ -36,9 +69,13 @@ export function Navbar({ showTerminalButton = true, showStartButton = true }: Na
                             </Button>
                         </Link>
                     )}
-                    {showStartButton && (
+
+                    {isHomePage && (
                         <Link href="/level">
-                            <Button className="bg-purple-600 text-white hover:bg-purple-700">Start Learning</Button>
+                            <Button className="bg-purple-600 text-white hover:bg-purple-700">
+                                <Code className="mr-2 h-4 w-4" />
+                                Start Learning
+                            </Button>
                         </Link>
                     )}
                 </div>

@@ -10,6 +10,7 @@ import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
 import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, GitBranch, Terminal as TerminalIcon } from "lucide-react";
+import { PageLayout } from "~/components/layout/PageLayout";
 
 export default function LevelPage() {
     const {
@@ -218,73 +219,41 @@ export default function LevelPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#1a1625] text-purple-100">
-            {/* Header */}
-            <header className="border-b border-purple-900/20">
-                <nav className="container mx-auto flex h-16 items-center px-4">
-                    <Link href="/" className="flex items-center space-x-2">
-                        <GitBranch className="h-6 w-6 text-purple-400" />
-                        <span className="text-xl font-bold text-white">GitGud</span>
-                    </Link>
-                    <span className="ml-4 text-purple-300">
-                        Level {currentLevel} - {currentStage}
-                    </span>
-                    <div className="ml-auto flex space-x-4">
-                        <Link href="/">
-                            <Button
-                                variant="ghost"
-                                className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
-                                <TerminalIcon className="mr-2 h-4 w-4" />
-                                Home
-                            </Button>
-                        </Link>
+        <PageLayout showLevelInfo>
+            <div className="bg-[#1a1625] text-purple-100">
+                <div className="container mx-auto p-4">
+                    <h1 className="mb-6 text-center text-3xl font-bold text-white">Git Lernspiel</h1>
+                    <ProgressBar score={progress.score} maxScore={150} className="mb-6" />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <Card className="border-purple-900/20 bg-purple-900/10 md:order-2">
+                            <CardHeader>
+                                <CardTitle className="flex items-center text-white">
+                                    <Shield className="mr-2 h-5 w-5 text-purple-400" />
+                                    Aktuelle Herausforderung
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {renderLevelChallenge()}
+                                {renderGitStatus()}
+                            </CardContent>
+                        </Card>
+                        <Card className="border-purple-900/20 bg-purple-900/10 md:order-1">
+                            <CardHeader>
+                                <CardTitle className="text-white">Git Terminal</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <Terminal className="h-[400px] rounded-none" />
+                            </CardContent>
+                        </Card>
                     </div>
-                </nav>
-            </header>
-
-            <div className="container mx-auto p-4">
-                <h1 className="mb-6 text-center text-3xl font-bold text-white">Git Lernspiel</h1>
-
-                <ProgressBar score={progress.score} maxScore={150} className="mb-6" />
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Card className="border-purple-900/20 bg-purple-900/10 md:order-2">
-                        <CardHeader>
-                            <CardTitle className="flex items-center text-white">
-                                <Shield className="mr-2 h-5 w-5 text-purple-400" />
-                                Aktuelle Herausforderung
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {renderLevelChallenge()}
-                            {renderGitStatus()}
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-purple-900/20 bg-purple-900/10 md:order-1">
-                        <CardHeader>
-                            <CardTitle className="text-white">Git Terminal</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <Terminal className="h-[400px] rounded-none" />
-                        </CardContent>
-                    </Card>
+                    <FileEditor
+                        isOpen={isFileEditorOpen}
+                        onClose={() => setIsFileEditorOpen(false)}
+                        fileName={currentFile.name}
+                        initialContent={currentFile.content}
+                    />
                 </div>
-
-                <FileEditor
-                    isOpen={isFileEditorOpen}
-                    onClose={() => setIsFileEditorOpen(false)}
-                    fileName={currentFile.name}
-                    initialContent={currentFile.content}
-                />
             </div>
-
-            {/* Footer */}
-            <footer className="mt-8 border-t border-purple-900/20 py-4">
-                <div className="container mx-auto px-4 text-center text-purple-400">
-                    <p>GitGud</p>
-                </div>
-            </footer>
-        </div>
+        </PageLayout>
     );
 }

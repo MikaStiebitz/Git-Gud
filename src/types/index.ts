@@ -25,6 +25,7 @@ export interface GameContextProps {
     handleFileEdit: (path: string, content: string) => void;
     resetCurrentLevel: () => void;
     resetAllProgress: () => void;
+    resetTerminalForPlayground: () => void;
 }
 
 // Basis-Typen

@@ -27,6 +27,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         `Level ${currentLevel} von ${currentStage} gestartet. Gib 'help' ein für Hilfe.`,
     ]);
 
+    // Add a function to reset terminal for playground mode
+    const resetTerminalForPlayground = () => {
+        setTerminalOutput([
+            "Willkommen im Git Terminal Simulator!",
+            "Playground-Modus aktiviert. Experimentiere frei mit Git-Befehlen. Gib 'help' ein für Hilfe.",
+        ]);
+    };
+
     // Zustand für den FileEditor
     const [isFileEditorOpen, setIsFileEditorOpen] = useState(false);
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
@@ -191,6 +199,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetAllProgress,
         openFileEditor,
         setIsFileEditorOpen,
+        resetTerminalForPlayground,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

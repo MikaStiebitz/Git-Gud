@@ -61,24 +61,40 @@ export function Terminal({
         }
     }, []);
 
+    // Öffne den Datei-Editor
+    const openFileEditor = (fileName: string) => {
+        const currentDir = commandProcessor.getCurrentDirectory();
+        const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
+        const content = fileSystem.getFileContents(filePath) || "";
+
+        // Verwende den FileEditor über die FileEdit-Funktion aus dem Context
+        handleFileEdit(filePath, content);
+    };
+
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim()) return;
 
-        // Schließe das Autocomplete-Menü
+        // Close the autocomplete menu
         setShowAutocomplete(false);
 
-        // Spezieller Fall für nano-Befehl
+        // Special handling for nano command
         if (input.trim().startsWith("nano ")) {
             const args = input.trim().split(/\s+/);
             if (args.length > 1) {
                 const fileName = args[1];
+                // Add to terminal output
+                handleCommand(input);
+                // Open file editor
                 openFileEditor(fileName);
+                // Clear input
+                setInput("");
+                return;
             }
         } else if (input.trim() === "next" && isLevelCompleted) {
-            handleCommand("next"); // Spezieller Fall für das "next"-Kommando
+            handleCommand("next"); // Special case for the "next" command
         } else {
-            // Normaler Befehlsprozess
+            // Normal command processing
             handleCommand(input);
         }
 
@@ -88,16 +104,6 @@ export function Terminal({
 
         // Clear input
         setInput("");
-    };
-
-    // Öffne den Datei-Editor
-    const openFileEditor = (fileName: string) => {
-        const currentDir = commandProcessor.getCurrentDirectory();
-        const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
-        const content = fileSystem.getFileContents(filePath) || "";
-
-        // Verwende den FileEditor über die FileEdit-Funktion aus dem Context
-        handleFileEdit(filePath, content);
     };
 
     // Verarbeite Tab-Autocomplete für Dateien
