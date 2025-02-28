@@ -1,5 +1,6 @@
 import { BadgeCheck, Trophy } from "lucide-react";
 import { ClientOnly } from "./ClientOnly";
+import { useLanguage } from "~/contexts/LanguageContext";
 
 interface ProgressBarProps {
     score: number;
@@ -8,14 +9,15 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ score, maxScore = 150, className = "" }: ProgressBarProps) {
+    const { t } = useLanguage();
     const percentage = Math.min(100, Math.round((score / maxScore) * 100));
 
     // Define milestone points
     const milestones = [
-        { at: 25, label: "Anfänger", icon: <BadgeCheck className="h-4 w-4" /> },
-        { at: 50, label: "Fortgeschritten", icon: <BadgeCheck className="h-4 w-4" /> },
-        { at: 75, label: "Experte", icon: <BadgeCheck className="h-4 w-4" /> },
-        { at: 100, label: "Git Master", icon: <Trophy className="h-4 w-4" /> },
+        { at: 25, label: t("progress.beginner"), icon: <BadgeCheck className="h-4 w-4" /> },
+        { at: 50, label: t("progress.intermediate"), icon: <BadgeCheck className="h-4 w-4" /> },
+        { at: 75, label: t("progress.expert"), icon: <BadgeCheck className="h-4 w-4" /> },
+        { at: 100, label: t("progress.gitMaster"), icon: <Trophy className="h-4 w-4" /> },
     ];
 
     // Find current milestone
@@ -26,7 +28,7 @@ export function ProgressBar({ score, maxScore = 150, className = "" }: ProgressB
             <div className={className}>
                 <div className="mb-1 flex justify-between">
                     <div className="flex items-center text-base font-medium">
-                        <span>Fortschritt</span>
+                        <span>Progress</span>
                         {currentMilestone && (
                             <div className="ml-2 flex items-center rounded-full border border-purple-700/50 bg-purple-900/30 px-2 py-0.5 text-xs text-purple-300">
                                 {currentMilestone.icon}
@@ -35,7 +37,7 @@ export function ProgressBar({ score, maxScore = 150, className = "" }: ProgressB
                         )}
                     </div>
                     <span className="text-sm font-medium">
-                        {score}/{maxScore} Punkte ({percentage}%)
+                        {score}/{maxScore} {t("progress.points")} ({percentage}%)
                     </span>
                 </div>
 
@@ -59,7 +61,7 @@ export function ProgressBar({ score, maxScore = 150, className = "" }: ProgressB
                     ))}
                 </div>
 
-                {/* Milestone labels - Korrigiert für richtige Ausrichtung */}
+                {/* Milestone labels - Adjusted for correct alignment */}
                 <div className="relative mt-1 h-4 w-full text-xs">
                     {milestones.map((milestone, index) => (
                         <div

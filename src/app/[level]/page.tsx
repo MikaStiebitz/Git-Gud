@@ -10,6 +10,7 @@ import { type LevelType } from "~/types";
 import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
+import { useLanguage } from "~/contexts/LanguageContext";
 import dynamic from "next/dynamic";
 
 // Dynamically import Terminal component with SSR disabled
@@ -33,6 +34,7 @@ export default function LevelPage() {
         setIsFileEditorOpen,
     } = useGameContext();
 
+    const { t } = useLanguage();
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
     const [showHints, setShowHints] = useState(false);
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
@@ -58,7 +60,7 @@ export default function LevelPage() {
 
         return (
             <div className="mt-4">
-                <h3 className="mb-2 font-medium text-purple-200">Dateien zum Bearbeiten:</h3>
+                <h3 className="mb-2 font-medium text-purple-200">{t("level.filesToEdit")}</h3>
                 <div className="space-y-1">
                     {files.map(file => (
                         <Button
@@ -78,7 +80,7 @@ export default function LevelPage() {
     // Render the current level's challenge details
     const renderLevelChallenge = () => {
         if (!levelData) {
-            return <div className="text-purple-300">Level nicht gefunden</div>;
+            return <div className="text-purple-300">{t("level.notFound")}</div>;
         }
 
         return (
@@ -88,7 +90,7 @@ export default function LevelPage() {
                     <p className="text-purple-200">{levelData.description}</p>
 
                     <div>
-                        <h3 className="mb-2 font-medium text-purple-200">Ziele:</h3>
+                        <h3 className="mb-2 font-medium text-purple-200">{t("level.objectives")}</h3>
                         <ul className="list-inside list-disc space-y-1 text-purple-300">
                             {levelData.objectives.map((objective, index) => (
                                 <li key={index}>{objective}</li>
@@ -103,7 +105,7 @@ export default function LevelPage() {
                             onClick={() => setShowHints(!showHints)}
                             className="flex items-center border-purple-700 text-purple-300 hover:bg-purple-900/50">
                             <HelpCircleIcon className="mr-1 h-4 w-4" />
-                            {showHints ? "Hinweise ausblenden" : "Hinweise anzeigen"}
+                            {showHints ? t("level.hideHints") : t("level.showHints")}
                         </Button>
 
                         {isLevelCompleted && (
@@ -111,14 +113,14 @@ export default function LevelPage() {
                                 onClick={handleNextLevel}
                                 className="flex items-center bg-purple-600 text-white hover:bg-purple-700">
                                 <ArrowRightIcon className="mr-1 h-4 w-4" />
-                                Nächstes Level
+                                {t("level.nextLevel")}
                             </Button>
                         )}
                     </div>
 
                     {showHints && (
                         <div className="rounded-md border border-purple-700/50 bg-purple-900/30 p-3 text-purple-200">
-                            <h3 className="mb-1 font-medium">Hinweise:</h3>
+                            <h3 className="mb-1 font-medium">{t("level.hints")}:</h3>
                             <ul className="list-inside list-disc space-y-1">
                                 {levelData.hints.map((hint, index) => (
                                     <li key={index}>{hint}</li>
@@ -135,7 +137,7 @@ export default function LevelPage() {
                             size="sm"
                             onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
                             className="text-purple-400 hover:bg-purple-900/30 hover:text-purple-200">
-                            {showAdvancedOptions ? "Erweiterte Optionen ausblenden" : "Erweiterte Optionen anzeigen"}
+                            {showAdvancedOptions ? t("level.hideAdvancedOptions") : t("level.advancedOptions")}
                         </Button>
 
                         {showAdvancedOptions && (
@@ -146,7 +148,7 @@ export default function LevelPage() {
                                     className="w-full border-amber-800/50 text-amber-400 hover:bg-amber-900/30"
                                     onClick={resetCurrentLevel}>
                                     <RotateCcw className="mr-1 h-4 w-4" />
-                                    Level zurücksetzen
+                                    {t("level.resetLevel")}
                                 </Button>
 
                                 <Button
@@ -154,16 +156,12 @@ export default function LevelPage() {
                                     size="sm"
                                     className="w-full border-red-800/50 text-red-400 hover:bg-red-900/30"
                                     onClick={() => {
-                                        if (
-                                            window.confirm(
-                                                "Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen?",
-                                            )
-                                        ) {
+                                        if (window.confirm(t("level.resetConfirm"))) {
                                             resetAllProgress();
                                         }
                                     }}>
                                     <RotateCcw className="mr-1 h-4 w-4" />
-                                    Gesamten Fortschritt zurücksetzen
+                                    {t("level.resetAllProgress")}
                                 </Button>
                             </div>
                         )}
@@ -182,7 +180,7 @@ export default function LevelPage() {
         if (!isInitialized) {
             return (
                 <div className="mt-4 rounded border border-purple-800/30 bg-purple-900/30 px-3 py-2 text-sm">
-                    <span className="text-yellow-400">⚠️ Git ist noch nicht initialisiert</span>
+                    <span className="text-yellow-400">⚠️ {t("level.gitNotInitialized")}</span>
                 </div>
             );
         }
@@ -195,33 +193,39 @@ export default function LevelPage() {
             <div className="mt-4 rounded border border-purple-800/30 bg-purple-900/30 px-3 py-2 text-sm">
                 <div className="flex items-center justify-between">
                     <span>
-                        <span className="text-purple-400">Branch:</span>{" "}
+                        <span className="text-purple-400">{t("level.branch")}</span>{" "}
                         <span className="text-purple-200">{branch}</span>
                     </span>
-                    <span className="text-xs text-purple-500">Git Status</span>
+                    <span className="text-xs text-purple-500">{t("level.gitStatus")}</span>
                 </div>
 
                 {stagedCount > 0 && (
                     <div className="mt-1">
-                        <span className="text-green-400">● {stagedCount} staged</span>
+                        <span className="text-green-400">
+                            ● {stagedCount} {t("level.staged")}
+                        </span>
                     </div>
                 )}
 
                 {modifiedCount > 0 && (
                     <div className="mt-1">
-                        <span className="text-amber-400">● {modifiedCount} modified</span>
+                        <span className="text-amber-400">
+                            ● {modifiedCount} {t("level.modified")}
+                        </span>
                     </div>
                 )}
 
                 {untrackedCount > 0 && (
                     <div className="mt-1">
-                        <span className="text-red-400">● {untrackedCount} untracked</span>
+                        <span className="text-red-400">
+                            ● {untrackedCount} {t("level.untracked")}
+                        </span>
                     </div>
                 )}
 
                 {stagedCount === 0 && modifiedCount === 0 && untrackedCount === 0 && (
                     <div className="mt-1">
-                        <span className="text-green-400">✓ Working tree clean</span>
+                        <span className="text-green-400">✓ {t("level.workingTreeClean")}</span>
                     </div>
                 )}
             </div>
@@ -232,14 +236,14 @@ export default function LevelPage() {
         <PageLayout showLevelInfo>
             <div className="bg-[#1a1625] text-purple-100">
                 <div className="container mx-auto p-4">
-                    <h1 className="mb-6 text-center text-3xl font-bold text-white">Git Lernspiel</h1>
+                    <h1 className="mb-6 text-center text-3xl font-bold text-white">Git Learning Game</h1>
                     <ProgressBar score={progress.score} maxScore={150} className="mb-6" />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <Card className="border-purple-900/20 bg-purple-900/10 md:order-2">
                             <CardHeader>
                                 <CardTitle className="flex items-center text-white">
                                     <Shield className="mr-2 h-5 w-5 text-purple-400" />
-                                    Aktuelle Herausforderung
+                                    {t("level.currentChallenge")}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -249,7 +253,7 @@ export default function LevelPage() {
                         </Card>
                         <Card className="border-purple-900/20 bg-purple-900/10 md:order-1">
                             <CardHeader>
-                                <CardTitle className="text-white">Git Terminal</CardTitle>
+                                <CardTitle className="text-white">{t("level.gitTerminal")}</CardTitle>
                             </CardHeader>
                             <CardContent className="p-0">
                                 <Terminal className="h-[400px] rounded-none" />

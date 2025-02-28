@@ -8,9 +8,11 @@ import { GitBranch, GitCommit, GitMerge, Rocket, CheckCircle2, LockIcon } from "
 import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
+import { useLanguage } from "~/contexts/LanguageContext";
 
 export default function Home() {
     const { levelManager, progressManager } = useGameContext();
+    const { t } = useLanguage();
     const [progress, setProgress] = useState(progressManager.getProgress());
 
     // Update progress when it changes
@@ -86,17 +88,14 @@ export default function Home() {
                 {/* Hero Section */}
                 <section className="container mx-auto px-4 py-16 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                        Master Git Through
+                        {t("home.title")}
                         <span className="text-purple-400"> Play</span>
                     </h1>
-                    <p className="mt-6 text-lg text-purple-200">
-                        Learn Git commands and concepts through an interactive game. Progress through levels, complete
-                        challenges, and become a Git expert.
-                    </p>
+                    <p className="mt-6 text-lg text-purple-200">{t("home.subtitle")}</p>
                     <div className="mt-10 flex justify-center gap-4">
                         <Link href="/level">
                             <Button size="lg" className="bg-purple-600 text-white hover:bg-purple-700">
-                                Start Learning
+                                {t("home.startLearning")}
                             </Button>
                         </Link>
                         <Link href="/playground">
@@ -104,17 +103,17 @@ export default function Home() {
                                 size="lg"
                                 variant="outline"
                                 className="border-purple-700 text-purple-300 hover:bg-purple-900/50">
-                                Cheat Sheet
+                                {t("home.cheatSheet")}
                             </Button>
                         </Link>
                     </div>
                 </section>
                 {/* Progress Path */}
                 <section className="container mx-auto px-4 py-16">
-                    <h2 className="mb-12 text-center text-3xl font-bold text-white">Your Learning Path</h2>
+                    <h2 className="mb-12 text-center text-3xl font-bold text-white">{t("home.learningPath")}</h2>
                     <ClientOnly>
                         <div className="relative">
-                            {/* Zentrale Linie */}
+                            {/* Central Line */}
                             <div className="absolute left-1/2 h-full w-1 -translate-x-1/2 bg-purple-900/50" />
                             <div className="space-y-24">
                                 {Object.entries(stages).map(([stageId, stageData], index) => {
@@ -142,7 +141,7 @@ export default function Home() {
                                                     </h3>
                                                     <div
                                                         className={`text-sm ${isUnlocked ? "text-purple-400" : "text-gray-500"}`}>
-                                                        {completedLevels}/{totalLevels} completed
+                                                        {completedLevels}/{totalLevels} {t("home.completed")}
                                                     </div>
                                                 </div>
                                                 <p
@@ -194,7 +193,7 @@ export default function Home() {
                 </section>
                 {/* Level Selection */}
                 <section className="container mx-auto px-4 py-16">
-                    <h2 className="mb-12 text-center text-3xl font-bold text-white">Choose Your Challenge</h2>
+                    <h2 className="mb-12 text-center text-3xl font-bold text-white">{t("home.chooseChallenge")}</h2>
                     <ClientOnly>
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                             {Object.entries(stages).map(([stageId, stageData]) =>
@@ -243,7 +242,9 @@ export default function Home() {
                                                                     : "bg-purple-600 text-white hover:bg-purple-700"
                                                             }`}
                                                             size="sm">
-                                                            {levelCompleted ? "Review Level" : "Start Level"}
+                                                            {levelCompleted
+                                                                ? t("home.reviewLevel")
+                                                                : t("home.startLevel")}
                                                         </Button>
                                                     </Link>
                                                 ) : (
@@ -251,7 +252,7 @@ export default function Home() {
                                                         className="mt-4 w-full cursor-not-allowed bg-gray-700 text-gray-300 opacity-50"
                                                         size="sm"
                                                         disabled>
-                                                        Locked
+                                                        {t("home.locked")}
                                                     </Button>
                                                 )}
                                             </CardContent>

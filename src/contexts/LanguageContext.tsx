@@ -197,8 +197,8 @@ const translations = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // Try to get the language from localStorage or default to German
-    const [language, setLanguageState] = useState<Language>("de");
+    // Change default language from "de" to "en"
+    const [language, setLanguageState] = useState<Language>("en");
 
     // Load language from localStorage on initial render
     useEffect(() => {
