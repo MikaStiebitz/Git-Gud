@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
+import { useLanguage } from "~/contexts/LanguageContext";
 
 interface FileEditorProps {
     isOpen: boolean;
@@ -15,6 +16,7 @@ interface FileEditorProps {
 
 export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: FileEditorProps) {
     const { handleFileEdit } = useGameContext();
+    const { t } = useLanguage();
     const [content, setContent] = useState(initialContent);
     const [isDirty, setIsDirty] = useState(false);
 
@@ -37,7 +39,7 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
     };
 
     const handleCancel = () => {
-        if (isDirty && !window.confirm("Du hast ungespeicherte Änderungen. Möchtest du wirklich abbrechen?")) {
+        if (isDirty && !window.confirm(t("editor.unsavedChanges"))) {
             return;
         }
         onClose();
@@ -49,13 +51,15 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
                 <DialogHeader>
                     <DialogTitle className="flex items-center text-white">
                         <span className="truncate">{fileName}</span>
-                        <span className="ml-2 text-xs text-purple-400">{isDirty ? "(Unsaved)" : ""}</span>
+                        <span className="ml-2 text-xs text-purple-400">
+                            {isDirty ? `(${t("editor.unsaved")})` : ""}
+                        </span>
                     </DialogTitle>
                 </DialogHeader>
 
                 <div className="relative max-h-[60vh] overflow-hidden rounded border border-purple-800/30">
                     <div className="absolute left-0 top-0 z-10 w-full bg-purple-900/50 px-3 py-1 text-xs text-purple-300">
-                        File Content
+                        {t("editor.fileContent")}
                     </div>
                     <Textarea
                         value={content}
@@ -66,16 +70,16 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
                 </div>
 
                 <DialogFooter className="flex justify-between sm:justify-between">
-                    <div className="text-xs text-purple-400">Press ESC to cancel, CTRL+Enter to save</div>
+                    <div className="text-xs text-purple-400">{t("editor.escToCancel")}</div>
                     <div className="flex space-x-2">
                         <Button
                             variant="outline"
                             onClick={handleCancel}
                             className="border-purple-700 text-purple-300 hover:bg-purple-900/50">
-                            Cancel
+                            {t("editor.cancel")}
                         </Button>
                         <Button onClick={handleSave} className="bg-purple-600 text-white hover:bg-purple-700">
-                            Save
+                            {t("editor.save")}
                         </Button>
                     </div>
                 </DialogFooter>

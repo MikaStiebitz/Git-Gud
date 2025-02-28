@@ -29,9 +29,10 @@ export default function LevelPage() {
         gitRepository,
         resetCurrentLevel,
         resetAllProgress,
+        isFileEditorOpen,
+        setIsFileEditorOpen,
     } = useGameContext();
 
-    const [isFileEditorOpen, setIsFileEditorOpen] = useState(false);
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
     const [showHints, setShowHints] = useState(false);
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);

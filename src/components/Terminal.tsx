@@ -6,6 +6,7 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
 import { TerminalIcon, HelpCircleIcon, RotateCcw } from "lucide-react";
+import { useLanguage } from "~/contexts/LanguageContext";
 
 interface TerminalProps {
     className?: string;
@@ -30,7 +31,10 @@ export function Terminal({
         currentLevel,
         isLevelCompleted,
         handleFileEdit,
+        openFileEditor,
     } = useGameContext();
+
+    const { t } = useLanguage();
 
     const [input, setInput] = useState("");
     const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -45,7 +49,7 @@ export function Terminal({
     // Auto-scroll to bottom when terminal output changes
     useEffect(() => {
         if (scrollAreaRef.current) {
-            // Verzögertes Scrollen, um sicherzustellen, dass der neue Inhalt gerendert wurde
+            // Delayed scrolling to ensure new content is rendered
             setTimeout(() => {
                 if (scrollAreaRef.current) {
                     scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
@@ -61,13 +65,13 @@ export function Terminal({
         }
     }, []);
 
-    // Öffne den Datei-Editor
-    const openFileEditor = (fileName: string) => {
+    // Open the file editor - Fixed function
+    const FileEditor = (fileName: string) => {
         const currentDir = commandProcessor.getCurrentDirectory();
         const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
         const content = fileSystem.getFileContents(filePath) ?? "";
 
-        // Verwende den FileEditor über die FileEdit-Funktion aus dem Context
+        // Use the FileEditor via the handleFileEdit function from the Context
         handleFileEdit(filePath, content);
     };
 
@@ -78,20 +82,7 @@ export function Terminal({
         // Close the autocomplete menu
         setShowAutocomplete(false);
 
-        // Special handling for nano command
-        if (input.trim().startsWith("nano ")) {
-            const args = input.trim().split(/\s+/);
-            if (args.length > 1) {
-                const fileName = args[1];
-                // Add to terminal output
-                handleCommand(input, isPlaygroundMode);
-                // Open file editor
-                openFileEditor(fileName ?? "");
-                // Clear input
-                setInput("");
-                return;
-            }
-        } else if (input.trim() === "next" && isLevelCompleted) {
+        if (input.trim() === "next" && isLevelCompleted) {
             handleCommand("next", isPlaygroundMode); // Special case for the "next" command
         } else {
             // Normal command processing
@@ -106,36 +97,36 @@ export function Terminal({
         setInput("");
     };
 
-    // Verarbeite Tab-Autocomplete für Dateien
+    // Process Tab-autocomplete for files
     const handleTabAutocomplete = () => {
         if (!input.trim().startsWith("nano ") && !input.trim().startsWith("cat ")) return;
 
         const args = input.trim().split(/\s+/);
         if (args.length <= 1) return;
 
-        // Holen Sie sich den aktuellen Eingabepfad
+        // Get the current input path
         const currentInputPath = args[1];
         const currentDir = commandProcessor.getCurrentDirectory();
 
-        // Holen Sie sich Dateien im aktuellen Verzeichnis
+        // Get files in the current directory
         const contents = fileSystem.getDirectoryContents(currentDir);
         if (!contents) return;
 
-        // Filtern Sie Dateien basierend auf der aktuellen Eingabe
+        // Filter files based on the current input
         const matchingFiles = Object.keys(contents).filter(file => file.startsWith(currentInputPath ?? ""));
 
         if (matchingFiles.length === 1) {
-            // Wenn es nur eine Übereinstimmung gibt, vervollständigen Sie sie direkt
+            // If there's only one match, complete it directly
             setInput(`${args[0]} ${matchingFiles[0]}`);
             setShowAutocomplete(false);
         } else if (matchingFiles.length > 1) {
-            // Wenn es mehrere Übereinstimmungen gibt, zeigen Sie das Autocomplete-Menü an
+            // If there are multiple matches, show the autocomplete menu
             setFileAutocomplete(matchingFiles);
             setShowAutocomplete(true);
         }
     };
 
-    // Wählen Sie einen Vorschlag aus dem Autocomplete-Menü
+    // Select a suggestion from the autocomplete menu
     const selectAutocompleteOption = (file: string) => {
         const args = input.trim().split(/\s+/);
         setInput(`${args[0]} ${file}`);
@@ -177,11 +168,7 @@ export function Terminal({
     };
 
     const handleReset = () => {
-        if (
-            window.confirm(
-                "Möchtest du dieses Level wirklich zurücksetzen? Dein Fortschritt in diesem Level geht verloren.",
-            )
-        ) {
+        if (window.confirm(t("level.resetConfirm"))) {
             resetCurrentLevel();
         }
     };
@@ -199,8 +186,8 @@ export function Terminal({
                     <TerminalIcon className="h-4 w-4" />
                     <span>
                         {isPlaygroundMode
-                            ? "Git Terminal - Playground Mode"
-                            : `Git Terminal - ${currentStage} Level ${currentLevel}`}
+                            ? t("playground.gitTerminal")
+                            : `${t("level.gitTerminal")} - ${currentStage} ${t("level.level")} ${currentLevel}`}
                     </span>
                 </div>
                 <div className="flex space-x-1">
@@ -210,7 +197,7 @@ export function Terminal({
                             size="sm"
                             className="h-6 w-6 p-0 text-gray-400 hover:bg-gray-800 hover:text-white"
                             onClick={handleShowHelp}
-                            title="Show Help">
+                            title={t("level.showHelp")}>
                             <HelpCircleIcon className="h-4 w-4" />
                         </Button>
                     )}
@@ -220,7 +207,7 @@ export function Terminal({
                             size="sm"
                             className="h-6 w-6 p-0 text-gray-400 hover:bg-gray-800 hover:text-white"
                             onClick={handleReset}
-                            title="Reset Level">
+                            title={t("level.resetLevel")}>
                             <RotateCcw className="h-4 w-4" />
                         </Button>
                     )}
@@ -236,8 +223,7 @@ export function Terminal({
                     ))}
                     {isLevelCompleted && !isPlaygroundMode && (
                         <div className="mt-2 rounded bg-green-900/30 p-2 text-center text-white">
-                            Level abgeschlossen! 🎉 Gib &apos;next&apos; ein oder klicke auf den Button &quot;Nächstes
-                            Level&quot;.
+                            {t("terminal.levelCompleted")}
                         </div>
                     )}
                 </div>
@@ -253,7 +239,7 @@ export function Terminal({
                         onChange={e => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         className="flex-grow border-none bg-transparent font-mono text-sm text-green-500 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        placeholder="Gib einen Befehl ein..."
+                        placeholder={t("terminal.enterCommand")}
                         autoComplete="off"
                         spellCheck="false"
                     />
@@ -266,7 +252,7 @@ export function Terminal({
                     </Button>
                 </form>
 
-                {/* Autocomplete-Dropdown */}
+                {/* Autocomplete dropdown */}
                 {showAutocomplete && fileAutocomplete.length > 0 && (
                     <div className="absolute bottom-full left-0 right-0 z-10 max-h-32 overflow-y-auto rounded-t border border-gray-700 bg-gray-900 p-1 shadow-lg">
                         {fileAutocomplete.map(file => (

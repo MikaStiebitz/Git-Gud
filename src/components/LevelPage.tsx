@@ -83,11 +83,12 @@ export default function EnhancedLevelPage() {
         handleNextLevel,
         levelManager,
         progressManager,
-        fileSystem,
+
         gitRepository,
+        isFileEditorOpen,
+        setIsFileEditorOpen,
     } = useGameContext();
 
-    const [isFileEditorOpen, setIsFileEditorOpen] = useState(false);
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
     const [showRealWorldContext, setShowRealWorldContext] = useState(false);
     const [showStory, setShowStory] = useState(true);

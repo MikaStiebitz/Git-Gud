@@ -11,10 +11,18 @@ import { type LevelType } from "~/types";
 import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield } from "lucide-react";
 
 export default function LevelPage() {
-    const { currentStage, currentLevel, isLevelCompleted, handleNextLevel, levelManager, progressManager, fileSystem } =
-        useGameContext();
+    const {
+        currentStage,
+        currentLevel,
+        isLevelCompleted,
+        handleNextLevel,
+        levelManager,
+        progressManager,
+        fileSystem,
+        isFileEditorOpen,
+        setIsFileEditorOpen,
+    } = useGameContext();
 
-    const [isFileEditorOpen, setIsFileEditorOpen] = useState(false);
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
     const [showHints, setShowHints] = useState(false);
 

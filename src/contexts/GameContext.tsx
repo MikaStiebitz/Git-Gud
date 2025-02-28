@@ -7,6 +7,7 @@ import { LevelManager } from "~/models/LevelManager";
 import { ProgressManager } from "~/models/ProgressManager";
 import { GitRepository } from "~/models/GitRepository";
 import type { GameContextProps } from "~/types";
+import { useLanguage } from "~/contexts/LanguageContext";
 
 const GameContext = createContext<GameContextProps | undefined>(undefined);
 
@@ -16,6 +17,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [commandProcessor] = useState<CommandProcessor>(new CommandProcessor(fileSystem, gitRepository));
     const [levelManager] = useState<LevelManager>(new LevelManager());
     const [progressManager] = useState<ProgressManager>(new ProgressManager());
+    const { t } = useLanguage();
 
     const [currentStage, setCurrentStage] = useState<string>(progressManager.getProgress().currentStage);
     const [currentLevel, setCurrentLevel] = useState<number>(progressManager.getProgress().currentLevel);
@@ -23,19 +25,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         progressManager.isLevelCompleted(currentStage, currentLevel),
     );
     const [terminalOutput, setTerminalOutput] = useState<string[]>([
-        "Willkommen im Git Terminal Simulator!",
-        `Level ${currentLevel} von ${currentStage} gestartet. Gib 'help' ein für Hilfe.`,
+        t("terminal.welcome"),
+        t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
     ]);
 
     // Add a function to reset terminal for playground mode
     const resetTerminalForPlayground = () => {
-        setTerminalOutput([
-            "Willkommen im Git Terminal Simulator!",
-            "Playground-Modus aktiviert. Experimentiere frei mit Git-Befehlen. Gib 'help' ein für Hilfe.",
-        ]);
+        setTerminalOutput([t("terminal.welcome"), t("terminal.playgroundMode")]);
     };
 
-    // Zustand für den FileEditor
+    // State for FileEditor
     const [isFileEditorOpen, setIsFileEditorOpen] = useState(false);
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
 
@@ -49,7 +48,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Process a command and update the state
     const handleCommand = (command: string, isPlaygroundMode = false) => {
-        // Spezialfall für nano-Befehl
+        // Special case for nano command
         if (command.trim().startsWith("nano ")) {
             const args = command.trim().split(/\s+/);
             if (args.length > 1) {
@@ -62,13 +61,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         setTerminalOutput(prev => [...prev, `$ ${command}`]);
 
-        // Spezialfall für "next"-Befehl
+        // Special case for "next" command
         if (command.trim() === "next" && isLevelCompleted) {
             handleNextLevel();
             return;
         }
 
-        // Prozessiere den Befehl und erhalte die Ausgabe
+        // Process the command and get output
         const output = commandProcessor.processCommand(command);
         setTerminalOutput(prev => [...prev, ...output]);
 
@@ -77,36 +76,32 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return;
         }
 
-        // Überprüfe, ob der Befehl das Level abschließt
+        // Check if the command completes the level
         const [cmd, ...args] = command.trim().split(/\s+/);
 
         // Handle special case for git commands
         if (cmd === "git") {
-            const gitCommand = args[0]; // Der eigentliche Git-Befehl (init, status, etc.)
-            const gitArgs = args.slice(1); // Die Argumente des Git-Befehls
+            const gitCommand = args[0]; // The actual Git command (init, status, etc.)
+            const gitArgs = args.slice(1); // The arguments for the Git command
 
-            // Prüfe Git Befehl mit dem LevelManager
+            // Check Git command with the LevelManager
             if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
                 markLevelAsCompleted();
             }
         } else {
-            // Für Nicht-Git-Befehle - direkte Überprüfung
+            // For non-Git commands - direct check
             if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd ?? "", args)) {
                 markLevelAsCompleted();
             }
         }
     };
 
-    // Hilfsfunktion zum Markieren eines Levels als abgeschlossen
+    // Helper function to mark a level as completed
     const markLevelAsCompleted = () => {
         if (!isLevelCompleted) {
             setIsLevelCompleted(true);
             progressManager.completeLevel(currentStage, currentLevel);
-            setTerminalOutput(prev => [
-                ...prev,
-                "🎉 Level abgeschlossen! Gut gemacht! 🎉",
-                "Tippe 'next' ein oder klicke auf 'Nächstes Level', um fortzufahren.",
-            ]);
+            setTerminalOutput(prev => [...prev, "🎉 " + t("level.levelCompleted") + " 🎉", t("terminal.typeNext")]);
         }
     };
 
@@ -134,23 +129,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
 
                 setTerminalOutput([
-                    "Willkommen im Git Terminal Simulator!",
-                    `Level ${levelId} von ${stageId} gestartet. Gib 'help' ein für Hilfe.`,
+                    t("terminal.welcome"),
+                    t("terminal.levelStarted").replace("{level}", levelId.toString()).replace("{stage}", stageId),
                 ]);
             } else {
                 // Handle case where there's no next level
-                setTerminalOutput(prev => [...prev, "Gratulation! Du hast alle verfügbaren Level abgeschlossen!"]);
+                setTerminalOutput(prev => [...prev, t("terminal.allLevelsCompleted")]);
             }
         }
     };
 
-    // Öffne den FileEditor für eine Datei
+    // Open the FileEditor for a file
     const openFileEditor = (fileName: string) => {
         const currentDir = commandProcessor.getCurrentDirectory();
         const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
         const content = fileSystem.getFileContents(filePath) ?? "";
 
-        // Setze die aktuellen Dateideaten und öffne den Editor
+        // Set the current file data and open the editor
         setCurrentFile({ name: filePath, content });
         setIsFileEditorOpen(true);
     };
@@ -164,7 +159,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Update Git status for the file
         gitRepository.updateFileStatus(path, "modified");
 
-        setTerminalOutput(prev => [...prev, `File saved: ${path}`]);
+        setTerminalOutput(prev => [...prev, t("terminal.fileSaved").replace("{path}", path)]);
     };
 
     // Reset the current level
@@ -172,8 +167,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         gitRepository.reset();
         setIsLevelCompleted(false);
         setTerminalOutput([
-            "Level zurückgesetzt.",
-            `Level ${currentLevel} von ${currentStage} neu gestartet. Gib 'help' ein für Hilfe.`,
+            t("terminal.levelReset"),
+            t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
         ]);
     };
 
@@ -188,8 +183,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLevelCompleted(false);
 
         setTerminalOutput([
-            "Fortschritt zurückgesetzt.",
-            `Level ${initialProgress.currentLevel} von ${initialProgress.currentStage} gestartet. Gib 'help' ein für Hilfe.`,
+            t("terminal.progressReset"),
+            t("terminal.levelStarted")
+                .replace("{level}", initialProgress.currentLevel.toString())
+                .replace("{stage}", initialProgress.currentStage),
         ]);
     };
 
@@ -204,7 +201,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLevelCompleted,
         terminalOutput,
         isFileEditorOpen,
-        currentFile,
 
         handleCommand,
         handleNextLevel,

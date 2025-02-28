@@ -52,6 +52,8 @@ const translations = {
         "level.resetLevel": "Reset Level",
         "level.resetAllProgress": "Reset All Progress",
         "level.resetConfirm": "Are you sure you want to reset all your progress?",
+        "level.level": "Level",
+        "level.levelCompleted": "Level completed!",
 
         // Playground
         "playground.title": "Git Playground",
@@ -93,6 +95,11 @@ const translations = {
             "Playground mode activated. Freely experiment with Git commands. Type 'help' for help.",
         "terminal.levelCompleted": "Level completed! 🎉 Type 'next' or click the \"Next Level\" button.",
         "terminal.enterCommand": "Enter a command...",
+        "terminal.typeNext": "Type 'next' or click the \"Next Level\" button to continue.",
+        "terminal.fileSaved": "File saved: {path}",
+        "terminal.levelReset": "Level reset.",
+        "terminal.progressReset": "Progress reset.",
+        "terminal.allLevelsCompleted": "Congratulations! You have completed all available levels!",
     },
     de: {
         // Navigation
@@ -135,6 +142,8 @@ const translations = {
         "level.resetLevel": "Level zurücksetzen",
         "level.resetAllProgress": "Gesamten Fortschritt zurücksetzen",
         "level.resetConfirm": "Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen?",
+        "level.level": "Level",
+        "level.levelCompleted": "Level abgeschlossen!",
 
         // Playground
         "playground.title": "Git Playground",
@@ -177,6 +186,11 @@ const translations = {
         "terminal.levelCompleted":
             "Level abgeschlossen! 🎉 Tippe 'next' ein oder klicke auf 'Nächstes Level', um fortzufahren.",
         "terminal.enterCommand": "Gib einen Befehl ein...",
+        "terminal.typeNext": "Tippe 'next' ein oder klicke auf 'Nächstes Level', um fortzufahren.",
+        "terminal.fileSaved": "Datei gespeichert: {path}",
+        "terminal.levelReset": "Level zurückgesetzt.",
+        "terminal.progressReset": "Fortschritt zurückgesetzt.",
+        "terminal.allLevelsCompleted": "Gratulation! Du hast alle verfügbaren Level abgeschlossen!",
     },
 };
 

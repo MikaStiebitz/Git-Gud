@@ -18,6 +18,7 @@ export interface GameContextProps {
     currentLevel: number;
     isLevelCompleted: boolean;
     terminalOutput: string[];
+    isFileEditorOpen: boolean;
 
     // Funktionen
     handleCommand: (command: string, isPlaygroundMode: boolean) => void;
@@ -26,6 +27,8 @@ export interface GameContextProps {
     resetCurrentLevel: () => void;
     resetAllProgress: () => void;
     resetTerminalForPlayground: () => void;
+    openFileEditor: (fileName: string) => void;
+    setIsFileEditorOpen: (isOpen: boolean) => void;
 }
 
 // Basis-Typen
