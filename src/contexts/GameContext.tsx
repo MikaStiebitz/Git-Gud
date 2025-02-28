@@ -41,14 +41,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Advanced mode state
     const [isAdvancedMode, setIsAdvancedMode] = useState<boolean>(
-        localStorage.getItem("gitgud-advanced-mode") === "true",
+        typeof window !== "undefined" ? localStorage.getItem("gitgud-advanced-mode") === "true" : false,
     );
 
     // Toggle advanced mode
     const toggleAdvancedMode = () => {
         setIsAdvancedMode(prev => {
             const newMode = !prev;
-            localStorage.setItem("gitgud-advanced-mode", newMode.toString());
+            if (typeof window !== "undefined") localStorage.setItem("gitgud-advanced-mode", newMode.toString());
             return newMode;
         });
     };
