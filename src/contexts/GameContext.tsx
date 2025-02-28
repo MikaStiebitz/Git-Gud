@@ -29,9 +29,25 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
     ]);
 
+    // Advanced mode state
+    const [isAdvancedMode, setIsAdvancedMode] = useState<boolean>(false);
+
+    // Toggle advanced mode
+    const toggleAdvancedMode = () => {
+        setIsAdvancedMode(prev => !prev);
+    };
+
     // Add a function to reset terminal for playground mode
     const resetTerminalForPlayground = () => {
         setTerminalOutput([t("terminal.welcome"), t("terminal.playgroundMode")]);
+    };
+
+    // Add a function to reset terminal for level mode
+    const resetTerminalForLevel = () => {
+        setTerminalOutput([
+            t("terminal.welcome"),
+            t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
+        ]);
     };
 
     // State for FileEditor
@@ -206,6 +222,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLevelCompleted,
         terminalOutput,
         isFileEditorOpen,
+        isAdvancedMode,
 
         handleCommand,
         handleNextLevel,
@@ -215,6 +232,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         openFileEditor,
         setIsFileEditorOpen,
         resetTerminalForPlayground,
+        resetTerminalForLevel,
+        toggleAdvancedMode,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
