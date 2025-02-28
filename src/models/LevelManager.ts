@@ -1,7 +1,4 @@
-// src/models/LevelManager.ts
-// Klasse zur Verwaltung der Spiellevel und Challenges - Mit integriertem StoryContext
-
-import { StageType, LevelType } from "~/types";
+import type { StageType, LevelType } from "~/types";
 
 export class LevelManager {
     private stages: Record<string, StageType>;
@@ -234,12 +231,12 @@ export class LevelManager {
 
     // Get a specific stage
     public getStage(stageId: string): StageType | null {
-        return this.stages[stageId] || null;
+        return this.stages[stageId] ?? null;
     }
 
     // Get a specific level within a stage
     public getLevel(stageId: string, levelId: number): LevelType | null {
-        return this.stages[stageId]?.levels[levelId] || null;
+        return this.stages[stageId]?.levels[levelId] ?? null;
     }
 
     // Check if a command completes a level requirement
@@ -318,7 +315,7 @@ export class LevelManager {
     }
 
     // Get next level information
-    public getNextLevel(stageId: string, levelId: number): { stageId: string; levelId: number } {
+    public getNextLevel(stageId: string, levelId: number): { stageId: string | undefined; levelId: number } {
         const stage = this.getStage(stageId);
         if (!stage) return { stageId, levelId };
 

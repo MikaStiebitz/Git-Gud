@@ -6,7 +6,6 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { GitBranch, GitCommit, GitMerge, Rocket, CheckCircle2, LockIcon } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
-import { Navbar } from "~/components/layout/Navbar";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
 
@@ -110,164 +109,168 @@ export default function Home() {
                         </Link>
                     </div>
                 </section>
-                {/* Ersetze den "Progress Path"-Abschnitt in der HomePage mit diesem Code */}
                 {/* Progress Path */}
                 <section className="container mx-auto px-4 py-16">
                     <h2 className="mb-12 text-center text-3xl font-bold text-white">Your Learning Path</h2>
-                    <div className="relative">
-                        {/* Zentrale Linie */}
-                        <div className="absolute left-1/2 h-full w-1 -translate-x-1/2 bg-purple-900/50" />
-                        <div className="space-y-24">
-                            {Object.entries(stages).map(([stageId, stageData], index) => {
-                                const isUnlocked = isStageUnlocked(stageId);
-                                const totalLevels = Object.keys(stageData.levels).length;
-                                const completedLevels = progress.completedLevels[stageId]?.length ?? 0;
-                                return (
-                                    <div key={stageId} className="relative">
-                                        <div
-                                            className={`absolute left-1/2 top-0 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full ${
-                                                isUnlocked ? "bg-purple-600" : "bg-gray-700"
-                                            } ${stageId === progress.currentStage ? "ring-4 ring-purple-400" : ""}`}>
-                                            {getStageIcon(stageId)}
-                                        </div>
-                                        <div
-                                            className={`ml-8 rounded-lg border p-6 ${
-                                                isUnlocked
-                                                    ? "border-purple-900/20 bg-purple-900/10"
-                                                    : "border-gray-800/20 bg-gray-900/10"
-                                            } ${index % 2 === 0 ? "lg:ml-auto lg:mr-8" : ""} lg:w-5/12`}>
-                                            <div className="flex items-center justify-between">
-                                                <h3
-                                                    className={`text-xl font-bold ${isUnlocked ? "text-white" : "text-gray-500"}`}>
-                                                    {stageData.name}
-                                                </h3>
-                                                <div
-                                                    className={`text-sm ${isUnlocked ? "text-purple-400" : "text-gray-500"}`}>
-                                                    {completedLevels}/{totalLevels} completed
+                    <ClientOnly>
+                        <div className="relative">
+                            {/* Zentrale Linie */}
+                            <div className="absolute left-1/2 h-full w-1 -translate-x-1/2 bg-purple-900/50" />
+                            <div className="space-y-24">
+                                {Object.entries(stages).map(([stageId, stageData], index) => {
+                                    const isUnlocked = isStageUnlocked(stageId);
+                                    const totalLevels = Object.keys(stageData.levels).length;
+                                    const completedLevels = progress.completedLevels[stageId]?.length ?? 0;
+                                    return (
+                                        <div key={stageId} className="relative">
+                                            <div
+                                                className={`absolute left-1/2 top-0 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full ${
+                                                    isUnlocked ? "bg-purple-600" : "bg-gray-700"
+                                                } ${stageId === progress.currentStage ? "ring-4 ring-purple-400" : ""}`}>
+                                                {getStageIcon(stageId)}
+                                            </div>
+                                            <div
+                                                className={`ml-8 rounded-lg border p-6 ${
+                                                    isUnlocked
+                                                        ? "border-purple-900/20 bg-purple-900/10"
+                                                        : "border-gray-800/20 bg-gray-900/10"
+                                                } ${index % 2 === 0 ? "lg:ml-auto lg:mr-8" : ""} lg:w-5/12`}>
+                                                <div className="flex items-center justify-between">
+                                                    <h3
+                                                        className={`text-xl font-bold ${isUnlocked ? "text-white" : "text-gray-500"}`}>
+                                                        {stageData.name}
+                                                    </h3>
+                                                    <div
+                                                        className={`text-sm ${isUnlocked ? "text-purple-400" : "text-gray-500"}`}>
+                                                        {completedLevels}/{totalLevels} completed
+                                                    </div>
+                                                </div>
+                                                <p
+                                                    className={`mt-2 ${isUnlocked ? "text-purple-200" : "text-gray-500"}`}>
+                                                    {stageData.description}
+                                                </p>
+                                                <div className="mt-4 flex flex-wrap gap-2">
+                                                    {Object.entries(stageData.levels).map(([levelId]) => {
+                                                        const level = parseInt(levelId);
+                                                        const levelUnlocked = isLevelUnlocked(stageId, level);
+                                                        const levelCompleted = isLevelCompleted(stageId, level);
+                                                        return (
+                                                            <Link
+                                                                key={levelId}
+                                                                href={
+                                                                    levelUnlocked
+                                                                        ? `/level?stage=${stageId}&level=${levelId}`
+                                                                        : "#"
+                                                                }
+                                                                className={levelUnlocked ? "" : "pointer-events-none"}>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className={`flex items-center ${
+                                                                        levelUnlocked
+                                                                            ? levelCompleted
+                                                                                ? "border-green-700 bg-green-900/20 text-green-300 hover:bg-green-900/30"
+                                                                                : "border-purple-700 text-purple-300 hover:bg-purple-900/50"
+                                                                            : "border-gray-800 bg-gray-900/20 text-gray-500"
+                                                                    }`}>
+                                                                    {levelCompleted ? (
+                                                                        <CheckCircle2 className="mr-1 h-3 w-3" />
+                                                                    ) : !levelUnlocked ? (
+                                                                        <LockIcon className="mr-1 h-3 w-3" />
+                                                                    ) : null}
+                                                                    Level {levelId}
+                                                                </Button>
+                                                            </Link>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
-                                            <p className={`mt-2 ${isUnlocked ? "text-purple-200" : "text-gray-500"}`}>
-                                                {stageData.description}
-                                            </p>
-                                            <div className="mt-4 flex flex-wrap gap-2">
-                                                {Object.entries(stageData.levels).map(([levelId, levelData]) => {
-                                                    const level = parseInt(levelId);
-                                                    const levelUnlocked = isLevelUnlocked(stageId, level);
-                                                    const levelCompleted = isLevelCompleted(stageId, level);
-                                                    return (
-                                                        <Link
-                                                            key={levelId}
-                                                            href={
-                                                                levelUnlocked
-                                                                    ? `/level?stage=${stageId}&level=${levelId}`
-                                                                    : "#"
-                                                            }
-                                                            className={levelUnlocked ? "" : "pointer-events-none"}>
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className={`flex items-center ${
-                                                                    levelUnlocked
-                                                                        ? levelCompleted
-                                                                            ? "border-green-700 bg-green-900/20 text-green-300 hover:bg-green-900/30"
-                                                                            : "border-purple-700 text-purple-300 hover:bg-purple-900/50"
-                                                                        : "border-gray-800 bg-gray-900/20 text-gray-500"
-                                                                }`}>
-                                                                {levelCompleted ? (
-                                                                    <CheckCircle2 className="mr-1 h-3 w-3" />
-                                                                ) : !levelUnlocked ? (
-                                                                    <LockIcon className="mr-1 h-3 w-3" />
-                                                                ) : null}
-                                                                Level {levelId}
-                                                            </Button>
-                                                        </Link>
-                                                    );
-                                                })}
-                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
+                    </ClientOnly>
                 </section>
                 {/* Level Selection */}
                 <section className="container mx-auto px-4 py-16">
                     <h2 className="mb-12 text-center text-3xl font-bold text-white">Choose Your Challenge</h2>
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {Object.entries(stages).map(([stageId, stageData]) =>
-                            Object.entries(stageData.levels).map(([levelId, levelData]) => {
-                                const level = parseInt(levelId);
-                                const levelUnlocked = isLevelUnlocked(stageId, level);
-                                const levelCompleted = isLevelCompleted(stageId, level);
-                                return (
-                                    <Card
-                                        key={`${stageId}-${levelId}`}
-                                        className={`group relative overflow-hidden transition-all ${
-                                            levelUnlocked
-                                                ? levelCompleted
-                                                    ? "border-green-800/30 bg-green-900/10 hover:border-green-600"
-                                                    : "border-purple-900/20 bg-purple-900/10 hover:border-purple-600"
-                                                : "border-gray-800/20 bg-gray-900/10"
-                                        }`}>
-                                        <CardContent className="p-6">
-                                            <div className="mb-4 flex items-center justify-between">
-                                                <span className="text-2xl">{stageData.icon}</span>
-                                                <span
-                                                    className={`rounded-full px-2 py-1 text-xs ${
-                                                        levelUnlocked
-                                                            ? levelCompleted
-                                                                ? "bg-green-900/50 text-green-300"
-                                                                : "bg-purple-900/50 text-purple-300"
-                                                            : "bg-gray-800/50 text-gray-400"
-                                                    }`}>
-                                                    Level {levelId}
-                                                </span>
-                                            </div>
-                                            <h3
-                                                className={`text-lg font-bold ${levelUnlocked ? "text-white" : "text-gray-500"}`}>
-                                                {levelData.name}
-                                            </h3>
-                                            <p
-                                                className={`mt-2 text-sm ${levelUnlocked ? "text-purple-300" : "text-gray-500"}`}>
-                                                {levelData.description}
-                                            </p>
-                                            {levelUnlocked ? (
-                                                <Link href={`/level?stage=${stageId}&level=${levelId}`}>
+                    <ClientOnly>
+                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                            {Object.entries(stages).map(([stageId, stageData]) =>
+                                Object.entries(stageData.levels).map(([levelId, levelData]) => {
+                                    const level = parseInt(levelId);
+                                    const levelUnlocked = isLevelUnlocked(stageId, level);
+                                    const levelCompleted = isLevelCompleted(stageId, level);
+                                    return (
+                                        <Card
+                                            key={`${stageId}-${levelId}`}
+                                            className={`group relative overflow-hidden transition-all ${
+                                                levelUnlocked
+                                                    ? levelCompleted
+                                                        ? "border-green-800/30 bg-green-900/10 hover:border-green-600"
+                                                        : "border-purple-900/20 bg-purple-900/10 hover:border-purple-600"
+                                                    : "border-gray-800/20 bg-gray-900/10"
+                                            }`}>
+                                            <CardContent className="p-6">
+                                                <div className="mb-4 flex items-center justify-between">
+                                                    <span className="text-2xl">{stageData.icon}</span>
+                                                    <span
+                                                        className={`rounded-full px-2 py-1 text-xs ${
+                                                            levelUnlocked
+                                                                ? levelCompleted
+                                                                    ? "bg-green-900/50 text-green-300"
+                                                                    : "bg-purple-900/50 text-purple-300"
+                                                                : "bg-gray-800/50 text-gray-400"
+                                                        }`}>
+                                                        Level {levelId}
+                                                    </span>
+                                                </div>
+                                                <h3
+                                                    className={`text-lg font-bold ${levelUnlocked ? "text-white" : "text-gray-500"}`}>
+                                                    {levelData.name}
+                                                </h3>
+                                                <p
+                                                    className={`mt-2 text-sm ${levelUnlocked ? "text-purple-300" : "text-gray-500"}`}>
+                                                    {levelData.description}
+                                                </p>
+                                                {levelUnlocked ? (
+                                                    <Link href={`/level?stage=${stageId}&level=${levelId}`}>
+                                                        <Button
+                                                            className={`mt-4 w-full opacity-0 transition-opacity group-hover:opacity-100 ${
+                                                                levelCompleted
+                                                                    ? "bg-green-600 text-white hover:bg-green-700"
+                                                                    : "bg-purple-600 text-white hover:bg-purple-700"
+                                                            }`}
+                                                            size="sm">
+                                                            {levelCompleted ? "Review Level" : "Start Level"}
+                                                        </Button>
+                                                    </Link>
+                                                ) : (
                                                     <Button
-                                                        className={`mt-4 w-full opacity-0 transition-opacity group-hover:opacity-100 ${
-                                                            levelCompleted
-                                                                ? "bg-green-600 text-white hover:bg-green-700"
-                                                                : "bg-purple-600 text-white hover:bg-purple-700"
-                                                        }`}
-                                                        size="sm">
-                                                        {levelCompleted ? "Review Level" : "Start Level"}
+                                                        className="mt-4 w-full cursor-not-allowed bg-gray-700 text-gray-300 opacity-50"
+                                                        size="sm"
+                                                        disabled>
+                                                        Locked
                                                     </Button>
-                                                </Link>
-                                            ) : (
-                                                <Button
-                                                    className="mt-4 w-full cursor-not-allowed bg-gray-700 text-gray-300 opacity-50"
-                                                    size="sm"
-                                                    disabled>
-                                                    Locked
-                                                </Button>
+                                                )}
+                                            </CardContent>
+                                            {!levelUnlocked && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                                    <LockIcon className="h-8 w-8 text-gray-400" />
+                                                </div>
                                             )}
-                                        </CardContent>
-                                        {!levelUnlocked && (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                                <LockIcon className="h-8 w-8 text-gray-400" />
-                                            </div>
-                                        )}
-                                        {levelCompleted && (
-                                            <div className="absolute right-2 top-2 rounded-full bg-green-700 p-1">
-                                                <CheckCircle2 className="h-4 w-4 text-white" />
-                                            </div>
-                                        )}
-                                    </Card>
-                                );
-                            }),
-                        )}
-                    </div>
+                                            {levelCompleted && (
+                                                <div className="absolute right-2 top-2 rounded-full bg-green-700 p-1">
+                                                    <CheckCircle2 className="h-4 w-4 text-white" />
+                                                </div>
+                                            )}
+                                        </Card>
+                                    );
+                                }),
+                            )}
+                        </div>
+                    </ClientOnly>
                 </section>
             </div>
         </PageLayout>

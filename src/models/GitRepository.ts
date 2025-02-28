@@ -1,4 +1,4 @@
-import { FileStatus, GitStatus } from "../types";
+import type { FileStatus, GitStatus } from "../types";
 
 export class GitRepository {
     private initialized = false;

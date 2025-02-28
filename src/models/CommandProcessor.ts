@@ -65,7 +65,7 @@ export class CommandProcessor {
             case "commit":
                 return this.processGitCommitCommand(args.slice(1));
             case "branch":
-                return this.processGitBranchCommand(args.slice(1));
+                return this.processGitBranchCommand();
             case "checkout":
                 return this.processGitCheckoutCommand(args.slice(1));
             case "merge":
@@ -142,7 +142,7 @@ export class CommandProcessor {
 
             return [`Added ${stagedFiles.length} files to staging area.`];
         } else {
-            const filePath = this.resolvePath(args[0]);
+            const filePath = this.resolvePath(args[0] ?? "");
             if (this.fileSystem.getFileContents(filePath) === null) {
                 return [`pathspec '${args[0]}' did not match any files`];
             }
@@ -159,7 +159,7 @@ export class CommandProcessor {
         }
 
         const message = args[1];
-        const commitId = this.gitRepository.commit(message);
+        const commitId = this.gitRepository.commit(message ?? "");
 
         if (!commitId) {
             return ["Nothing to commit. Use git add to stage files first."];
@@ -172,7 +172,7 @@ export class CommandProcessor {
     }
 
     // Process git branch command
-    private processGitBranchCommand(args: string[]): string[] {
+    private processGitBranchCommand(): string[] {
         const branches = this.gitRepository.getBranches();
         const currentBranch = this.gitRepository.getCurrentBranch();
 
@@ -191,12 +191,12 @@ export class CommandProcessor {
             }
 
             const newBranch = args[1];
-            const success = this.gitRepository.checkout(newBranch, true);
+            const success = this.gitRepository.checkout(newBranch ?? "", true);
 
             return success ? [`Switched to a new branch '${newBranch}'`] : [`Branch '${newBranch}' already exists.`];
         } else {
             const branch = args[0];
-            const success = this.gitRepository.checkout(branch);
+            const success = this.gitRepository.checkout(branch ?? "");
 
             return success ? [`Switched to branch '${branch}'`] : [`Branch '${branch}' does not exist.`];
         }
@@ -209,7 +209,7 @@ export class CommandProcessor {
         }
 
         const branch = args[0];
-        const success = this.gitRepository.merge(branch);
+        const success = this.gitRepository.merge(branch ?? "");
 
         return success
             ? [`Merged branch '${branch}' into ${this.gitRepository.getCurrentBranch()}.`]

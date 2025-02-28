@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     title: "GitGud - Learn Git Through Play",
     description:
         "A gamified Git learning platform that helps you master Git commands and concepts through interactive challenges.",
-    icons: [{ rel: "icon", url: "/gitIcon.ico" }],
+    icons: [{ rel: "icon", url: "/gitBranch.svg" }],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

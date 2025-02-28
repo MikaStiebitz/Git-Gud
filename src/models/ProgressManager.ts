@@ -27,7 +27,7 @@ export class ProgressManager {
     }
 
     // Mark a level as completed
-    public completeLevel(stage: string, level: number, score: number = 10): void {
+    public completeLevel(stage: string, level: number, score = 10): void {
         if (!this.progress.completedLevels[stage]) {
             this.progress.completedLevels[stage] = [];
         }

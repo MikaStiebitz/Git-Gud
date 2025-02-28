@@ -1,10 +1,10 @@
-import { FileSystemItem } from "../types";
+import type { FileSystemItem } from "../types";
 
 export class FileSystem {
     private root: FileSystemItem;
 
     constructor(initialFileSystem?: FileSystemItem) {
-        this.root = initialFileSystem || {
+        this.root = initialFileSystem ?? {
             type: "directory",
             name: "/",
             children: {
@@ -32,7 +32,7 @@ export class FileSystem {
     public getDirectoryContents(path: string): Record<string, FileSystemItem> | null {
         const item = this.getItemAtPath(path);
         if (item && item.type === "directory") {
-            return item.children || {};
+            return item.children ?? {};
         }
         return null;
     }
@@ -41,7 +41,7 @@ export class FileSystem {
     public getFileContents(path: string): string | null {
         const item = this.getItemAtPath(path);
         if (item && item.type === "file") {
-            return item.content || "";
+            return item.content ?? "";
         }
         return null;
     }
@@ -56,7 +56,7 @@ export class FileSystem {
 
         // Navigate to the directory
         for (const part of parts) {
-            if (!currentDir.children || !currentDir.children[part]) {
+            if (!currentDir.children?.[part]) {
                 // Create directory if it doesn't exist
                 if (!currentDir.children) currentDir.children = {};
                 currentDir.children[part] = {
@@ -90,7 +90,7 @@ export class FileSystem {
         const parentPath = "/" + parts.join("/");
         const parent = this.getItemAtPath(parentPath);
 
-        if (parent && parent.type === "directory" && parent.children && parent.children[name]) {
+        if (parent?.type === "directory" && parent?.children?.[name]) {
             delete parent.children[name];
             return true;
         }
@@ -129,7 +129,7 @@ export class FileSystem {
         let current: FileSystemItem = this.root;
 
         for (const part of parts) {
-            if (!current.children || !current.children[part]) {
+            if (!current.children?.[part]) {
                 return null;
             }
             current = current.children[part];

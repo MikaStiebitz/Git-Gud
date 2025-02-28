@@ -53,7 +53,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (command.trim().startsWith("nano ")) {
             const args = command.trim().split(/\s+/);
             if (args.length > 1) {
-                const fileName = args[1];
+                const fileName = args[1] ?? "";
                 setTerminalOutput(prev => [...prev, `$ ${command}`, `Opening ${fileName} in editor...`]);
                 openFileEditor(fileName);
                 return;
@@ -92,7 +92,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         } else {
             // Für Nicht-Git-Befehle - direkte Überprüfung
-            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
+            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd ?? "", args)) {
                 markLevelAsCompleted();
             }
         }
@@ -115,18 +115,25 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleNextLevel = () => {
         if (isLevelCompleted) {
             const { stageId, levelId } = levelManager.getNextLevel(currentStage, currentLevel);
-            setCurrentStage(stageId);
-            setCurrentLevel(levelId);
-            setIsLevelCompleted(progressManager.isLevelCompleted(stageId, levelId));
-            progressManager.setCurrentLevel(stageId, levelId);
 
-            // Reset for next level
-            gitRepository.reset();
+            // Fixed: Check if stageId and levelId are defined before using them
+            if (stageId && typeof levelId === "number") {
+                setCurrentStage(stageId);
+                setCurrentLevel(levelId);
+                setIsLevelCompleted(progressManager.isLevelCompleted(stageId, levelId));
+                progressManager.setCurrentLevel(stageId, levelId);
 
-            setTerminalOutput([
-                "Willkommen im Git Terminal Simulator!",
-                `Level ${levelId} von ${stageId} gestartet. Gib 'help' ein für Hilfe.`,
-            ]);
+                // Reset for next level
+                gitRepository.reset();
+
+                setTerminalOutput([
+                    "Willkommen im Git Terminal Simulator!",
+                    `Level ${levelId} von ${stageId} gestartet. Gib 'help' ein für Hilfe.`,
+                ]);
+            } else {
+                // Handle case where there's no next level
+                setTerminalOutput(prev => [...prev, "Gratulation! Du hast alle verfügbaren Level abgeschlossen!"]);
+            }
         }
     };
 
@@ -134,7 +141,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const openFileEditor = (fileName: string) => {
         const currentDir = commandProcessor.getCurrentDirectory();
         const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
-        const content = fileSystem.getFileContents(filePath) || "";
+        const content = fileSystem.getFileContents(filePath) ?? "";
 
         // Setze die aktuellen Dateideaten und öffne den Editor
         setCurrentFile({ name: filePath, content });

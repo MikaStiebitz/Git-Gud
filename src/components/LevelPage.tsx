@@ -10,7 +10,6 @@ import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
 import {
-    HelpCircleIcon,
     ArrowRightIcon,
     GitBranch,
     Terminal as TerminalIcon,
@@ -20,8 +19,18 @@ import {
     Coffee,
 } from "lucide-react";
 
-// Beispiel für eine storyline-basierte Level-Struktur
-const storyContext = {
+const storyContext: Record<
+    string,
+    Record<
+        number,
+        {
+            title: string;
+            story: string;
+            realWorldContext: string;
+            taskIntroduction: string;
+        }
+    >
+> = {
     Intro: {
         1: {
             title: "Willkommen im Team",
@@ -94,18 +103,18 @@ export default function EnhancedLevelPage() {
         if (showStory && !hasReadStory) {
             const timer = setTimeout(() => {
                 setHasReadStory(true);
-            }, 5000); // Nach 5 Sekunden gilt die Story als gelesen
+            }, 5000);
 
             return () => clearTimeout(timer);
         }
     }, [showStory, hasReadStory]);
 
     // Open the file editor for a specific file
-    const openFileEditor = (fileName: string) => {
-        const content = fileSystem.getFileContents(fileName) || "";
-        setCurrentFile({ name: fileName, content });
-        setIsFileEditorOpen(true);
-    };
+    // const openFileEditor = (fileName: string) => {
+    //     const content = fileSystem.getFileContents(fileName) ?? "";
+    //     setCurrentFile({ name: fileName, content });
+    //     setIsFileEditorOpen(true);
+    // };
 
     const renderStorySection = () => {
         if (!storyData) return null;

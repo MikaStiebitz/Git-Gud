@@ -65,7 +65,7 @@ export function Terminal({
     const openFileEditor = (fileName: string) => {
         const currentDir = commandProcessor.getCurrentDirectory();
         const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
-        const content = fileSystem.getFileContents(filePath) || "";
+        const content = fileSystem.getFileContents(filePath) ?? "";
 
         // Verwende den FileEditor über die FileEdit-Funktion aus dem Context
         handleFileEdit(filePath, content);
@@ -236,7 +236,8 @@ export function Terminal({
                     ))}
                     {isLevelCompleted && !isPlaygroundMode && (
                         <div className="mt-2 rounded bg-green-900/30 p-2 text-center text-white">
-                            Level abgeschlossen! 🎉 Gib 'next' ein oder klicke auf den Button "Nächstes Level".
+                            Level abgeschlossen! 🎉 Gib &apos;next&apos; ein oder klicke auf den Button &quot;Nächstes
+                            Level&quot;.
                         </div>
                     )}
                 </div>

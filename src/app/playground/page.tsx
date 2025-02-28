@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
-import { Terminal } from "~/components/Terminal";
-import { GitBranch, TerminalIcon, Search, BookOpen, Command } from "lucide-react";
+import { TerminalIcon, Search, BookOpen, Command } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
+import type { CommandType } from "~/types";
+
+// Dynamically import Terminal component with SSR disabled
+const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
+    ssr: false,
+});
 
 // Git-Befehle für das Cheat Sheet
 const gitCommands = [
@@ -141,11 +146,12 @@ const gitCommands = [
 export default function Playground() {
     const { resetTerminalForPlayground } = useGameContext();
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCommand, setSelectedCommand] = useState<any>(null);
+    const [selectedCommand, setSelectedCommand] = useState<CommandType | null>(null);
 
     useEffect(() => {
         resetTerminalForPlayground();
-    }, [resetTerminalForPlayground]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Filtere Befehle basierend auf dem Suchbegriff
     const filteredCommands = !searchTerm
@@ -271,7 +277,9 @@ export default function Playground() {
                                     {filteredCommands.length === 0 && (
                                         <div className="flex flex-col items-center justify-center py-12 text-center">
                                             <Search className="mb-2 h-8 w-8 text-purple-500" />
-                                            <p className="text-purple-400">Keine Befehle gefunden für "{searchTerm}"</p>
+                                            <p className="text-purple-400">
+                                                Keine Befehle gefunden für &quot;{searchTerm}&quot;
+                                            </p>
                                             <Button
                                                 variant="ghost"
                                                 size="sm"

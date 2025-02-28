@@ -1,16 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { Terminal } from "~/components/Terminal";
 import { FileEditor } from "~/components/FileEditor";
 import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
-import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, GitBranch, Terminal as TerminalIcon } from "lucide-react";
+import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
+import { ClientOnly } from "~/components/ClientOnly";
+import dynamic from "next/dynamic";
+
+// Dynamically import Terminal component with SSR disabled
+const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
+    ssr: false,
+});
 
 export default function LevelPage() {
     const {
@@ -37,7 +42,7 @@ export default function LevelPage() {
 
     // Open the file editor for a specific file
     const openFileEditor = (fileName: string) => {
-        const content = fileSystem.getFileContents(fileName) || "";
+        const content = fileSystem.getFileContents(fileName) ?? "";
         setCurrentFile({ name: fileName, content });
         setIsFileEditorOpen(true);
     };
@@ -76,90 +81,94 @@ export default function LevelPage() {
         }
 
         return (
-            <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-white">{levelData.name}</h2>
-                <p className="text-purple-200">{levelData.description}</p>
+            <ClientOnly>
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-white">{levelData.name}</h2>
+                    <p className="text-purple-200">{levelData.description}</p>
 
-                <div>
-                    <h3 className="mb-2 font-medium text-purple-200">Ziele:</h3>
-                    <ul className="list-inside list-disc space-y-1 text-purple-300">
-                        {levelData.objectives.map((objective, index) => (
-                            <li key={index}>{objective}</li>
-                        ))}
-                    </ul>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowHints(!showHints)}
-                        className="flex items-center border-purple-700 text-purple-300 hover:bg-purple-900/50">
-                        <HelpCircleIcon className="mr-1 h-4 w-4" />
-                        {showHints ? "Hinweise ausblenden" : "Hinweise anzeigen"}
-                    </Button>
-
-                    {isLevelCompleted && (
-                        <Button
-                            onClick={handleNextLevel}
-                            className="flex items-center bg-purple-600 text-white hover:bg-purple-700">
-                            <ArrowRightIcon className="mr-1 h-4 w-4" />
-                            Nächstes Level
-                        </Button>
-                    )}
-                </div>
-
-                {showHints && (
-                    <div className="rounded-md border border-purple-700/50 bg-purple-900/30 p-3 text-purple-200">
-                        <h3 className="mb-1 font-medium">Hinweise:</h3>
-                        <ul className="list-inside list-disc space-y-1">
-                            {levelData.hints.map((hint, index) => (
-                                <li key={index}>{hint}</li>
+                    <div>
+                        <h3 className="mb-2 font-medium text-purple-200">Ziele:</h3>
+                        <ul className="list-inside list-disc space-y-1 text-purple-300">
+                            {levelData.objectives.map((objective, index) => (
+                                <li key={index}>{objective}</li>
                             ))}
                         </ul>
                     </div>
-                )}
 
-                {renderEditableFiles()}
+                    <div className="flex items-center space-x-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowHints(!showHints)}
+                            className="flex items-center border-purple-700 text-purple-300 hover:bg-purple-900/50">
+                            <HelpCircleIcon className="mr-1 h-4 w-4" />
+                            {showHints ? "Hinweise ausblenden" : "Hinweise anzeigen"}
+                        </Button>
 
-                <div className="mt-4 border-t border-purple-900/30 pt-4">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
-                        className="text-purple-400 hover:bg-purple-900/30 hover:text-purple-200">
-                        {showAdvancedOptions ? "Erweiterte Optionen ausblenden" : "Erweiterte Optionen anzeigen"}
-                    </Button>
-
-                    {showAdvancedOptions && (
-                        <div className="mt-2 space-y-2">
+                        {isLevelCompleted && (
                             <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full border-amber-800/50 text-amber-400 hover:bg-amber-900/30"
-                                onClick={resetCurrentLevel}>
-                                <RotateCcw className="mr-1 h-4 w-4" />
-                                Level zurücksetzen
+                                onClick={handleNextLevel}
+                                className="flex items-center bg-purple-600 text-white hover:bg-purple-700">
+                                <ArrowRightIcon className="mr-1 h-4 w-4" />
+                                Nächstes Level
                             </Button>
+                        )}
+                    </div>
 
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full border-red-800/50 text-red-400 hover:bg-red-900/30"
-                                onClick={() => {
-                                    if (
-                                        window.confirm("Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen?")
-                                    ) {
-                                        resetAllProgress();
-                                    }
-                                }}>
-                                <RotateCcw className="mr-1 h-4 w-4" />
-                                Gesamten Fortschritt zurücksetzen
-                            </Button>
+                    {showHints && (
+                        <div className="rounded-md border border-purple-700/50 bg-purple-900/30 p-3 text-purple-200">
+                            <h3 className="mb-1 font-medium">Hinweise:</h3>
+                            <ul className="list-inside list-disc space-y-1">
+                                {levelData.hints.map((hint, index) => (
+                                    <li key={index}>{hint}</li>
+                                ))}
+                            </ul>
                         </div>
                     )}
+
+                    {renderEditableFiles()}
+
+                    <div className="mt-4 border-t border-purple-900/30 pt-4">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+                            className="text-purple-400 hover:bg-purple-900/30 hover:text-purple-200">
+                            {showAdvancedOptions ? "Erweiterte Optionen ausblenden" : "Erweiterte Optionen anzeigen"}
+                        </Button>
+
+                        {showAdvancedOptions && (
+                            <div className="mt-2 space-y-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full border-amber-800/50 text-amber-400 hover:bg-amber-900/30"
+                                    onClick={resetCurrentLevel}>
+                                    <RotateCcw className="mr-1 h-4 w-4" />
+                                    Level zurücksetzen
+                                </Button>
+
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full border-red-800/50 text-red-400 hover:bg-red-900/30"
+                                    onClick={() => {
+                                        if (
+                                            window.confirm(
+                                                "Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen?",
+                                            )
+                                        ) {
+                                            resetAllProgress();
+                                        }
+                                    }}>
+                                    <RotateCcw className="mr-1 h-4 w-4" />
+                                    Gesamten Fortschritt zurücksetzen
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            </ClientOnly>
         );
     };
 

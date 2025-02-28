@@ -24,7 +24,7 @@ export default function LevelPage() {
 
     // Open the file editor for a specific file
     const openFileEditor = (fileName: string) => {
-        const content = fileSystem.getFileContents(fileName) || "";
+        const content = fileSystem.getFileContents(fileName) ?? "";
         setCurrentFile({ name: fileName, content });
         setIsFileEditorOpen(true);
     };

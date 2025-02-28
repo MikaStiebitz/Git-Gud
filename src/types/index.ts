@@ -80,7 +80,7 @@ export type LevelType = {
     objectives: string[];
     hints: string[];
     requirements: LevelRequirement[];
-    story: StoryContext; // Neu: Story-Kontext für jedes Level
+    story: StoryContext;
 };
 
 export type StageType = {
