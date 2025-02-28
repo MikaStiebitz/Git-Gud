@@ -29,6 +29,8 @@ export class CommandProcessor {
                 return this.processTouchCommand(cmdArgs[0]);
             case "mkdir":
                 return this.processMkdirCommand(cmdArgs[0]);
+            case "rm":
+                return this.processRmCommand(cmdArgs[0]);
             case "pwd":
                 return [this.currentDirectory];
             case "help":
@@ -326,6 +328,39 @@ export class CommandProcessor {
         return success ? [`Created directory: ${dir}`] : [`Failed to create directory: ${dir}`];
     }
 
+    // Process rm command
+    private processRmCommand(filePath?: string): string[] {
+        if (!filePath) {
+            return ["Please specify a file to remove."];
+        }
+
+        const resolvedPath = this.resolvePath(filePath);
+
+        // Check if the path is a directory
+        if (this.fileSystem.getDirectoryContents(resolvedPath)) {
+            return [`Cannot remove '${filePath}': Is a directory. Use 'rm -r' for directories (not implemented yet).`];
+        }
+
+        // Check if the file exists
+        if (this.fileSystem.getFileContents(resolvedPath) === null) {
+            return [`Cannot remove '${filePath}': No such file.`];
+        }
+
+        // Remove the file
+        const success = this.fileSystem.delete(resolvedPath);
+
+        // Update Git status if file was tracked
+        if (success) {
+            const status = this.gitRepository.getStatus();
+            if (resolvedPath in status) {
+                // Remove the file from Git status
+                delete status[resolvedPath];
+            }
+        }
+
+        return success ? [`Removed file '${filePath}'.`] : [`Failed to remove '${filePath}'.`];
+    }
+
     // Process help command
     private processHelpCommand(): string[] {
         return [
@@ -338,6 +373,7 @@ export class CommandProcessor {
             "  nano [file] - Edit file",
             "  touch [file] - Create empty file",
             "  mkdir [directory] - Create directory",
+            "  rm [file] - Remove file",
             "  help - Display this help message",
             "  clear - Clear the terminal",
         ];

@@ -32,6 +32,7 @@ export interface GameContextProps {
     setIsFileEditorOpen: (isOpen: boolean) => void;
     toggleAdvancedMode: () => void;
     resetTerminalForLevel: () => void;
+    getEditableFiles: () => { name: string; path: string }[];
 }
 
 // Basis-Typen
@@ -45,6 +46,8 @@ export type CommandType = {
         description: string;
         required?: boolean;
     }[];
+    example?: string;
+    explanation?: string;
 };
 
 export type GitCommand = CommandType & {

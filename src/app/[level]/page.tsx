@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { FileEditor } from "~/components/FileEditor";
 import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
-import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, BookOpen } from "lucide-react";
+import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, BookOpen, Code } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -33,6 +33,10 @@ export default function LevelPage() {
         resetAllProgress,
         isFileEditorOpen,
         setIsFileEditorOpen,
+        isAdvancedMode,
+        toggleAdvancedMode,
+        resetTerminalForLevel,
+        getEditableFiles,
     } = useGameContext();
 
     const { t } = useLanguage();
@@ -40,10 +44,36 @@ export default function LevelPage() {
     const [showHints, setShowHints] = useState(false);
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
     const [showStoryDialog, setShowStoryDialog] = useState(false);
+    const [editableFiles, setEditableFiles] = useState<Array<{ name: string; path: string }>>([]);
 
     // Get the current level data
     const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel);
     const progress = progressManager.getProgress();
+
+    // Reset terminal once when the component mounts
+    useEffect(() => {
+        resetTerminalForLevel();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Update editable files when terminal output changes (indicator of file system changes)
+    const updateEditableFiles = useCallback(() => {
+        setEditableFiles(getEditableFiles());
+    }, [getEditableFiles]);
+
+    useEffect(() => {
+        updateEditableFiles();
+    }, [updateEditableFiles]);
+
+    // Monitor for file system changes
+    useEffect(() => {
+        // Set up an interval to check for file changes
+        const intervalId = setInterval(() => {
+            updateEditableFiles();
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [updateEditableFiles]);
 
     // Open the file editor for a specific file
     const openFileEditor = (fileName: string) => {
@@ -53,24 +83,27 @@ export default function LevelPage() {
     };
 
     useEffect(() => {
-        if (levelData?.story) {
+        if (levelData?.story && !isAdvancedMode) {
             setShowStoryDialog(true);
         }
-    }, [currentStage, currentLevel, levelData]);
+    }, [currentStage, currentLevel, levelData, isAdvancedMode]);
 
     // Show a list of user-editable files
     const renderEditableFiles = () => {
-        // For simplicity, we'll just show README.md and index.js
-        const files = [
-            { name: "README.md", path: "/README.md" },
-            { name: "index.js", path: "/src/index.js" },
-        ];
+        if (editableFiles.length === 0) {
+            return (
+                <div className="mt-4">
+                    <h3 className="mb-2 font-medium text-purple-200">{t("level.filesToEdit")}</h3>
+                    <p className="text-sm text-purple-400">No editable files found.</p>
+                </div>
+            );
+        }
 
         return (
             <div className="mt-4">
                 <h3 className="mb-2 font-medium text-purple-200">{t("level.filesToEdit")}</h3>
                 <div className="space-y-1">
-                    {files.map(file => (
+                    {editableFiles.map(file => (
                         <Button
                             key={file.path}
                             variant="outline"
@@ -94,7 +127,24 @@ export default function LevelPage() {
         return (
             <ClientOnly>
                 <div className="space-y-4">
-                    <h2 className="text-xl font-semibold text-white">{levelData.name}</h2>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-semibold text-white">{levelData.name}</h2>
+
+                        {/* Advanced Mode Toggle Button */}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={toggleAdvancedMode}
+                            className={`flex items-center text-xs ${
+                                isAdvancedMode
+                                    ? "border-purple-600 bg-purple-800/30 text-purple-300"
+                                    : "border-purple-700 text-purple-400"
+                            }`}>
+                            <Code className="mr-1 h-3 w-3" />
+                            {isAdvancedMode ? t("level.advancedModeOn") : t("level.advancedModeOff")}
+                        </Button>
+                    </div>
+
                     <p className="text-purple-200">{levelData.description}</p>
 
                     <div>
@@ -116,7 +166,7 @@ export default function LevelPage() {
                             {showHints ? t("level.hideHints") : t("level.showHints")}
                         </Button>
 
-                        {/* Add this new button */}
+                        {/* Story button only if not in advanced mode */}
                         {levelData.story && (
                             <Button
                                 variant="outline"
@@ -293,6 +343,8 @@ export default function LevelPage() {
                     isOpen={showStoryDialog}
                     onClose={() => setShowStoryDialog(false)}
                     story={levelData.story}
+                    isAdvancedMode={isAdvancedMode}
+                    onToggleAdvancedMode={toggleAdvancedMode}
                 />
             )}
         </PageLayout>

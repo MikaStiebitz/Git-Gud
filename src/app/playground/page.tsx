@@ -25,6 +25,7 @@ export default function Playground() {
     const [cheatSheetCollapsed, setCheatSheetCollapsed] = useState(true);
 
     useEffect(() => {
+        // Initial reset when component mounts
         resetTerminalForPlayground();
 
         // On mobile, default to showing terminal first

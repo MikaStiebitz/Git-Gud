@@ -58,6 +58,9 @@ const translations = {
         "level.task": "Your Task",
         "level.startCoding": "Start Coding",
         "level.storyButton": "Show Story",
+        "level.advancedModeOn": "Advanced Mode (On)",
+        "level.advancedModeOff": "Advanced Mode (Off)",
+        "level.notFound": "Level not found",
 
         // Playground
         "playground.title": "Git Playground",
@@ -101,6 +104,7 @@ const translations = {
         "terminal.enterCommand": "Enter a command...",
         "terminal.typeNext": "Type 'next' or click the \"Next Level\" button to continue.",
         "terminal.fileSaved": "File saved: {path}",
+        "terminal.fileRemoved": "File removed: {path}",
         "terminal.levelReset": "Level reset.",
         "terminal.progressReset": "Progress reset.",
         "terminal.allLevelsCompleted": "Congratulations! You have completed all available levels!",
@@ -152,6 +156,9 @@ const translations = {
         "level.task": "Deine Aufgabe",
         "level.startCoding": "Mit dem Coding beginnen",
         "level.storyButton": "Story anzeigen",
+        "level.advancedModeOn": "Fortgeschrittenen-Modus (An)",
+        "level.advancedModeOff": "Fortgeschrittenen-Modus (Aus)",
+        "level.notFound": "Level nicht gefunden",
 
         // Playground
         "playground.title": "Git Playground",
@@ -196,6 +203,7 @@ const translations = {
         "terminal.enterCommand": "Gib einen Befehl ein...",
         "terminal.typeNext": "Tippe 'next' ein oder klicke auf 'Nächstes Level', um fortzufahren.",
         "terminal.fileSaved": "Datei gespeichert: {path}",
+        "terminal.fileRemoved": "Datei gelöscht: {path}",
         "terminal.levelReset": "Level zurückgesetzt.",
         "terminal.progressReset": "Fortschritt zurückgesetzt.",
         "terminal.allLevelsCompleted": "Gratulation! Du hast alle verfügbaren Level abgeschlossen!",

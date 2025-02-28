@@ -11,6 +11,16 @@ import { useLanguage } from "~/contexts/LanguageContext";
 
 const GameContext = createContext<GameContextProps | undefined>(undefined);
 
+interface FileSystemItem {
+    type: "file" | "directory";
+    children?: Record<string, FileSystemItem>;
+}
+
+interface EditableFile {
+    name: string;
+    path: string;
+}
+
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [fileSystem] = useState<FileSystem>(new FileSystem());
     const [gitRepository] = useState<GitRepository>(new GitRepository());
@@ -30,11 +40,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     ]);
 
     // Advanced mode state
-    const [isAdvancedMode, setIsAdvancedMode] = useState<boolean>(false);
+    const [isAdvancedMode, setIsAdvancedMode] = useState<boolean>(
+        localStorage.getItem("gitgud-advanced-mode") === "true",
+    );
 
     // Toggle advanced mode
     const toggleAdvancedMode = () => {
-        setIsAdvancedMode(prev => !prev);
+        setIsAdvancedMode(prev => {
+            const newMode = !prev;
+            localStorage.setItem("gitgud-advanced-mode", newMode.toString());
+            return newMode;
+        });
     };
 
     // Add a function to reset terminal for playground mode
@@ -211,6 +227,34 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ]);
     };
 
+    // Get all editable files
+    const getEditableFiles = (): EditableFile[] => {
+        const files: EditableFile[] = [];
+        const root = fileSystem.getFileSystem() as FileSystemItem;
+
+        // Helper function to recursively collect files
+        const collectFiles = (dir: FileSystemItem, path: string) => {
+            if (!dir.children) return;
+
+            Object.entries(dir.children).forEach(([name, item]: [string, FileSystemItem]) => {
+                const fullPath = path === "/" ? `/${name}` : `${path}/${name}`;
+
+                if (item.type === "file") {
+                    // Add files that are likely to be edited (exclude hidden files)
+                    if (!name.startsWith(".")) {
+                        files.push({ name, path: fullPath });
+                    }
+                } else if (item.type === "directory" && !name.startsWith(".")) {
+                    // Recursively process subdirectories (exclude hidden dirs)
+                    collectFiles(item, fullPath);
+                }
+            });
+        };
+
+        collectFiles(root, "/");
+        return files;
+    };
+
     const value = {
         fileSystem,
         gitRepository,
@@ -234,6 +278,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetTerminalForPlayground,
         resetTerminalForLevel,
         toggleAdvancedMode,
+        getEditableFiles,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
