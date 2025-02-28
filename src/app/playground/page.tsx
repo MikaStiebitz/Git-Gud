@@ -63,7 +63,7 @@ export default function Playground() {
         }
     };
 
-    // Git commands for the cheat sheet
+    // Git commands for the cheat sheet with proper translations
     const gitCommands = [
         {
             category: t("category.basics"),

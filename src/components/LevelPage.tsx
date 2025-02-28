@@ -255,7 +255,7 @@ export default function LevelPage() {
         <PageLayout showLevelInfo>
             <div className="bg-[#1a1625] text-purple-100">
                 <div className="container mx-auto p-4">
-                    <h1 className="mb-6 text-center text-3xl font-bold text-white">Git Learning Game</h1>
+                    <h1 className="mb-6 text-center text-3xl font-bold text-white">{t("Git Learning Game")}</h1>
                     <ProgressBar score={progress.score} maxScore={150} className="mb-6" />
 
                     {/* Mobile collapsible controls */}
