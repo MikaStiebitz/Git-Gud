@@ -86,7 +86,7 @@ export function Terminal({
                 // Add to terminal output
                 handleCommand(input);
                 // Open file editor
-                openFileEditor(fileName);
+                openFileEditor(fileName ?? "");
                 // Clear input
                 setInput("");
                 return;
@@ -122,7 +122,7 @@ export function Terminal({
         if (!contents) return;
 
         // Filtern Sie Dateien basierend auf der aktuellen Eingabe
-        const matchingFiles = Object.keys(contents).filter(file => file.startsWith(currentInputPath));
+        const matchingFiles = Object.keys(contents).filter(file => file.startsWith(currentInputPath ?? ""));
 
         if (matchingFiles.length === 1) {
             // Wenn es nur eine Übereinstimmung gibt, vervollständigen Sie sie direkt
@@ -152,14 +152,14 @@ export function Terminal({
             if (historyIndex < commandHistory.length - 1) {
                 const newIndex = historyIndex + 1;
                 setHistoryIndex(newIndex);
-                setInput(commandHistory[newIndex]);
+                setInput(commandHistory[newIndex] ?? "");
             }
         } else if (e.key === "ArrowDown") {
             e.preventDefault();
             if (historyIndex > 0) {
                 const newIndex = historyIndex - 1;
                 setHistoryIndex(newIndex);
-                setInput(commandHistory[newIndex]);
+                setInput(commandHistory[newIndex] ?? "");
             } else if (historyIndex === 0) {
                 setHistoryIndex(-1);
                 setInput("");
