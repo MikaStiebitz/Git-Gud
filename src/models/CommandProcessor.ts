@@ -79,14 +79,26 @@ export class CommandProcessor {
 
     // Process git status command
     private processGitStatusCommand(): string[] {
+        // First, ensure the status is up to date by checking for untracked files
+        const currentFiles = this.getAllFiles(this.currentDirectory);
         const status = this.gitRepository.getStatus();
+
+        // Find files that exist in the filesystem but aren't in the git status
+        currentFiles.forEach(file => {
+            if (!Object.prototype.hasOwnProperty.call(status, file)) {
+                this.gitRepository.updateFileStatus(file, "untracked");
+            }
+        });
+
+        // Now get the updated status
+        const updatedStatus = this.gitRepository.getStatus();
         const output = [`On branch ${this.gitRepository.getCurrentBranch()}`];
 
         const staged: string[] = [];
         const modified: string[] = [];
         const untracked: string[] = [];
 
-        Object.entries(status).forEach(([file, fileStatus]) => {
+        Object.entries(updatedStatus).forEach(([file, fileStatus]) => {
             switch (fileStatus) {
                 case "staged":
                     staged.push(file);
@@ -134,6 +146,12 @@ export class CommandProcessor {
         if (args[0] === ".") {
             // Get all files in the current directory recursively
             const allFiles = this.getAllFiles(this.currentDirectory);
+
+            // Fix: Before calling addAll, make sure all files are marked as untracked
+            allFiles.forEach(file => {
+                this.gitRepository.updateFileStatus(file, "untracked");
+            });
+
             const stagedFiles = this.gitRepository.addAll(allFiles);
 
             if (stagedFiles.length === 0) {
@@ -288,8 +306,8 @@ export class CommandProcessor {
         const success = this.fileSystem.writeFile(filePath, "");
 
         if (success) {
-            // Aktualisiere den Git-Status für die neue Datei
-            this.gitRepository.updateFileStatus(file, "untracked");
+            // Use the resolved file path for the Git status update
+            this.gitRepository.updateFileStatus(filePath, "untracked");
             return [`Created file: ${file}`];
         } else {
             return [`Failed to create file: ${file}`];
