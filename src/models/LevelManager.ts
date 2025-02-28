@@ -24,7 +24,7 @@ export class LevelManager {
                                 successMessage: "Gut gemacht! Du hast ein Git-Repository erstellt.",
                             },
                         ],
-                        // Neu: Story-Kontext für jedes Level
+                        resetGitRepo: true,
                         story: {
                             title: "Willkommen im Team",
                             narrative: `Herzlich willkommen in deinem neuen Job als Entwickler bei TechStart! Ich bin Alex, dein Team-Lead.

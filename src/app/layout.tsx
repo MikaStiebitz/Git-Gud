@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { GameProvider } from "~/contexts/GameContext";
+import { LanguageProvider } from "~/contexts/LanguageContext";
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
@@ -16,7 +17,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <html lang="en" className={`${GeistSans.variable}`}>
             <body className="dark">
                 <Analytics />
-                <GameProvider>{children}</GameProvider>
+                <LanguageProvider>
+                    <GameProvider>{children}</GameProvider>
+                </LanguageProvider>
             </body>
         </html>
     );

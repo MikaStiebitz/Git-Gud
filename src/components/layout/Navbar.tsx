@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "~/components/ui/button";
-import { GitBranch, Terminal, BookCopy, Home, Code } from "lucide-react";
+import { GitBranch, Terminal, BookCopy, Home, Code, Languages } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
+import { useLanguage } from "~/contexts/LanguageContext";
 import { ClientOnly } from "~/components/ClientOnly";
 
 interface NavbarProps {
@@ -12,11 +13,17 @@ interface NavbarProps {
 export function Navbar({ showLevelInfo = false }: NavbarProps) {
     const pathname = usePathname();
     const { currentStage, currentLevel } = useGameContext();
+    const { language, setLanguage, t } = useLanguage();
 
     // Determine which page we're on
     const isHomePage = pathname === "/";
     const isLevelPage = pathname.includes("/level") || pathname === "/[level]";
     const isPlaygroundPage = pathname === "/playground";
+
+    // Toggle language
+    const toggleLanguage = () => {
+        setLanguage(language === "de" ? "en" : "de");
+    };
 
     return (
         <header className="border-b border-purple-900/20 bg-[#1a1625]">
@@ -34,16 +41,25 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                     </ClientOnly>
                 )}
 
-                {isPlaygroundPage && <span className="ml-4 text-purple-300">Playground</span>}
+                {isPlaygroundPage && <span className="ml-4 text-purple-300">{t("nav.playground")}</span>}
 
-                <div className="ml-auto flex space-x-4">
+                <div className="ml-auto flex items-center space-x-4">
+                    {/* Language toggle */}
+                    <Button
+                        variant="ghost"
+                        onClick={toggleLanguage}
+                        className="flex items-center text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                        <Languages className="mr-2 h-4 w-4" />
+                        {language === "de" ? "EN" : "DE"}
+                    </Button>
+
                     {!isHomePage && (
                         <Link href="/">
                             <Button
                                 variant="ghost"
                                 className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <Home className="mr-2 h-4 w-4" />
-                                Home
+                                {t("nav.home")}
                             </Button>
                         </Link>
                     )}
@@ -54,7 +70,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 variant="ghost"
                                 className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <Terminal className="mr-2 h-4 w-4" />
-                                Terminal
+                                {t("nav.terminal")}
                             </Button>
                         </Link>
                     )}
@@ -65,7 +81,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 variant="ghost"
                                 className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <BookCopy className="mr-2 h-4 w-4" />
-                                Playground
+                                {t("nav.playground")}
                             </Button>
                         </Link>
                     )}
@@ -74,7 +90,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                         <Link href="/level">
                             <Button className="bg-purple-600 text-white hover:bg-purple-700">
                                 <Code className="mr-2 h-4 w-4" />
-                                Start Learning
+                                {t("nav.startLearning")}
                             </Button>
                         </Link>
                     )}

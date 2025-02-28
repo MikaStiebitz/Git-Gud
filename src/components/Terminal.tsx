@@ -84,7 +84,7 @@ export function Terminal({
             if (args.length > 1) {
                 const fileName = args[1];
                 // Add to terminal output
-                handleCommand(input);
+                handleCommand(input, isPlaygroundMode);
                 // Open file editor
                 openFileEditor(fileName ?? "");
                 // Clear input
@@ -92,10 +92,10 @@ export function Terminal({
                 return;
             }
         } else if (input.trim() === "next" && isLevelCompleted) {
-            handleCommand("next"); // Special case for the "next" command
+            handleCommand("next", isPlaygroundMode); // Special case for the "next" command
         } else {
             // Normal command processing
-            handleCommand(input);
+            handleCommand(input, isPlaygroundMode);
         }
 
         // Add to command history

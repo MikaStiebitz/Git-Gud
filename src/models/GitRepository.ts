@@ -12,6 +12,15 @@ export class GitRepository {
         this.init();
     }
 
+    public partialReset(): void {
+        // Keep initialized state, but reset other properties
+        this.branches = ["main"];
+        this.currentBranch = "main";
+        this.HEAD = "main";
+        this.status = {};
+        this.commits = {};
+    }
+
     // Initialize a new Git repository
     public init(): boolean {
         if (this.initialized) return false;

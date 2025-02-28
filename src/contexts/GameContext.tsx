@@ -48,7 +48,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [progressManager]);
 
     // Process a command and update the state
-    const handleCommand = (command: string) => {
+    const handleCommand = (command: string, isPlaygroundMode = false) => {
         // Spezialfall für nano-Befehl
         if (command.trim().startsWith("nano ")) {
             const args = command.trim().split(/\s+/);
@@ -72,19 +72,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const output = commandProcessor.processCommand(command);
         setTerminalOutput(prev => [...prev, ...output]);
 
-        // Überprüfe, ob der Befehl das Level abschließt
-        // Wichtig: die Befehlsverarbeitung erfolgt in zwei Schritten:
-        // 1. Splitten des Befehls in Befehl und Argumente
-        const [cmd, ...args] = command.trim().split(/\s+/);
+        // Skip level completion checks if in playground mode
+        if (isPlaygroundMode) {
+            return;
+        }
 
-        console.log("Checking command:", cmd, "with args:", args);
+        // Überprüfe, ob der Befehl das Level abschließt
+        const [cmd, ...args] = command.trim().split(/\s+/);
 
         // Handle special case for git commands
         if (cmd === "git") {
             const gitCommand = args[0]; // Der eigentliche Git-Befehl (init, status, etc.)
             const gitArgs = args.slice(1); // Die Argumente des Git-Befehls
-
-            console.log("Git command:", gitCommand, "with git args:", gitArgs);
 
             // Prüfe Git Befehl mit dem LevelManager
             if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
@@ -123,8 +122,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setIsLevelCompleted(progressManager.isLevelCompleted(stageId, levelId));
                 progressManager.setCurrentLevel(stageId, levelId);
 
-                // Reset for next level
-                gitRepository.reset();
+                // Get the next level data to check if we should reset the git repo
+                const nextLevel = levelManager.getLevel(stageId, levelId);
+
+                // Only completely reset the repository if the next level requires it
+                if (nextLevel?.resetGitRepo) {
+                    gitRepository.reset();
+                } else {
+                    // Otherwise, use partial reset to keep the repo initialized
+                    gitRepository.partialReset();
+                }
 
                 setTerminalOutput([
                     "Willkommen im Git Terminal Simulator!",

@@ -20,7 +20,7 @@ export interface GameContextProps {
     terminalOutput: string[];
 
     // Funktionen
-    handleCommand: (command: string) => void;
+    handleCommand: (command: string, isPlaygroundMode: boolean) => void;
     handleNextLevel: () => void;
     handleFileEdit: (path: string, content: string) => void;
     resetCurrentLevel: () => void;
@@ -81,6 +81,7 @@ export type LevelType = {
     hints: string[];
     requirements: LevelRequirement[];
     story: StoryContext;
+    resetGitRepo?: boolean;
 };
 
 export type StageType = {
