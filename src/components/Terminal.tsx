@@ -173,7 +173,7 @@ export function Terminal({
     };
 
     const handleShowHelp = () => {
-        handleCommand("help");
+        handleCommand("help", isPlaygroundMode);
     };
 
     const handleReset = () => {
