@@ -59,6 +59,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         }
 
+        if (command.trim() === "clear") {
+            setTerminalOutput([]);
+            return;
+        }
+
         setTerminalOutput(prev => [...prev, `$ ${command}`]);
 
         // Special case for "next" command

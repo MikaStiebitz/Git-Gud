@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { FileEditor } from "~/components/FileEditor";
 import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
-import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield } from "lucide-react";
+import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, BookOpen } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
 import { useLanguage } from "~/contexts/LanguageContext";
+import { StoryDialog } from "~/components/StoryDialog";
 import dynamic from "next/dynamic";
 
 // Dynamically import Terminal component with SSR disabled
@@ -38,6 +39,7 @@ export default function LevelPage() {
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
     const [showHints, setShowHints] = useState(false);
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+    const [showStoryDialog, setShowStoryDialog] = useState(false);
 
     // Get the current level data
     const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel);
@@ -49,6 +51,12 @@ export default function LevelPage() {
         setCurrentFile({ name: fileName, content });
         setIsFileEditorOpen(true);
     };
+
+    useEffect(() => {
+        if (levelData?.story) {
+            setShowStoryDialog(true);
+        }
+    }, [currentStage, currentLevel, levelData]);
 
     // Show a list of user-editable files
     const renderEditableFiles = () => {
@@ -98,7 +106,7 @@ export default function LevelPage() {
                         </ul>
                     </div>
 
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <Button
                             variant="outline"
                             size="sm"
@@ -107,6 +115,18 @@ export default function LevelPage() {
                             <HelpCircleIcon className="mr-1 h-4 w-4" />
                             {showHints ? t("level.hideHints") : t("level.showHints")}
                         </Button>
+
+                        {/* Add this new button */}
+                        {levelData.story && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setShowStoryDialog(true)}
+                                className="flex items-center border-purple-700 text-purple-300 hover:bg-purple-900/50">
+                                <BookOpen className="mr-1 h-4 w-4" />
+                                {t("level.storyButton")}
+                            </Button>
+                        )}
 
                         {isLevelCompleted && (
                             <Button
@@ -268,6 +288,13 @@ export default function LevelPage() {
                     />
                 </div>
             </div>
+            {levelData?.story && (
+                <StoryDialog
+                    isOpen={showStoryDialog}
+                    onClose={() => setShowStoryDialog(false)}
+                    story={levelData.story}
+                />
+            )}
         </PageLayout>
     );
 }

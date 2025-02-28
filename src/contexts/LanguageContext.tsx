@@ -54,6 +54,10 @@ const translations = {
         "level.resetConfirm": "Are you sure you want to reset all your progress?",
         "level.level": "Level",
         "level.levelCompleted": "Level completed!",
+        "level.realWorldContext": "Real-World Context",
+        "level.task": "Your Task",
+        "level.startCoding": "Start Coding",
+        "level.storyButton": "Show Story",
 
         // Playground
         "playground.title": "Git Playground",
@@ -144,6 +148,10 @@ const translations = {
         "level.resetConfirm": "Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen?",
         "level.level": "Level",
         "level.levelCompleted": "Level abgeschlossen!",
+        "level.realWorldContext": "Kontext in der echten Welt",
+        "level.task": "Deine Aufgabe",
+        "level.startCoding": "Mit dem Coding beginnen",
+        "level.storyButton": "Story anzeigen",
 
         // Playground
         "playground.title": "Git Playground",
