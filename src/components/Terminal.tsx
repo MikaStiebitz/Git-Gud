@@ -5,7 +5,7 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
-import { TerminalIcon, HelpCircleIcon, RotateCcw } from "lucide-react";
+import { TerminalIcon, HelpCircleIcon, RotateCcw, Send } from "lucide-react";
 import { useLanguage } from "~/contexts/LanguageContext";
 
 interface TerminalProps {
@@ -60,18 +60,29 @@ export function Terminal({
 
     // Focus input field on mount
     useEffect(() => {
-        if (inputRef.current) {
+        if (inputRef.current && !isMobileDevice()) {
             inputRef.current.focus();
         }
     }, []);
 
-    // Open the file editor - Fixed function
-    const FileEditor = (fileName: string) => {
+    // Check if device is likely mobile
+    const isMobileDevice = () => {
+        if (typeof window !== "undefined") {
+            return (
+                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                window.innerWidth <= 768
+            );
+        }
+        return false;
+    };
+
+    // Open the file editor
+    const openNanoEditor = (fileName: string) => {
         const currentDir = commandProcessor.getCurrentDirectory();
         const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
         const content = fileSystem.getFileContents(filePath) ?? "";
 
-        // Use the FileEditor via the handleFileEdit function from the Context
+        // Use the FileEditor via handleFileEdit function from Context
         handleFileEdit(filePath, content);
     };
 
@@ -184,7 +195,7 @@ export function Terminal({
             <div className="flex items-center justify-between bg-gray-900 px-3 py-1.5 text-xs text-white">
                 <div className="flex items-center space-x-2">
                     <TerminalIcon className="h-4 w-4" />
-                    <span>
+                    <span className="truncate">
                         {isPlaygroundMode
                             ? t("playground.gitTerminal")
                             : `${t("level.gitTerminal")} - ${currentStage} ${t("level.level")} ${currentLevel}`}
@@ -215,7 +226,7 @@ export function Terminal({
             </div>
 
             <ScrollArea className="flex-grow overflow-auto p-3 font-mono text-sm text-green-500" ref={scrollAreaRef}>
-                <div ref={outputContainerRef} style={{ maxHeight: "350px" }}>
+                <div ref={outputContainerRef} className="pb-4">
                     {terminalOutput.map((line, i) => (
                         <div key={i} className="whitespace-pre-wrap break-words">
                             {line}
@@ -230,8 +241,12 @@ export function Terminal({
             </ScrollArea>
 
             <div className="relative">
-                <form onSubmit={handleFormSubmit} className="flex items-center border-t border-gray-800 px-3 py-2">
-                    <span className="mr-2 shrink-0 font-mono text-xs text-gray-400">{getPrompt()}</span>
+                <form
+                    onSubmit={handleFormSubmit}
+                    className="flex flex-grow items-center border-t border-gray-800 px-2 py-2 sm:px-3">
+                    <span className="mr-1 hidden shrink-0 font-mono text-xs text-gray-400 sm:mr-2 sm:block">
+                        {getPrompt()}
+                    </span>
                     <Input
                         ref={inputRef}
                         type="text"
@@ -242,13 +257,14 @@ export function Terminal({
                         placeholder={t("terminal.enterCommand")}
                         autoComplete="off"
                         spellCheck="false"
+                        onFocus={() => inputRef.current?.scrollIntoView({ behavior: "smooth" })}
                     />
                     <Button
                         type="submit"
                         size="sm"
                         variant="ghost"
                         className="ml-1 text-gray-400 hover:bg-gray-800 hover:text-white">
-                        ↵
+                        <Send className="h-4 w-4" />
                     </Button>
                 </form>
 

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
-import { TerminalIcon, Search, BookOpen, Command } from "lucide-react";
+import { TerminalIcon, Search, BookOpen, Command, ChevronUp, ChevronDown } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -21,11 +21,47 @@ export default function Playground() {
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCommand, setSelectedCommand] = useState<CommandType | null>(null);
+    const [terminalCollapsed, setTerminalCollapsed] = useState(false);
+    const [cheatSheetCollapsed, setCheatSheetCollapsed] = useState(true);
 
     useEffect(() => {
         resetTerminalForPlayground();
+
+        // On mobile, default to showing terminal first
+        const handleResize = () => {
+            if (window.innerWidth <= 768) {
+                setCheatSheetCollapsed(true);
+                setTerminalCollapsed(false);
+            } else {
+                setCheatSheetCollapsed(false);
+                setTerminalCollapsed(false);
+            }
+        };
+
+        // Set initial state
+        handleResize();
+
+        // Add resize listener
+        window.addEventListener("resize", handleResize);
+
+        return () => window.removeEventListener("resize", handleResize);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // Toggle sections on mobile
+    const toggleTerminal = () => {
+        setTerminalCollapsed(!terminalCollapsed);
+        if (window.innerWidth <= 768 && !terminalCollapsed) {
+            setCheatSheetCollapsed(false);
+        }
+    };
+
+    const toggleCheatSheet = () => {
+        setCheatSheetCollapsed(!cheatSheetCollapsed);
+        if (window.innerWidth <= 768 && !cheatSheetCollapsed) {
+            setTerminalCollapsed(false);
+        }
+    };
 
     // Git commands for the cheat sheet
     const gitCommands = [
@@ -184,11 +220,48 @@ export default function Playground() {
         <PageLayout>
             <div className="bg-[#1a1625] text-purple-100">
                 <div className="container mx-auto p-4">
-                    <h1 className="mb-6 text-center text-3xl font-bold text-white">{t("playground.title")}</h1>
-                    <p className="mb-8 text-center text-lg text-purple-300">{t("playground.subtitle")}</p>
+                    <h1 className="mb-4 text-center text-2xl font-bold text-white sm:text-3xl">
+                        {t("playground.title")}
+                    </h1>
+                    <p className="mb-6 text-center text-base text-purple-300 sm:text-lg">{t("playground.subtitle")}</p>
+
+                    {/* Mobile section toggles */}
+                    <div className="mb-4 flex flex-col gap-2 md:hidden">
+                        <Button
+                            variant="outline"
+                            onClick={toggleTerminal}
+                            className="flex w-full items-center justify-between border-purple-700 text-purple-200">
+                            <span className="flex items-center">
+                                <TerminalIcon className="mr-2 h-5 w-5 text-purple-400" />
+                                {t("playground.gitTerminal")}
+                            </span>
+                            {terminalCollapsed ? (
+                                <ChevronDown className="h-5 w-5" />
+                            ) : (
+                                <ChevronUp className="h-5 w-5" />
+                            )}
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            onClick={toggleCheatSheet}
+                            className="flex w-full items-center justify-between border-purple-700 text-purple-200">
+                            <span className="flex items-center">
+                                <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
+                                {t("playground.gitCheatSheet")}
+                            </span>
+                            {cheatSheetCollapsed ? (
+                                <ChevronDown className="h-5 w-5" />
+                            ) : (
+                                <ChevronUp className="h-5 w-5" />
+                            )}
+                        </Button>
+                    </div>
+
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {/* Terminal Side */}
-                        <Card className="border-purple-900/20 bg-purple-900/10">
+                        <Card
+                            className={`border-purple-900/20 bg-purple-900/10 ${terminalCollapsed ? "hidden md:block" : ""}`}>
                             <CardHeader>
                                 <CardTitle className="flex items-center text-white">
                                     <TerminalIcon className="mr-2 h-5 w-5 text-purple-400" />
@@ -197,15 +270,17 @@ export default function Playground() {
                             </CardHeader>
                             <CardContent className="p-0">
                                 <Terminal
-                                    className="h-[500px] rounded-none"
+                                    className="h-[350px] rounded-none md:h-[500px]"
                                     showHelpButton={true}
                                     showResetButton={false}
                                     isPlaygroundMode={true}
                                 />
                             </CardContent>
                         </Card>
+
                         {/* Cheat Sheet Side */}
-                        <Card className="border-purple-900/20 bg-purple-900/10">
+                        <Card
+                            className={`border-purple-900/20 bg-purple-900/10 ${cheatSheetCollapsed ? "hidden md:block" : ""}`}>
                             <CardHeader>
                                 <CardTitle className="flex items-center text-white">
                                     <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
@@ -222,7 +297,7 @@ export default function Playground() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="h-[420px] overflow-y-auto pr-2">
+                                <div className="h-[350px] overflow-y-auto pr-2 md:h-[420px]">
                                     {filteredCommands.map((category, index) => (
                                         <div key={index} className="mb-6">
                                             <h3 className="mb-2 font-medium text-purple-300">{category.category}</h3>
