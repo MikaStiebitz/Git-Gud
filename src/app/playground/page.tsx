@@ -261,23 +261,12 @@ export default function Playground() {
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {/* Terminal Side */}
-                        <Card
-                            className={`border-purple-900/20 bg-purple-900/10 ${terminalCollapsed ? "hidden md:block" : ""}`}>
-                            <CardHeader>
-                                <CardTitle className="flex items-center text-white">
-                                    <TerminalIcon className="mr-2 h-5 w-5 text-purple-400" />
-                                    {t("playground.gitTerminal")}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-0">
-                                <Terminal
-                                    className="h-[350px] rounded-none md:h-[500px]"
-                                    showHelpButton={true}
-                                    showResetButton={false}
-                                    isPlaygroundMode={true}
-                                />
-                            </CardContent>
-                        </Card>
+                        <Terminal
+                            className="h-full rounded-md"
+                            showHelpButton={true}
+                            showResetButton={false}
+                            isPlaygroundMode={true}
+                        />
 
                         {/* Cheat Sheet Side */}
                         <Card

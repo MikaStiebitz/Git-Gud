@@ -61,6 +61,15 @@ const translations = {
         "level.advancedModeOn": "Advanced Mode (On)",
         "level.advancedModeOff": "Advanced Mode (Off)",
         "level.notFound": "Level not found",
+        "level.techModeOn": "Focus on Commands (Tech Mode)",
+        "level.storyModeOn": "Show Story Context (Story Mode)",
+        "level.techModeDescription":
+            "Technical mode focuses on Git commands without stories or context for a faster, more direct experience.",
+        "level.storyModeDescription":
+            "Story mode provides real-world context and explanations to help understand why and how Git commands are used.",
+        "level.editFile": "Edit file",
+        "level.deleteFile": "Delete file",
+        "level.confirmDelete": "Are you sure you want to delete {file}?",
 
         // Playground
         "playground.title": "Git Playground",
@@ -159,6 +168,15 @@ const translations = {
         "level.advancedModeOn": "Fortgeschrittenen-Modus (An)",
         "level.advancedModeOff": "Fortgeschrittenen-Modus (Aus)",
         "level.notFound": "Level nicht gefunden",
+        "level.techModeOn": "Fokus auf Befehle (Tech-Modus)",
+        "level.storyModeOn": "Story-Kontext anzeigen (Story-Modus)",
+        "level.techModeDescription":
+            "Der technische Modus konzentriert sich auf Git-Befehle ohne Geschichten oder Kontext für ein schnelleres, direkteres Erlebnis.",
+        "level.storyModeDescription":
+            "Der Story-Modus bietet Kontext aus der realen Welt und Erklärungen, um zu verstehen, warum und wie Git-Befehle verwendet werden.",
+        "level.editFile": "Datei bearbeiten",
+        "level.deleteFile": "Datei löschen",
+        "level.confirmDelete": "Möchten Sie {file} wirklich löschen?",
 
         // Playground
         "playground.title": "Git Playground",

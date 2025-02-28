@@ -7,7 +7,17 @@ import { FileEditor } from "~/components/FileEditor";
 import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
-import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, BookOpen, Code } from "lucide-react";
+import {
+    HelpCircleIcon,
+    ArrowRightIcon,
+    RotateCcw,
+    Shield,
+    BookOpen,
+    Code,
+    Pencil,
+    Trash2,
+    InfoIcon,
+} from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -37,6 +47,7 @@ export default function LevelPage() {
         toggleAdvancedMode,
         resetTerminalForLevel,
         getEditableFiles,
+        handleCommand,
     } = useGameContext();
 
     const { t } = useLanguage();
@@ -102,16 +113,38 @@ export default function LevelPage() {
         return (
             <div className="mt-4">
                 <h3 className="mb-2 font-medium text-purple-200">{t("level.filesToEdit")}</h3>
-                <div className="space-y-1">
+                <div className="space-y-2">
                     {editableFiles.map(file => (
-                        <Button
-                            key={file.path}
-                            variant="outline"
-                            size="sm"
-                            className="w-full justify-start border-purple-700 text-left text-purple-300 hover:bg-purple-900/50"
-                            onClick={() => openFileEditor(file.path)}>
-                            {file.name}
-                        </Button>
+                        <div key={file.path} className="flex items-center">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 justify-start border-purple-700 text-left text-purple-300 hover:bg-purple-900/50"
+                                onClick={() => openFileEditor(file.path)}>
+                                {file.name}
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="ml-1 h-9 w-9 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-purple-100"
+                                onClick={() => openFileEditor(file.path)}
+                                title={t("level.editFile")}>
+                                <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="ml-1 h-9 w-9 p-0 text-purple-300 hover:bg-red-900/30 hover:text-red-300"
+                                onClick={() => {
+                                    if (window.confirm(t("level.confirmDelete").replace("{file}", file.name))) {
+                                        handleCommand(`rm ${file.path}`, false);
+                                        updateEditableFiles();
+                                    }
+                                }}
+                                title={t("level.deleteFile")}>
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
                     ))}
                 </div>
             </div>
@@ -131,18 +164,32 @@ export default function LevelPage() {
                         <h2 className="text-xl font-semibold text-white">{levelData.name}</h2>
 
                         {/* Advanced Mode Toggle Button */}
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={toggleAdvancedMode}
-                            className={`flex items-center text-xs ${
-                                isAdvancedMode
-                                    ? "border-purple-600 bg-purple-800/30 text-purple-300"
-                                    : "border-purple-700 text-purple-400"
-                            }`}>
-                            <Code className="mr-1 h-3 w-3" />
-                            {isAdvancedMode ? t("level.advancedModeOn") : t("level.advancedModeOff")}
-                        </Button>
+                        <div className="relative">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={toggleAdvancedMode}
+                                className={`flex items-center text-xs ${
+                                    isAdvancedMode
+                                        ? "border-purple-600 bg-purple-800/30 text-purple-300"
+                                        : "border-purple-700 text-purple-400"
+                                }`}>
+                                {isAdvancedMode ? (
+                                    <>
+                                        <Code className="mr-1 h-3 w-3" />
+                                        {t("level.techModeOn")}
+                                    </>
+                                ) : (
+                                    <>
+                                        <BookOpen className="mr-1 h-3 w-3" />
+                                        {t("level.storyModeOn")}
+                                    </>
+                                )}
+                            </Button>
+                            <div className="absolute left-0 top-full z-10 mt-1 hidden w-64 rounded border border-purple-700 bg-purple-900/90 p-2 text-xs text-purple-200 group-hover:block">
+                                {isAdvancedMode ? t("level.techModeDescription") : t("level.storyModeDescription")}
+                            </div>
+                        </div>
                     </div>
 
                     <p className="text-purple-200">{levelData.description}</p>
@@ -321,14 +368,7 @@ export default function LevelPage() {
                                 {renderGitStatus()}
                             </CardContent>
                         </Card>
-                        <Card className="border-purple-900/20 bg-purple-900/10 md:order-1">
-                            <CardHeader>
-                                <CardTitle className="text-white">{t("level.gitTerminal")}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-0">
-                                <Terminal className="h-[400px] rounded-none" />
-                            </CardContent>
-                        </Card>
+                        <Terminal className="h-full rounded-md" />
                     </div>
                     <FileEditor
                         isOpen={isFileEditorOpen}

@@ -9,7 +9,8 @@ export class GitRepository {
     private commits: Record<string, { message: string; timestamp: Date; files: string[] }> = {};
 
     constructor() {
-        this.init();
+        // Start uninitialized - DON'T call this.init() here
+        this.initialized = false;
     }
 
     public partialReset(): void {

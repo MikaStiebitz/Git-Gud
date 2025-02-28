@@ -1,11 +1,9 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
-import { TerminalIcon, HelpCircleIcon, RotateCcw, Send } from "lucide-react";
+import { TerminalIcon, HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle } from "lucide-react";
 import { useLanguage } from "~/contexts/LanguageContext";
 
 interface TerminalProps {
@@ -27,11 +25,10 @@ export function Terminal({
         resetCurrentLevel,
         commandProcessor,
         fileSystem,
+        gitRepository,
         currentStage,
         currentLevel,
         isLevelCompleted,
-        handleFileEdit,
-        openFileEditor,
     } = useGameContext();
 
     const { t } = useLanguage();
@@ -175,17 +172,152 @@ export function Terminal({
         }
     };
 
-    // Get current prompt text (shows current directory)
-    const getPrompt = () => {
+    // Render a fancy Oh My Posh-like prompt
+    const renderFancyPrompt = () => {
         const currentDir = commandProcessor.getCurrentDirectory();
-        return `user@gitgud:${currentDir}$`;
+        const isGitInitialized = gitRepository.isInitialized();
+        const branch = isGitInitialized ? gitRepository.getCurrentBranch() : "";
+
+        // Get git status info
+        const status = gitRepository.getStatus();
+        const stagedCount = Object.values(status).filter(s => s === "staged").length;
+        const modifiedCount = Object.values(status).filter(s => s === "modified").length;
+        const untrackedCount = Object.values(status).filter(s => s === "untracked").length;
+
+        // Format display path
+        const displayPath = currentDir === "/" ? "/" : currentDir;
+        const pathSegments = displayPath.split("/").filter(Boolean);
+        const shortPath = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : "/";
+
+        return (
+            <div className="flex items-center space-x-1">
+                {/* Username segment */}
+                <span className="rounded-r bg-gradient-to-r from-purple-700 to-purple-600 px-2 py-0.5 text-white">
+                    user@gitgud
+                </span>
+
+                {/* Directory segment */}
+                <span className="flex items-center rounded bg-gradient-to-r from-purple-600 to-purple-500 px-2 py-0.5 text-white">
+                    <FileIcon className="mr-1 h-3 w-3" />
+                    {shortPath}
+                </span>
+
+                {/* Git segment - only show if initialized */}
+                {isGitInitialized && (
+                    <span
+                        className={`flex items-center rounded px-2 py-0.5 text-white ${
+                            stagedCount || modifiedCount || untrackedCount
+                                ? "bg-gradient-to-r from-yellow-700 to-yellow-600"
+                                : "bg-gradient-to-r from-green-700 to-green-600"
+                        }`}>
+                        <Github className="mr-1 h-3 w-3" />
+                        {branch}
+
+                        {/* Git status indicators */}
+                        {stagedCount > 0 && (
+                            <span className="ml-1 flex items-center text-green-300">
+                                <Circle className="mr-0.5 h-2 w-2 fill-current" />
+                                {stagedCount}
+                            </span>
+                        )}
+
+                        {modifiedCount > 0 && (
+                            <span className="ml-1 flex items-center text-yellow-300">
+                                <Circle className="mr-0.5 h-2 w-2 fill-current" />
+                                {modifiedCount}
+                            </span>
+                        )}
+
+                        {untrackedCount > 0 && (
+                            <span className="ml-1 flex items-center text-red-300">
+                                <X className="h-3 w-3" />
+                                {untrackedCount}
+                            </span>
+                        )}
+                    </span>
+                )}
+
+                {/* Command prompt symbol */}
+                <span className="text-purple-400">λ</span>
+            </div>
+        );
+    };
+
+    // Format terminal output with colorized git commands
+    const renderTerminalOutput = (line: string) => {
+        // Check if this is a command line (starts with $)
+        if (line.startsWith("$")) {
+            const cmd = line.substring(1).trim();
+            const parts = cmd.split(" ");
+
+            if (parts[0] === "git") {
+                return (
+                    <div>
+                        <span className="text-gray-400">$</span> <span className="text-purple-400">git</span>{" "}
+                        <span className="text-yellow-400">{parts.slice(1).join(" ")}</span>
+                    </div>
+                );
+            }
+
+            return (
+                <div>
+                    <span className="text-gray-400">$</span> <span className="text-green-400">{cmd}</span>
+                </div>
+            );
+        }
+
+        // Match git status output patterns
+        if (line.includes("new file:")) {
+            return (
+                <div>
+                    <span className="text-green-400">{line}</span>
+                </div>
+            );
+        }
+        if (line.includes("modified:")) {
+            return (
+                <div>
+                    <span className="text-yellow-400">{line}</span>
+                </div>
+            );
+        }
+        if (line.includes("deleted:")) {
+            return (
+                <div>
+                    <span className="text-red-400">{line}</span>
+                </div>
+            );
+        }
+        if (line.includes("Initialized empty Git")) {
+            return (
+                <div>
+                    <span className="text-green-400">{line}</span>
+                </div>
+            );
+        }
+        if (line.includes("branch")) {
+            return (
+                <div>
+                    <span className="text-purple-400">{line}</span>
+                </div>
+            );
+        }
+
+        // Default formatting
+        return <div className="text-purple-300">{line}</div>;
     };
 
     return (
-        <div className={`flex h-full flex-col rounded-md border bg-black ${className}`}>
-            <div className="flex items-center justify-between bg-gray-900 px-3 py-1.5 text-xs text-white">
+        <div
+            className={`flex h-[400px] w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}>
+            {/* Terminal header */}
+            <div className="flex items-center justify-between bg-purple-900/50 px-3 py-2 text-sm font-medium text-white">
                 <div className="flex items-center space-x-2">
-                    <TerminalIcon className="h-4 w-4" />
+                    <div className="flex space-x-1.5">
+                        <div className="h-3 w-3 rounded-full bg-red-500"></div>
+                        <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+                        <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                    </div>
                     <span className="truncate">
                         {isPlaygroundMode
                             ? t("playground.gitTerminal")
@@ -197,7 +329,7 @@ export function Terminal({
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0 text-gray-400 hover:bg-gray-800 hover:text-white"
+                            className="h-6 w-6 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-white"
                             onClick={handleShowHelp}
                             title={t("level.showHelp")}>
                             <HelpCircleIcon className="h-4 w-4" />
@@ -207,7 +339,7 @@ export function Terminal({
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0 text-gray-400 hover:bg-gray-800 hover:text-white"
+                            className="h-6 w-6 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-white"
                             onClick={handleReset}
                             title={t("level.resetLevel")}>
                             <RotateCcw className="h-4 w-4" />
@@ -216,11 +348,14 @@ export function Terminal({
                 </div>
             </div>
 
-            <ScrollArea className="flex-grow overflow-auto p-3 font-mono text-sm text-green-500" ref={scrollAreaRef}>
+            {/* Terminal output area */}
+            <ScrollArea
+                className="flex-grow overflow-auto px-4 py-3 font-mono text-sm text-purple-300"
+                ref={scrollAreaRef}>
                 <div ref={outputContainerRef} className="pb-4">
                     {terminalOutput.map((line, i) => (
                         <div key={i} className="whitespace-pre-wrap break-words">
-                            {line}
+                            {renderTerminalOutput(line)}
                         </div>
                     ))}
                     {isLevelCompleted && !isPlaygroundMode && (
@@ -231,20 +366,19 @@ export function Terminal({
                 </div>
             </ScrollArea>
 
+            {/* Terminal input area */}
             <div className="relative">
                 <form
                     onSubmit={handleFormSubmit}
-                    className="flex flex-grow items-center border-t border-gray-800 px-2 py-2 sm:px-3">
-                    <span className="mr-1 hidden shrink-0 font-mono text-xs text-gray-400 sm:mr-2 sm:block">
-                        {getPrompt()}
-                    </span>
+                    className="flex flex-grow items-center border-t border-purple-800/50 px-3 py-2">
+                    <div className="mr-2 hidden sm:block">{renderFancyPrompt()}</div>
                     <Input
                         ref={inputRef}
                         type="text"
                         value={input}
                         onChange={e => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        className="flex-grow border-none bg-transparent font-mono text-sm text-green-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="flex-grow border-none bg-transparent font-mono text-sm text-purple-300 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder={t("terminal.enterCommand")}
                         autoComplete="off"
                         spellCheck="false"
@@ -254,18 +388,18 @@ export function Terminal({
                         type="submit"
                         size="sm"
                         variant="ghost"
-                        className="ml-1 text-gray-400 hover:bg-gray-800 hover:text-white">
+                        className="ml-1 text-purple-400 hover:bg-purple-800/50 hover:text-purple-200">
                         <Send className="h-4 w-4" />
                     </Button>
                 </form>
 
                 {/* Autocomplete dropdown */}
                 {showAutocomplete && fileAutocomplete.length > 0 && (
-                    <div className="absolute bottom-full left-0 right-0 z-10 max-h-32 overflow-y-auto rounded-t border border-gray-700 bg-gray-900 p-1 shadow-lg">
+                    <div className="absolute bottom-full left-0 right-0 z-10 max-h-32 overflow-y-auto rounded-t border border-purple-800 bg-purple-900/70 p-1 shadow-lg">
                         {fileAutocomplete.map(file => (
                             <div
                                 key={file}
-                                className="cursor-pointer rounded px-2 py-1 font-mono text-sm text-green-400 hover:bg-gray-800"
+                                className="cursor-pointer rounded px-2 py-1 font-mono text-sm text-purple-300 hover:bg-purple-800"
                                 onClick={() => selectAutocompleteOption(file)}>
                                 {file}
                             </div>
