@@ -272,11 +272,11 @@ export default function Playground() {
                         <Card
                             className={`border-purple-900/20 bg-purple-900/10 ${cheatSheetCollapsed ? "hidden md:block" : ""}`}>
                             <CardHeader>
-                                <CardTitle className="flex items-center text-white">
+                                <CardTitle className="mb-2 flex items-center text-white">
                                     <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
                                     {t("playground.gitCheatSheet")}
                                 </CardTitle>
-                                <div className="relative mt-2">
+                                <div className="relative">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-purple-400" />
                                     <Input
                                         placeholder={t("playground.searchCommands")}
