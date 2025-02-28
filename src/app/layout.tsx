@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { GameProvider } from "~/contexts/GameContext";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
     title: "GitGud - Learn Git Through Play",
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en" className={`${GeistSans.variable}`}>
             <body className="dark">
+                <Analytics />
                 <GameProvider>{children}</GameProvider>
             </body>
         </html>
