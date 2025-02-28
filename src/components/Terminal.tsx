@@ -76,16 +76,6 @@ export function Terminal({
         return false;
     };
 
-    // Open the file editor
-    const openNanoEditor = (fileName: string) => {
-        const currentDir = commandProcessor.getCurrentDirectory();
-        const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
-        const content = fileSystem.getFileContents(filePath) ?? "";
-
-        // Use the FileEditor via handleFileEdit function from Context
-        handleFileEdit(filePath, content);
-    };
-
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim()) return;
@@ -110,7 +100,8 @@ export function Terminal({
 
     // Process Tab-autocomplete for files
     const handleTabAutocomplete = () => {
-        if (!input.trim().startsWith("nano ") && !input.trim().startsWith("cat ")) return;
+        if (!input.trim().startsWith("nano ") && !input.trim().startsWith("cat ") && !input.trim().startsWith("rm "))
+            return;
 
         const args = input.trim().split(/\s+/);
         if (args.length <= 1) return;

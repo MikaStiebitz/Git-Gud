@@ -66,7 +66,6 @@ export interface FileSystemItem {
     lastModified?: Date;
 }
 
-// Neu: Story-Kontext für jedes Level
 export type StoryContext = {
     title: string;
     narrative: string;
@@ -81,7 +80,6 @@ export type LevelRequirement = {
     successMessage?: string;
 };
 
-// Erweitert: Level mit Story-Kontext
 export type LevelType = {
     id: number;
     name: string;
