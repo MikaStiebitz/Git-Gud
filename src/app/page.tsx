@@ -89,7 +89,7 @@ export default function Home() {
                 <section className="container mx-auto px-4 py-8 text-center sm:py-16">
                     <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-6xl">
                         {t("home.title")}
-                        <span className="text-purple-400"> Play</span>
+                        <span className="text-purple-400"> {t("home.title2")}</span>
                     </h1>
                     <p className="mt-4 text-base text-purple-200 sm:mt-6 sm:text-lg">{t("home.subtitle")}</p>
                     <div className="mt-6 flex flex-col justify-center gap-3 sm:mt-10 sm:flex-row sm:gap-4">

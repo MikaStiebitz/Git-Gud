@@ -20,7 +20,8 @@ const translations = {
         "nav.language": "Language",
 
         // Home Page
-        "home.title": "Master Git Through Play",
+        "home.title": "Master Git Through",
+        "home.title2": "Play",
         "home.subtitle":
             "Learn Git commands and concepts through an interactive game. Progress through levels, complete challenges, and become a Git expert.",
         "home.startLearning": "Start Learning",
@@ -127,7 +128,8 @@ const translations = {
         "nav.language": "Sprache",
 
         // Home Page
-        "home.title": "Meistere Git durch Spielen",
+        "home.title": "Meistere Git durch",
+        "home.title2": "Spielen",
         "home.subtitle":
             "Lerne Git-Befehle und Konzepte durch ein interaktives Spiel. Schreite durch Level fort, löse Herausforderungen und werde ein Git-Experte.",
         "home.startLearning": "Starte Lernen",

@@ -366,6 +366,7 @@ export class CommandProcessor {
         return [
             "Available commands:",
             "  git - Git version control commands",
+            "  git help - Display Git help",
             "  ls - List directory contents",
             "  cd [directory] - Change directory",
             "  pwd - Print working directory",
