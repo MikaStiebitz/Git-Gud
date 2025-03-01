@@ -15,6 +15,7 @@ export class GitRepository {
 
     public partialReset(): void {
         // Keep initialized state, but reset other properties
+        this.initialized = true;
         this.branches = ["main"];
         this.currentBranch = "main";
         this.HEAD = "main";

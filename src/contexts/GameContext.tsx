@@ -79,7 +79,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // If this level requires a fresh git repo, do a full reset
         if (level?.resetGitRepo) {
             gitRepository.reset();
+            console.log("Full reset");
         } else {
+            console.log("Partial reset");
             // Otherwise do a partial reset to maintain initialized state but clear other state
             gitRepository.partialReset();
         }
