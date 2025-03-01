@@ -77,17 +77,6 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                         </Link>
                     )}
 
-                    {!isLevelPage && (
-                        <Link href="/level">
-                            <Button
-                                variant="ghost"
-                                className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
-                                <Terminal className="mr-2 h-4 w-4" />
-                                {t("nav.terminal")}
-                            </Button>
-                        </Link>
-                    )}
-
                     {!isPlaygroundPage && (
                         <Link href="/playground">
                             <Button
@@ -99,14 +88,12 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                         </Link>
                     )}
 
-                    {isHomePage && (
-                        <Link href="/level">
-                            <Button className="bg-purple-600 text-white hover:bg-purple-700">
-                                <Code className="mr-2 h-4 w-4" />
-                                {t("nav.startLearning")}
-                            </Button>
-                        </Link>
-                    )}
+                    <Link href="/level">
+                        <Button className="bg-purple-600 text-white hover:bg-purple-700">
+                            <Code className="mr-2 h-4 w-4" />
+                            {t("nav.startLearning")}
+                        </Button>
+                    </Link>
                 </div>
 
                 {/* Mobile menu button */}

@@ -55,15 +55,49 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Add a function to reset terminal for playground mode
     const resetTerminalForPlayground = () => {
+        // First reset the git repository to ensure a clean state
+        gitRepository.reset();
+
+        // Reset the file system to initial state
+        // This is a simple approach - you might want to implement a proper reset method in FileSystem class
+        fileSystem.mkdir("/");
+        fileSystem.writeFile("/README.md", "# Git Learning Game\n\nWelcome to the Git learning game!");
+        fileSystem.mkdir("/src");
+        fileSystem.writeFile("/src/index.js", 'console.log("Hello, Git!");');
+
+        // Reset the terminal output
         setTerminalOutput([t("terminal.welcome"), t("terminal.playgroundMode")]);
+
+        // Reset the command processor's current directory
+        commandProcessor.setCurrentDirectory("/");
     };
 
     // Add a function to reset terminal for level mode
     const resetTerminalForLevel = () => {
+        const level = levelManager.getLevel(currentStage, currentLevel);
+
+        // If this level requires a fresh git repo, do a full reset
+        if (level?.resetGitRepo) {
+            gitRepository.reset();
+        } else {
+            // Otherwise do a partial reset to maintain initialized state but clear other state
+            gitRepository.partialReset();
+        }
+
+        // Reset to standard file system
+        fileSystem.mkdir("/");
+        fileSystem.writeFile("/README.md", "# Git Learning Game\n\nWelcome to the Git learning game!");
+        fileSystem.mkdir("/src");
+        fileSystem.writeFile("/src/index.js", 'console.log("Hello, Git!");');
+
+        // Reset the terminal output
         setTerminalOutput([
             t("terminal.welcome"),
             t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
         ]);
+
+        // Reset the command processor's current directory
+        commandProcessor.setCurrentDirectory("/");
     };
 
     // State for FileEditor

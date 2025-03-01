@@ -20,12 +20,27 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
     const { t } = useLanguage();
     const [content, setContent] = useState(initialContent);
     const [isDirty, setIsDirty] = useState(false);
+    const [viewportHeight, setViewportHeight] = useState(0);
 
     // Reset content when the file changes
     useEffect(() => {
         setContent(initialContent);
         setIsDirty(false);
     }, [initialContent, fileName]);
+
+    // Track viewport height for responsive sizing
+    useEffect(() => {
+        const updateViewportHeight = () => {
+            setViewportHeight(window.innerHeight);
+        };
+
+        // Set initial height
+        updateViewportHeight();
+
+        // Update on resize
+        window.addEventListener("resize", updateViewportHeight);
+        return () => window.removeEventListener("resize", updateViewportHeight);
+    }, []);
 
     const handleSave = () => {
         if (isDirty) {
@@ -57,12 +72,37 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
         return false;
     };
 
+    // Calculate editor height based on viewport
+    const getEditorHeight = () => {
+        // Base height on viewport size, smaller percentage for small screens
+        const isMobile = isMobileDevice();
+        const heightPercentage = isMobile ? 40 : 60;
+        return `${Math.min(heightPercentage, 60)}vh`;
+    };
+
+    // Handle keyboard shortcuts
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        // Support Ctrl+Enter or Cmd+Enter to save
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            e.preventDefault();
+            handleSave();
+        }
+
+        // Use Escape to cancel
+        if (e.key === "Escape") {
+            e.preventDefault();
+            handleCancel();
+        }
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-h-[90vh] max-w-[90vw] border-purple-900/20 bg-[#1a1625] text-purple-100 md:max-h-[80vh] md:max-w-3xl">
-                <DialogHeader className="flex flex-row items-center justify-between">
+            <DialogContent
+                className="h-[90vh] max-h-[90vh] w-[95vw] max-w-[95vw] border-purple-900/20 bg-[#1a1625] p-3 text-purple-100 sm:h-[85vh] sm:max-h-[85vh] sm:w-[90vw] sm:max-w-[90vw] sm:p-6 md:h-[80vh] md:max-h-[80vh] md:w-[85vw] md:max-w-[85vw] lg:h-auto lg:w-auto lg:max-w-4xl"
+                onKeyDown={handleKeyDown}>
+                <DialogHeader className="mb-2 flex flex-row items-center justify-between">
                     <DialogTitle className="mr-2 flex items-center text-white">
-                        <span className="max-w-[200px] truncate md:max-w-md">{fileName}</span>
+                        <span className="max-w-[150px] truncate sm:max-w-[200px] md:max-w-md">{fileName}</span>
                         <span className="ml-2 text-xs text-purple-400">
                             {isDirty ? `(${t("editor.unsaved")})` : ""}
                         </span>
@@ -72,19 +112,22 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
                     </Button>
                 </DialogHeader>
 
-                <div className="relative h-[50vh] flex-grow overflow-hidden rounded border border-purple-800/30 md:max-h-[60vh]">
+                <div
+                    className="relative flex-grow overflow-hidden rounded border border-purple-800/30"
+                    style={{ height: getEditorHeight() }}>
                     <div className="absolute left-0 top-0 z-10 w-full bg-purple-900/50 px-3 py-1 text-xs text-purple-300">
                         {t("editor.fileContent")}
                     </div>
                     <Textarea
                         value={content}
                         onChange={handleContentChange}
-                        className="h-full min-h-[200px] resize-none bg-purple-900/10 pt-7 font-mono text-sm text-purple-200"
+                        className="h-full w-full resize-none bg-purple-900/10 pt-7 font-mono text-xs text-purple-200 focus-visible:ring-purple-500 sm:text-sm"
                         autoFocus={!isMobileDevice()}
+                        onKeyDown={handleKeyDown}
                     />
                 </div>
 
-                <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+                <DialogFooter className="mt-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
                     <div className="hidden text-xs text-purple-400 md:block">{t("editor.escToCancel")}</div>
                     <div className="flex w-full gap-2 sm:w-auto">
                         <Button
