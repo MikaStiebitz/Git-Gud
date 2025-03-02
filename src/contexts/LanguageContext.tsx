@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 type Language = "de" | "en";
 
-type LanguageContextType = {
+export type LanguageContextType = {
     language: Language;
     setLanguage: (lang: Language) => void;
     t: (key: string) => string;

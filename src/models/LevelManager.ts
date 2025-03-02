@@ -1,5 +1,4 @@
 import type { StageType, LevelType } from "~/types";
-import type { LanguageContextType } from "~/contexts/LanguageContext";
 
 export class LevelManager {
     private stages: Record<string, StageType>;
