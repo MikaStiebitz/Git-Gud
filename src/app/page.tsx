@@ -32,8 +32,8 @@ export default function Home() {
         };
     }, [progressManager]);
 
-    // Get all stages
-    const stages = levelManager.getAllStages();
+    // Get all stages with translated content
+    const stages = levelManager.getAllStages(t);
 
     // Get stage icon component
     const getStageIcon = (stageId: string) => {
@@ -157,7 +157,7 @@ export default function Home() {
                                                     {stageData.description}
                                                 </p>
                                                 <div className="mt-4 flex flex-wrap gap-2">
-                                                    {Object.entries(stageData.levels).map(([levelId]) => {
+                                                    {Object.entries(stageData.levels).map(([levelId, levelData]) => {
                                                         const level = parseInt(levelId);
                                                         const levelUnlocked = isLevelUnlocked(stageId, level);
                                                         const levelCompleted = isLevelCompleted(stageId, level);

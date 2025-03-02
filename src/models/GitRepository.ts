@@ -79,6 +79,11 @@ export class GitRepository {
         return commitId;
     }
 
+    // Get all commits
+    public getCommits(): Record<string, { message: string; timestamp: Date; files: string[] }> {
+        return { ...this.commits };
+    }
+
     // Create a new branch
     public createBranch(name: string): boolean {
         if (!this.initialized || this.branches.includes(name)) return false;

@@ -303,6 +303,46 @@ export function Terminal({
             );
         }
 
+        // Handle untracked files section in git status output
+        if (line.trim() === "Untracked files:") {
+            return (
+                <div>
+                    <span className="font-semibold text-red-400">{line}</span>
+                </div>
+            );
+        }
+
+        // Color specific files listed under "Untracked files:"
+        if (
+            line.trim().startsWith("  ") &&
+            !line.includes(":") &&
+            terminalOutput.some(l => l.includes("Untracked files:"))
+        ) {
+            return (
+                <div>
+                    <span className="text-red-400">{line}</span>
+                </div>
+            );
+        }
+
+        // Changes to be committed (staged files) - header
+        if (line.trim() === "Changes to be committed:") {
+            return (
+                <div>
+                    <span className="font-semibold text-green-400">{line}</span>
+                </div>
+            );
+        }
+
+        // Working tree clean message
+        if (line.includes("working tree clean")) {
+            return (
+                <div>
+                    <span className="text-green-400">{line}</span>
+                </div>
+            );
+        }
+
         // Default formatting
         return <div className="text-purple-300">{line}</div>;
     };

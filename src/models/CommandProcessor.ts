@@ -72,6 +72,10 @@ export class CommandProcessor {
                 return this.processGitCheckoutCommand(args.slice(1));
             case "merge":
                 return this.processGitMergeCommand(args.slice(1));
+            case "mv":
+                return this.processGitMvCommand(args.slice(1));
+            case "log":
+                return this.processGitLogCommand();
             case "help":
                 return this.processGitHelpCommand();
             default:
@@ -236,6 +240,74 @@ export class CommandProcessor {
             : [`Cannot merge branch '${branch}'.`];
     }
 
+    // Process git mv command (new)
+    private processGitMvCommand(args: string[]): string[] {
+        if (args.length < 2) {
+            return ["git mv: missing destination file after '" + (args[0] || "") + "'"];
+        }
+
+        const sourcePath = this.resolvePath(args[0] ?? "");
+        const destPath = this.resolvePath(args[1] ?? "");
+
+        // Check if source file exists
+        if (this.fileSystem.getFileContents(sourcePath) === null) {
+            return [`error: failed to move '${args[0]}': No such file or directory`];
+        }
+
+        // Get the file content
+        const fileContent = this.fileSystem.getFileContents(sourcePath);
+
+        // If we have content, create the new file
+        if (fileContent !== null) {
+            const success = this.fileSystem.writeFile(destPath, fileContent);
+
+            if (success) {
+                // Delete the old file
+                this.fileSystem.delete(sourcePath);
+
+                // Update git status
+                // First make sure we reflect the deletion
+                this.gitRepository.updateFileStatus(sourcePath, "deleted");
+
+                // Then show the new file as staged
+                this.gitRepository.updateFileStatus(destPath, "staged");
+
+                return [`Renamed ${args[0]} => ${args[1]}`];
+            } else {
+                return [`error: failed to move '${args[0]}' to '${args[1]}'`];
+            }
+        }
+
+        return [`error: failed to move '${args[0]}' to '${args[1]}'`];
+    }
+
+    // Process git log command (new)
+    private processGitLogCommand(): string[] {
+        const commits = this.gitRepository.getCommits();
+
+        if (Object.keys(commits).length === 0) {
+            return ["No commits yet"];
+        }
+
+        const output: string[] = [];
+
+        // Show commits in reverse chronological order (newest first)
+        Object.entries(commits)
+            .reverse()
+            .forEach(([commitId, commit]) => {
+                const shortId = commitId.substring(0, 7);
+                const date = commit.timestamp.toISOString().split("T")[0];
+
+                output.push(`commit ${commitId}`);
+                output.push(`Date: ${date}`);
+                output.push("");
+                output.push(`    ${commit.message}`);
+                output.push("");
+            });
+
+        return output;
+    }
+
     // Process git help command
     private processGitHelpCommand(): string[] {
         return [
@@ -249,6 +321,8 @@ export class CommandProcessor {
             "  git checkout <branch> - Switch branches",
             "  git checkout -b <branch> - Create and switch to a new branch",
             "  git merge <branch> - Join two development histories together",
+            "  git mv <source> <dest> - Move or rename a file",
+            "  git log - Show commit history",
         ];
     }
 

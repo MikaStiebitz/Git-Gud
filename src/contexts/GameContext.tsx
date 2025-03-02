@@ -74,7 +74,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Add a function to reset terminal for level mode
     const resetTerminalForLevel = () => {
-        const level = levelManager.getLevel(currentStage, currentLevel);
+        const level = levelManager.getLevel(currentStage, currentLevel, t);
 
         // If this level requires a fresh git repo, do a full reset
         if (level?.resetGitRepo) {
@@ -191,7 +191,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 progressManager.setCurrentLevel(stageId, levelId);
 
                 // Get the next level data to check if we should reset the git repo
-                const nextLevel = levelManager.getLevel(stageId, levelId);
+                const nextLevel = levelManager.getLevel(stageId, levelId, t);
 
                 // Only completely reset the repository if the next level requires it
                 if (nextLevel?.resetGitRepo) {

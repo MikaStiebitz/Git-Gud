@@ -57,8 +57,8 @@ export default function LevelPage() {
     const [showStoryDialog, setShowStoryDialog] = useState(false);
     const [editableFiles, setEditableFiles] = useState<Array<{ name: string; path: string }>>([]);
 
-    // Get the current level data
-    const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel);
+    // Get the current level data with translation
+    const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel, t);
     const progress = progressManager.getProgress();
 
     // Reset terminal once when the component mounts

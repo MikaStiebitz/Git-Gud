@@ -26,8 +26,8 @@ export function StoryDialog({
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-h-[90vh] max-w-[90vw] border-purple-900/20 bg-[#1a1625] text-purple-100 md:max-h-[80vh] md:max-w-3xl">
-                <DialogHeader>
-                    <div className="flex items-center justify-between">
+                <DialogHeader className="pb-2">
+                    <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between">
                         <DialogTitle className="flex items-center text-white">
                             <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
                             {story.title}
@@ -36,11 +36,11 @@ export function StoryDialog({
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className={`flex items-center text-xs ${
+                                className={`mr-6 flex items-center text-xs ${
                                     isAdvancedMode
                                         ? "border-purple-600 bg-purple-800/30 text-purple-300"
                                         : "border-purple-700 text-purple-400"
-                                }`}
+                                } mt-2 sm:mt-0`}
                                 onClick={onToggleAdvancedMode}>
                                 <Code className="mr-1 h-3 w-3" />
                                 {isAdvancedMode ? t("level.advancedModeOn") : t("level.advancedModeOff")}
@@ -49,7 +49,7 @@ export function StoryDialog({
                     </div>
                 </DialogHeader>
 
-                <div className="space-y-4 py-4">
+                <div className="space-y-4 overflow-y-auto py-4">
                     <div className="whitespace-pre-line text-purple-200">{story.narrative}</div>
 
                     <div className="rounded-md border border-purple-800/30 bg-purple-900/30 p-3">
@@ -64,7 +64,7 @@ export function StoryDialog({
                 </div>
 
                 <DialogFooter>
-                    <Button onClick={onClose} className="bg-purple-600 text-white hover:bg-purple-700">
+                    <Button onClick={onClose} className="w-full bg-purple-600 text-white hover:bg-purple-700 sm:w-auto">
                         {t("level.startCoding")}
                     </Button>
                 </DialogFooter>
