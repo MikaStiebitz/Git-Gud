@@ -54,7 +54,7 @@ export type GitCommand = CommandType & {
     requiresInitializedRepo?: boolean;
 };
 
-export type FileStatus = "untracked" | "modified" | "staged" | "committed";
+export type FileStatus = "untracked" | "modified" | "staged" | "committed" | "deleted";
 
 export type GitStatus = Record<string, FileStatus>;
 

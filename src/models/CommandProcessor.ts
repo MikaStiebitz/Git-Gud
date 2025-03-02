@@ -243,7 +243,7 @@ export class CommandProcessor {
     // Process git mv command (new)
     private processGitMvCommand(args: string[]): string[] {
         if (args.length < 2) {
-            return ["git mv: missing destination file after '" + (args[0] || "") + "'"];
+            return ["git mv: missing destination file after '" + (args[0] ?? "") + "'"];
         }
 
         const sourcePath = this.resolvePath(args[0] ?? "");
