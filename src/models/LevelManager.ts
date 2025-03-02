@@ -102,6 +102,27 @@ export class LevelManager {
                             taskIntroduction: "files.level2.story.taskIntroduction",
                         },
                     },
+                    3: {
+                        id: 3,
+                        name: "files.level3.name",
+                        description: "files.level3.description",
+                        objectives: ["files.level3.objective1"],
+                        hints: ["files.level3.hint1", "files.level3.hint2"],
+                        requirements: [
+                            {
+                                command: "git rm",
+                                requiresArgs: ["any"],
+                                description: "files.level3.requirement1.description",
+                                successMessage: "files.level3.requirement1.success",
+                            },
+                        ],
+                        story: {
+                            title: "files.level3.story.title",
+                            narrative: "files.level3.story.narrative",
+                            realWorldContext: "files.level3.story.realWorldContext",
+                            taskIntroduction: "files.level3.story.taskIntroduction",
+                        },
+                    },
                 },
             },
             Branches: {
@@ -151,6 +172,26 @@ export class LevelManager {
                             taskIntroduction: "branches.level2.story.taskIntroduction",
                         },
                     },
+                    3: {
+                        id: 3,
+                        name: "branches.level3.name",
+                        description: "branches.level3.description",
+                        objectives: ["branches.level3.objective1"],
+                        hints: ["branches.level3.hint1", "branches.level3.hint2"],
+                        requirements: [
+                            {
+                                command: "git switch",
+                                description: "branches.level3.requirement1.description",
+                                successMessage: "branches.level3.requirement1.success",
+                            },
+                        ],
+                        story: {
+                            title: "branches.level3.story.title",
+                            narrative: "branches.level3.story.narrative",
+                            realWorldContext: "branches.level3.story.realWorldContext",
+                            taskIntroduction: "branches.level3.story.taskIntroduction",
+                        },
+                    },
                 },
             },
             Merge: {
@@ -178,6 +219,76 @@ export class LevelManager {
                             narrative: "merge.level1.story.narrative",
                             realWorldContext: "merge.level1.story.realWorldContext",
                             taskIntroduction: "merge.level1.story.taskIntroduction",
+                        },
+                    },
+                    2: {
+                        id: 2,
+                        name: "merge.level2.name",
+                        description: "merge.level2.description",
+                        objectives: ["merge.level2.objective1"],
+                        hints: ["merge.level2.hint1", "merge.level2.hint2"],
+                        requirements: [
+                            {
+                                command: "git merge",
+                                requiresArgs: ["--abort"],
+                                description: "merge.level2.requirement1.description",
+                                successMessage: "merge.level2.requirement1.success",
+                            },
+                        ],
+                        story: {
+                            title: "merge.level2.story.title",
+                            narrative: "merge.level2.story.narrative",
+                            realWorldContext: "merge.level2.story.realWorldContext",
+                            taskIntroduction: "merge.level2.story.taskIntroduction",
+                        },
+                    },
+                },
+            },
+            Remote: {
+                id: "remote",
+                name: "remote.name",
+                description: "remote.description",
+                icon: "🌐",
+                levels: {
+                    1: {
+                        id: 1,
+                        name: "remote.level1.name",
+                        description: "remote.level1.description",
+                        objectives: ["remote.level1.objective1"],
+                        hints: ["remote.level1.hint1", "remote.level1.hint2"],
+                        requirements: [
+                            {
+                                command: "git remote",
+                                requiresArgs: ["add"],
+                                description: "remote.level1.requirement1.description",
+                                successMessage: "remote.level1.requirement1.success",
+                            },
+                        ],
+                        story: {
+                            title: "remote.level1.story.title",
+                            narrative: "remote.level1.story.narrative",
+                            realWorldContext: "remote.level1.story.realWorldContext",
+                            taskIntroduction: "remote.level1.story.taskIntroduction",
+                        },
+                    },
+                    2: {
+                        id: 2,
+                        name: "remote.level2.name",
+                        description: "remote.level2.description",
+                        objectives: ["remote.level2.objective1"],
+                        hints: ["remote.level2.hint1", "remote.level2.hint2"],
+                        requirements: [
+                            {
+                                command: "git push",
+                                description: "remote.level2.requirement1.description",
+                                successMessage: "remote.level2.requirement1.success",
+                            },
+                        ],
+                        story: {
+                            title: "remote.level2.story.title",
+                            narrative: "remote.level2.story.narrative",
+                            realWorldContext: "remote.level2.story.realWorldContext",
+                            taskIntroduction: "remote.level2.story.taskIntroduction",
                         },
                     },
                 },

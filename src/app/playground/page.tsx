@@ -10,6 +10,7 @@ import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { useLanguage } from "~/contexts/LanguageContext";
 import type { CommandType } from "~/types";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
 
 // Dynamically import Terminal component with SSR disabled
 const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
@@ -105,6 +106,24 @@ export default function Playground() {
                         "Creates a new commit with all staged changes. The message should be a short, precise description of what was changed.",
                     ),
                 },
+                {
+                    name: "git config",
+                    description: t("Configure Git settings"),
+                    usage: "git config [--global] <key> <value>",
+                    example: 'git config --global user.name "Your Name"',
+                    explanation: t(
+                        "Sets configuration values for your user name, email, editor, and other preferences. Use --global to apply settings to all repositories.",
+                    ),
+                },
+                {
+                    name: "git help",
+                    description: t("Display help information"),
+                    usage: "git help <command>",
+                    example: "git help commit",
+                    explanation: t(
+                        "Shows detailed help information for any Git command. You can also use 'git <command> --help' for the same information.",
+                    ),
+                },
             ],
         },
         {
@@ -137,6 +156,65 @@ export default function Playground() {
                         "Integrates changes from the specified branch into the current branch. This creates a merge commit if it's not a fast-forward situation.",
                     ),
                 },
+                {
+                    name: "git switch",
+                    description: t("Switch to a specified branch"),
+                    usage: "git switch <branch> or git switch -c <new-branch>",
+                    example: "git switch main",
+                    explanation: t(
+                        "Modern alternative to 'git checkout' for switching branches. Use '-c' to create and switch to a new branch in one command.",
+                    ),
+                },
+                {
+                    name: "git branch -d",
+                    description: t("Delete a branch"),
+                    usage: "git branch -d <branch>",
+                    example: "git branch -d feature-login",
+                    explanation: t(
+                        "Deletes the specified branch if it has been fully merged. Use '-D' instead of '-d' to force deletion even if not merged.",
+                    ),
+                },
+            ],
+        },
+        {
+            category: t("category.history"),
+            commands: [
+                {
+                    name: "git log",
+                    description: t("Shows the commit history"),
+                    usage: "git log [options]",
+                    example: "git log --oneline --graph",
+                    explanation: t(
+                        "Shows the commit history with details like author, date, and message. Many options available to customize the output format.",
+                    ),
+                },
+                {
+                    name: "git diff",
+                    description: t("Show changes between commits"),
+                    usage: "git diff [<commit>] [<commit>]",
+                    example: "git diff HEAD~1 HEAD",
+                    explanation: t(
+                        "Shows the differences between two commits, commit and working tree, etc. Without arguments, shows changes in working directory that aren't staged.",
+                    ),
+                },
+                {
+                    name: "git show",
+                    description: t("Show various Git objects"),
+                    usage: "git show [<commit>]",
+                    example: "git show HEAD",
+                    explanation: t(
+                        "Shows information about a git object. For commits, shows the commit message and the differences it introduced.",
+                    ),
+                },
+                {
+                    name: "git blame",
+                    description: t("Show who changed what in a file"),
+                    usage: "git blame <file>",
+                    example: "git blame index.html",
+                    explanation: t(
+                        "Shows who made each change to a file, line by line, and in which commit. Useful for understanding the history of a specific file.",
+                    ),
+                },
             ],
         },
         {
@@ -167,6 +245,56 @@ export default function Playground() {
                         "Sends your local commits to a remote repository. Others can then see and fetch your changes.",
                     ),
                 },
+                {
+                    name: "git remote",
+                    description: t("Manage remote repositories"),
+                    usage: "git remote add <name> <url>",
+                    example: "git remote add origin https://github.com/user/repo.git",
+                    explanation: t(
+                        "Lists, adds, or removes remote repositories. Use 'git remote -v' to see the URLs of your remotes.",
+                    ),
+                },
+                {
+                    name: "git fetch",
+                    description: t("Download objects and refs from remote"),
+                    usage: "git fetch [remote]",
+                    example: "git fetch origin",
+                    explanation: t(
+                        "Downloads all branches and commits from a remote repository without merging them into your local branches.",
+                    ),
+                },
+            ],
+        },
+        {
+            category: t("category.undoing"),
+            commands: [
+                {
+                    name: "git restore",
+                    description: t("Restore working tree files"),
+                    usage: "git restore <file> or git restore --staged <file>",
+                    example: "git restore --staged index.html",
+                    explanation: t(
+                        "Undoes changes to your working tree (with no options) or removes files from the staging area (with --staged).",
+                    ),
+                },
+                {
+                    name: "git reset",
+                    description: t("Reset current HEAD to a specific state"),
+                    usage: "git reset [--soft | --mixed | --hard] [commit]",
+                    example: "git reset --hard HEAD~1",
+                    explanation: t(
+                        "Resets your branch to a specific commit. --soft keeps changes in staging area, --mixed (default) unstages them, --hard discards all changes.",
+                    ),
+                },
+                {
+                    name: "git revert",
+                    description: t("Create commit that undoes changes"),
+                    usage: "git revert <commit>",
+                    example: "git revert HEAD",
+                    explanation: t(
+                        "Creates a new commit that undoes the changes made by an earlier commit. Safer than reset for shared branches.",
+                    ),
+                },
             ],
         },
         {
@@ -191,12 +319,30 @@ export default function Playground() {
                     ),
                 },
                 {
-                    name: "git log",
-                    description: t("Shows the commit history"),
-                    usage: "git log",
-                    example: "git log --oneline",
+                    name: "git tag",
+                    description: t("Create, list, delete tags"),
+                    usage: "git tag [name] [commit]",
+                    example: "git tag v1.0.0",
                     explanation: t(
-                        "Shows the commit history with details like author, date, and message. You can customize the output with various flags.",
+                        "Tags are references to specific points in Git history, typically used for marking version releases. Use with -a for annotated tags.",
+                    ),
+                },
+                {
+                    name: "git cherry-pick",
+                    description: t("Apply changes from specific commits"),
+                    usage: "git cherry-pick <commit>",
+                    example: "git cherry-pick abc123",
+                    explanation: t(
+                        "Applies the changes from specific commits to your current branch. Useful for selectively bringing changes from one branch to another.",
+                    ),
+                },
+                {
+                    name: "git bisect",
+                    description: t("Use binary search to find bugs"),
+                    usage: "git bisect <subcommand>",
+                    example: "git bisect start",
+                    explanation: t(
+                        "Helps find which commit introduced a bug using binary search. Mark commits as 'good' or 'bad' to narrow down the problem.",
                     ),
                 },
             ],
@@ -288,69 +434,7 @@ export default function Playground() {
                             </CardHeader>
                             <CardContent>
                                 <div className="h-[350px] overflow-y-auto pr-2 md:h-[420px]">
-                                    {filteredCommands.map((category, index) => (
-                                        <div key={index} className="mb-6">
-                                            <h3 className="mb-2 font-medium text-purple-300">{category.category}</h3>
-                                            <div className="space-y-2">
-                                                {category.commands.map((command, cmdIndex) => (
-                                                    <div
-                                                        key={cmdIndex}
-                                                        className={`cursor-pointer rounded-md border border-purple-800/40 p-2.5 transition-colors hover:bg-purple-800/20 ${
-                                                            selectedCommand === command
-                                                                ? "border-purple-600/60 bg-purple-800/30"
-                                                                : ""
-                                                        }`}
-                                                        onClick={() =>
-                                                            setSelectedCommand(
-                                                                selectedCommand === command ? null : command,
-                                                            )
-                                                        }>
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="flex items-center font-mono text-sm font-semibold text-white">
-                                                                <Command className="mr-1.5 h-3.5 w-3.5 text-purple-400" />
-                                                                {command.name}
-                                                            </span>
-                                                            <span className="text-xs text-purple-400">
-                                                                {selectedCommand === command ? "▼" : "▶"}
-                                                            </span>
-                                                        </div>
-                                                        <div className="mt-1 text-sm text-purple-300">
-                                                            {command.description}
-                                                        </div>
-                                                        {selectedCommand === command && (
-                                                            <div className="mt-3 rounded border border-purple-800/30 bg-purple-900/20 p-3">
-                                                                <div className="mb-2">
-                                                                    <span className="text-xs font-medium text-purple-400">
-                                                                        {t("playground.usage")}
-                                                                    </span>
-                                                                    <pre className="mt-1 overflow-x-auto rounded bg-black/20 p-1.5 font-mono text-xs text-green-400">
-                                                                        {command.usage}
-                                                                    </pre>
-                                                                </div>
-                                                                <div className="mb-2">
-                                                                    <span className="text-xs font-medium text-purple-400">
-                                                                        {t("playground.example")}
-                                                                    </span>
-                                                                    <pre className="mt-1 overflow-x-auto rounded bg-black/20 p-1.5 font-mono text-xs text-green-400">
-                                                                        {command.example}
-                                                                    </pre>
-                                                                </div>
-                                                                <div>
-                                                                    <span className="text-xs font-medium text-purple-400">
-                                                                        {t("playground.explanation")}
-                                                                    </span>
-                                                                    <p className="mt-1 text-xs text-purple-200">
-                                                                        {command.explanation}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                    {filteredCommands.length === 0 && (
+                                    {filteredCommands.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-12 text-center">
                                             <Search className="mb-2 h-8 w-8 text-purple-500" />
                                             <p className="text-purple-400">
@@ -364,6 +448,64 @@ export default function Playground() {
                                                 {t("playground.resetSearch")}
                                             </Button>
                                         </div>
+                                    ) : (
+                                        <Accordion type="single" collapsible className="space-y-4">
+                                            {filteredCommands.map((category, index) => (
+                                                <div key={index} className="mb-6">
+                                                    <h3 className="mb-2 font-medium text-purple-300">
+                                                        {category.category}
+                                                    </h3>
+                                                    <div className="space-y-2">
+                                                        {category.commands.map((command, cmdIndex) => (
+                                                            <AccordionItem
+                                                                key={cmdIndex}
+                                                                value={`${index}-${cmdIndex}`}
+                                                                className="overflow-hidden rounded-md border border-purple-800/40">
+                                                                <AccordionTrigger className="px-3 py-2 hover:bg-purple-800/20 hover:no-underline">
+                                                                    <div>
+                                                                        <div className="flex items-center justify-between">
+                                                                            <span className="flex items-center font-mono text-sm font-semibold text-white">
+                                                                                <Command className="mr-1.5 h-3.5 w-3.5 text-purple-400" />
+                                                                                {command.name}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="mt-1 text-sm text-purple-300">
+                                                                            {command.description}
+                                                                        </div>
+                                                                    </div>
+                                                                </AccordionTrigger>
+                                                                <AccordionContent className="border-t border-purple-800/30 bg-purple-900/20 px-3 py-3">
+                                                                    <div className="mb-2">
+                                                                        <span className="text-xs font-medium text-purple-400">
+                                                                            {t("playground.usage")}
+                                                                        </span>
+                                                                        <pre className="mt-1 overflow-x-auto rounded bg-black/20 p-1.5 font-mono text-xs text-green-400">
+                                                                            {command.usage}
+                                                                        </pre>
+                                                                    </div>
+                                                                    <div className="mb-2">
+                                                                        <span className="text-xs font-medium text-purple-400">
+                                                                            {t("playground.example")}
+                                                                        </span>
+                                                                        <pre className="mt-1 overflow-x-auto rounded bg-black/20 p-1.5 font-mono text-xs text-green-400">
+                                                                            {command.example}
+                                                                        </pre>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span className="text-xs font-medium text-purple-400">
+                                                                            {t("playground.explanation")}
+                                                                        </span>
+                                                                        <p className="mt-1 text-xs text-purple-200">
+                                                                            {command.explanation}
+                                                                        </p>
+                                                                    </div>
+                                                                </AccordionContent>
+                                                            </AccordionItem>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </Accordion>
                                     )}
                                 </div>
                             </CardContent>

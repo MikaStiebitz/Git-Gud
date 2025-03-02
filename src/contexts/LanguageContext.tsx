@@ -90,6 +90,8 @@ const translations = {
         "category.branches": "Branches",
         "category.remoteRepos": "Remote Repositories",
         "category.advanced": "Advanced Commands",
+        "category.history": "Commit History",
+        "category.undoing": "Undoing Changes",
 
         // File Editor
         "editor.fileContent": "File Content",
@@ -184,6 +186,20 @@ const translations = {
             "Good commit messages are extremely important in development teams. They help everyone understand why a change was made, not just what was changed.",
         "files.level2.story.taskIntroduction": "Create your first commit with a meaningful message.",
 
+        "files.level3.name": "Removing Files",
+        "files.level3.description": "Learn how to remove files from Git",
+        "files.level3.objective1": "Remove a file from both the working directory and the index",
+        "files.level3.hint1": "Use the git rm <file> command",
+        "files.level3.hint2": "This removes the file from Git and also deletes it from your working directory",
+        "files.level3.requirement1.description": "Remove a file using Git",
+        "files.level3.requirement1.success": "Well done! You've removed the file from Git and your working directory.",
+        "files.level3.story.title": "Cleaning Up",
+        "files.level3.story.narrative":
+            '"I see you\'ve been making good progress," says Alex as he reviews your work. "But I notice there are some temporary files or drafts we don\'t need anymore. We should clean up the repository."\n\nHe explains: "When you want to remove files that are tracked by Git, you should use \'git rm\' rather than just deleting them manually. This ensures Git properly tracks the deletion."',
+        "files.level3.story.realWorldContext":
+            "Keeping repositories clean by removing unnecessary files is a best practice. The git rm command ensures Git tracks the file deletion.",
+        "files.level3.story.taskIntroduction": "Remove the unnecessary file from the repository using git rm.",
+
         // Level Content - Branches Stage
         "branches.name": "Working with Branches",
         "branches.description": "Learn how to work with branches",
@@ -216,6 +232,20 @@ const translations = {
             "In professional development teams, you almost never work directly on the main branch. Instead, you create feature branches for new functionality to keep the main code stable.",
         "branches.level2.story.taskIntroduction": "Create a new branch named 'feature' and switch to it.",
 
+        "branches.level3.name": "Switch Command",
+        "branches.level3.description": "Use the modern git switch command",
+        "branches.level3.objective1": "Switch between branches using the new git switch command",
+        "branches.level3.hint1": "Use the git switch <branch> command",
+        "branches.level3.hint2": "This is a newer alternative to git checkout for changing branches",
+        "branches.level3.requirement1.description": "Switch to another branch using git switch",
+        "branches.level3.requirement1.success": "Great job! You've used the modern git switch command.",
+        "branches.level3.story.title": "Modern Git Commands",
+        "branches.level3.story.narrative":
+            '"Let me show you something new," says Sarah, joining you at your desk. "Git has been around for a while, and some of its commands have evolved. For example, there\'s now a specific command just for switching branches."\n\nShe explains: "While \'git checkout\' works for switching branches, Git introduced \'git switch\' as a more intuitive alternative specifically for branch operations."',
+        "branches.level3.story.realWorldContext":
+            "Git occasionally introduces new commands to improve user experience. The git switch command was introduced in Git 2.23 to make branch operations more intuitive.",
+        "branches.level3.story.taskIntroduction": "Try using the git switch command to change to another branch.",
+
         // Level Content - Merge Stage
         "merge.name": "Merging Branches",
         "merge.description": "Learn how to merge branches",
@@ -233,6 +263,54 @@ const translations = {
         "merge.level1.story.realWorldContext":
             "Merging is a critical part of the Git workflow. In larger teams, this is often formalized through pull requests and code reviews.",
         "merge.level1.story.taskIntroduction": "Merge the 'feature' branch into the 'main' branch.",
+
+        "merge.level2.name": "Handling Merge Conflicts",
+        "merge.level2.description": "Learn how to handle or abort merges with conflicts",
+        "merge.level2.objective1": "Abort a merge with conflicts",
+        "merge.level2.hint1": "Use the git merge --abort command",
+        "merge.level2.hint2": "This will stop the merge process and return to the state before the merge began",
+        "merge.level2.requirement1.description": "Abort a merge with conflicts",
+        "merge.level2.requirement1.success": "Good job! You've successfully aborted the merge operation.",
+        "merge.level2.story.title": "When Merges Go Wrong",
+        "merge.level2.story.narrative":
+            '"Sometimes things don\'t go as planned with merges," Alex warns. "If the same part of a file has been changed differently in the two branches you\'re merging, Git can\'t automatically combine them."\n\nHe continues: "When you encounter merge conflicts, you have two options: resolve them manually, or abort the merge if you\'re not ready to deal with them yet."',
+        "merge.level2.story.realWorldContext":
+            "Merge conflicts are a common part of collaborative development. Knowing how to handle them—whether by resolving or temporarily aborting—is an essential skill.",
+        "merge.level2.story.taskIntroduction": "Practice aborting a merge operation using git merge --abort.",
+
+        // Remote Stage
+        "remote.name": "Remote Repositories",
+        "remote.description": "Learn to work with remote repositories",
+
+        // Remote Level 1
+        "remote.level1.name": "Adding Remotes",
+        "remote.level1.description": "Connect to a remote repository",
+        "remote.level1.objective1": "Add a remote repository",
+        "remote.level1.hint1": "Use the git remote add <name> <url> command",
+        "remote.level1.hint2": "The convention is to name your main remote 'origin'",
+        "remote.level1.requirement1.description": "Add a remote repository",
+        "remote.level1.requirement1.success": "Excellent! You've added a remote repository.",
+        "remote.level1.story.title": "Connecting Repositories",
+        "remote.level1.story.narrative":
+            '"Great progress so far! Now it\'s time to connect your local repository to a remote one," says Alex. "This will allow you to share your code with the team and collaborate effectively."\n\nHe explains: "The first step is to add a connection to the remote repository using \'git remote add\'. This doesn\'t transfer any code yet—it just creates the connection."',
+        "remote.level1.story.realWorldContext":
+            "Remote repositories are central to collaborative development workflows. Most Git-based systems like GitHub, GitLab, and Bitbucket work by hosting remote repositories that team members connect to.",
+        "remote.level1.story.taskIntroduction": "Add a remote named 'origin' to your repository.",
+
+        // Remote Level 2
+        "remote.level2.name": "Pushing Changes",
+        "remote.level2.description": "Send your changes to a remote repository",
+        "remote.level2.objective1": "Push your commits to the remote repository",
+        "remote.level2.hint1": "Use the git push <remote> <branch> command",
+        "remote.level2.hint2": "For your first push to a new branch, you might need to set the upstream with -u",
+        "remote.level2.requirement1.description": "Push your changes to the remote",
+        "remote.level2.requirement1.success": "Perfect! You've pushed your changes to the remote repository.",
+        "remote.level2.story.title": "Sharing Your Work",
+        "remote.level2.story.narrative":
+            '"Now that we\'ve connected to the remote repository, it\'s time to share your work with the team," says Alex. "This is done using the \'git push\' command."\n\nHe continues: "When you push, your commits are uploaded to the remote repository, making them available to other team members. This is how collaboration happens in Git."',
+        "remote.level2.story.realWorldContext":
+            "Pushing is how you share your work in a Git-based workflow. It's the opposite of pulling, which brings others' changes to your local repository.",
+        "remote.level2.story.taskIntroduction": "Push your changes to the remote repository.",
     },
     de: {
         // Navigation
@@ -313,6 +391,8 @@ const translations = {
         "category.branches": "Branches",
         "category.remoteRepos": "Remote-Repositories",
         "category.advanced": "Fortgeschrittene Befehle",
+        "category.history": "Commit-Historie",
+        "category.undoing": "Änderungen rückgängig machen",
 
         // File Editor
         "editor.fileContent": "Dateiinhalt",
@@ -408,6 +488,21 @@ const translations = {
             "Gute Commit-Nachrichten sind in Entwicklerteams extrem wichtig. Sie helfen allen zu verstehen, warum eine Änderung gemacht wurde, nicht nur was geändert wurde.",
         "files.level2.story.taskIntroduction": "Erstelle deinen ersten Commit mit einer aussagekräftigen Nachricht.",
 
+        "files.level3.name": "Dateien entfernen",
+        "files.level3.description": "Lerne, wie man Dateien aus Git entfernt",
+        "files.level3.objective1": "Entferne eine Datei sowohl aus dem Arbeitsverzeichnis als auch aus dem Index",
+        "files.level3.hint1": "Verwende den Befehl git rm <Datei>",
+        "files.level3.hint2": "Dies entfernt die Datei aus Git und löscht sie auch aus deinem Arbeitsverzeichnis",
+        "files.level3.requirement1.description": "Entferne eine Datei mit Git",
+        "files.level3.requirement1.success":
+            "Gut gemacht! Du hast die Datei aus Git und deinem Arbeitsverzeichnis entfernt.",
+        "files.level3.story.title": "Aufräumen",
+        "files.level3.story.narrative":
+            '"Ich sehe, du machst gute Fortschritte", sagt Alex, während er deine Arbeit überprüft. "Aber ich bemerke, dass es einige temporäre Dateien oder Entwürfe gibt, die wir nicht mehr brauchen. Wir sollten das Repository aufräumen."\n\nEr erklärt: "Wenn du Dateien entfernen möchtest, die von Git verfolgt werden, solltest du \'git rm\' verwenden, anstatt sie manuell zu löschen. So wird sichergestellt, dass Git die Löschung richtig verfolgt."',
+        "files.level3.story.realWorldContext":
+            "Repositories sauber zu halten, indem unnötige Dateien entfernt werden, ist eine bewährte Methode. Der Befehl git rm stellt sicher, dass Git die Dateientfernung verfolgt.",
+        "files.level3.story.taskIntroduction": "Entferne die unnötige Datei aus dem Repository mit git rm.",
+
         // Level Content - Branches Stage
         "branches.name": "Arbeiten mit Branches",
         "branches.description": "Lerne, wie du mit Branches arbeitest",
@@ -441,6 +536,21 @@ const translations = {
             "In professionellen Entwicklungsteams arbeitet man fast nie direkt im main-Branch. Stattdessen erstellt man Feature-Branches für neue Funktionen, um den Hauptcode stabil zu halten.",
         "branches.level2.story.taskIntroduction": "Erstelle einen neuen Branch namens 'feature' und wechsle zu ihm.",
 
+        "branches.level3.name": "Switch-Befehl",
+        "branches.level3.description": "Verwende den modernen git switch Befehl",
+        "branches.level3.objective1": "Wechsle zwischen Branches mit dem neuen git switch Befehl",
+        "branches.level3.hint1": "Verwende den Befehl git switch <branch>",
+        "branches.level3.hint2": "Dies ist eine neuere Alternative zu git checkout für den Wechsel von Branches",
+        "branches.level3.requirement1.description": "Wechsle zu einem anderen Branch mit git switch",
+        "branches.level3.requirement1.success": "Großartig! Du hast den modernen git switch Befehl verwendet.",
+        "branches.level3.story.title": "Moderne Git-Befehle",
+        "branches.level3.story.narrative":
+            '"Lass mich dir etwas Neues zeigen", sagt Sarah und gesellt sich zu dir an deinen Schreibtisch. "Git gibt es schon eine Weile, und einige seiner Befehle haben sich weiterentwickelt. Zum Beispiel gibt es jetzt einen speziellen Befehl nur für den Wechsel von Branches."\n\nSie erklärt: "Während \'git checkout\' für den Wechsel von Branches funktioniert, hat Git \'git switch\' als intuitivere Alternative speziell für Branch-Operationen eingeführt."',
+        "branches.level3.story.realWorldContext":
+            "Git führt gelegentlich neue Befehle ein, um die Benutzererfahrung zu verbessern. Der Befehl git switch wurde in Git 2.23 eingeführt, um Branch-Operationen intuitiver zu gestalten.",
+        "branches.level3.story.taskIntroduction":
+            "Versuche, den git switch Befehl zu verwenden, um zu einem anderen Branch zu wechseln.",
+
         // Level Content - Merge Stage
         "merge.name": "Branches zusammenführen",
         "merge.description": "Lerne, wie du Branches zusammenführst",
@@ -458,6 +568,55 @@ const translations = {
         "merge.level1.story.realWorldContext":
             "Das Zusammenführen (Merging) ist ein kritischer Teil des Git-Workflows. In größeren Teams wird dies oft durch Pull Requests und Code Reviews formalisiert.",
         "merge.level1.story.taskIntroduction": "Führe den 'feature'-Branch in den 'main'-Branch zusammen.",
+
+        "merge.level2.name": "Umgang mit Merge-Konflikten",
+        "merge.level2.description": "Lerne, wie man mit Konflikten umgeht oder Merges abbricht",
+        "merge.level2.objective1": "Brich einen Merge mit Konflikten ab",
+        "merge.level2.hint1": "Verwende den Befehl git merge --abort",
+        "merge.level2.hint2": "Dies stoppt den Merge-Prozess und kehrt zum Zustand vor dem Merge zurück",
+        "merge.level2.requirement1.description": "Brich einen Merge mit Konflikten ab",
+        "merge.level2.requirement1.success": "Gut gemacht! Du hast den Merge-Vorgang erfolgreich abgebrochen.",
+        "merge.level2.story.title": "Wenn Merges schief gehen",
+        "merge.level2.story.narrative":
+            '"Manchmal laufen Merges nicht wie geplant", warnt Alex. "Wenn der gleiche Teil einer Datei in den beiden Branches, die du zusammenführen möchtest, unterschiedlich geändert wurde, kann Git sie nicht automatisch kombinieren."\n\nEr fährt fort: "Wenn du auf Merge-Konflikte stößt, hast du zwei Möglichkeiten: sie manuell lösen oder den Merge abbrechen, wenn du noch nicht bereit bist, dich damit zu befassen."',
+        "merge.level2.story.realWorldContext":
+            "Merge-Konflikte sind ein häufiger Teil der kollaborativen Entwicklung. Zu wissen, wie man mit ihnen umgeht – ob durch Lösung oder vorübergehendes Abbrechen – ist eine wesentliche Fähigkeit.",
+        "merge.level2.story.taskIntroduction": "Übe das Abbrechen eines Merge-Vorgangs mit git merge --abort.",
+
+        // Remote Stage
+        "remote.name": "Remote-Repositories",
+        "remote.description": "Lerne, mit Remote-Repositories zu arbeiten",
+
+        // Remote Level 1
+        "remote.level1.name": "Remotes hinzufügen",
+        "remote.level1.description": "Verbinde dich mit einem Remote-Repository",
+        "remote.level1.objective1": "Füge ein Remote-Repository hinzu",
+        "remote.level1.hint1": "Verwende den Befehl git remote add <name> <url>",
+        "remote.level1.hint2": "Üblicherweise nennt man sein Haupt-Remote 'origin'",
+        "remote.level1.requirement1.description": "Füge ein Remote-Repository hinzu",
+        "remote.level1.requirement1.success": "Ausgezeichnet! Du hast ein Remote-Repository hinzugefügt.",
+        "remote.level1.story.title": "Repositories verbinden",
+        "remote.level1.story.narrative":
+            '"Großartige Fortschritte bisher! Jetzt ist es Zeit, dein lokales Repository mit einem Remote-Repository zu verbinden", sagt Alex. "Dies wird es dir ermöglichen, deinen Code mit dem Team zu teilen und effektiv zusammenzuarbeiten."\n\nEr erklärt: "Der erste Schritt ist, eine Verbindung zum Remote-Repository mit \'git remote add\' herzustellen. Dies überträgt noch keinen Code – es erstellt nur die Verbindung."',
+        "remote.level1.story.realWorldContext":
+            "Remote-Repositories sind zentral für kollaborative Entwicklungs-Workflows. Die meisten Git-basierten Systeme wie GitHub, GitLab und Bitbucket funktionieren, indem sie Remote-Repositories hosten, mit denen sich Teammitglieder verbinden.",
+        "remote.level1.story.taskIntroduction": "Füge ein Remote namens 'origin' zu deinem Repository hinzu.",
+
+        // Remote Level 2
+        "remote.level2.name": "Änderungen pushen",
+        "remote.level2.description": "Sende deine Änderungen an ein Remote-Repository",
+        "remote.level2.objective1": "Pushe deine Commits in das Remote-Repository",
+        "remote.level2.hint1": "Verwende den Befehl git push <remote> <branch>",
+        "remote.level2.hint2":
+            "Für deinen ersten Push zu einem neuen Branch musst du möglicherweise das Upstream mit -u setzen",
+        "remote.level2.requirement1.description": "Pushe deine Änderungen zum Remote",
+        "remote.level2.requirement1.success": "Perfekt! Du hast deine Änderungen zum Remote-Repository gepusht.",
+        "remote.level2.story.title": "Deine Arbeit teilen",
+        "remote.level2.story.narrative":
+            '"Jetzt, da wir mit dem Remote-Repository verbunden sind, ist es Zeit, deine Arbeit mit dem Team zu teilen", sagt Alex. "Dies geschieht mit dem Befehl \'git push\'."\n\nEr fährt fort: "Wenn du pushst, werden deine Commits in das Remote-Repository hochgeladen, wodurch sie für andere Teammitglieder verfügbar werden. So funktioniert Zusammenarbeit in Git."',
+        "remote.level2.story.realWorldContext":
+            "Pushen ist die Art und Weise, wie du deine Arbeit in einem Git-basierten Workflow teilst. Es ist das Gegenteil von Pulling, das die Änderungen anderer in dein lokales Repository bringt.",
+        "remote.level2.story.taskIntroduction": "Pushe deine Änderungen zum Remote-Repository.",
     },
 };
 
