@@ -23,8 +23,16 @@ export function StoryDialog({
 }: StoryDialogProps) {
     const { t } = useLanguage();
 
+    // This is the key change - properly handle onOpenChange to respect the Dialog control flow
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            // Only call onClose when the dialog is closing
+            onClose();
+        }
+    };
+
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent className="max-h-[90vh] max-w-[90vw] border-purple-900/20 bg-[#1a1625] text-purple-100 md:max-h-[80vh] md:max-w-3xl">
                 <DialogHeader className="pb-2">
                     <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between">
@@ -64,7 +72,9 @@ export function StoryDialog({
                 </div>
 
                 <DialogFooter>
-                    <Button onClick={onClose} className="w-full bg-purple-600 text-white hover:bg-purple-700 sm:w-auto">
+                    <Button
+                        onClick={() => handleOpenChange(false)}
+                        className="w-full bg-purple-600 text-white hover:bg-purple-700 sm:w-auto">
                         {t("level.startCoding")}
                     </Button>
                 </DialogFooter>

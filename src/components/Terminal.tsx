@@ -47,12 +47,18 @@ export function Terminal({
     // Auto-scroll to bottom when terminal output changes
     useEffect(() => {
         if (scrollAreaRef.current) {
-            // Delayed scrolling to ensure new content is rendered
+            // Longer delay to ensure content is fully rendered
             setTimeout(() => {
                 if (scrollAreaRef.current) {
+                    // Get the actual scrollable div inside the ScrollArea
+                    const scrollableDiv = scrollAreaRef.current.querySelector('div[style*="overflow"]');
+                    if (scrollableDiv) {
+                        scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+                    }
+                    // Fallback to the ref itself
                     scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
                 }
-            }, 10);
+            }, 50); // Increased from 10ms to 50ms
         }
     }, [terminalOutput]);
 
@@ -362,20 +368,13 @@ export function Terminal({
             );
         }
 
-        // Level completion message
-        if (line.includes(t("level.levelCompleted"))) {
-            return <div className="mt-2 rounded bg-green-900/30 p-2 text-center text-white">{line}</div>;
-        }
-
         // Default formatting
         return <div className="text-purple-300">{line}</div>;
     };
 
     return (
         <div
-            className={`flex h-[400px] w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}
-            style={{ maxHeight: "400px" }} // Force max height
-        >
+            className={`flex w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg md:h-[580px] ${className}`}>
             {/* Terminal header */}
             <div className="flex items-center justify-between bg-purple-900/50 px-3 py-2 text-sm font-medium text-white">
                 <div className="flex items-center space-x-2">

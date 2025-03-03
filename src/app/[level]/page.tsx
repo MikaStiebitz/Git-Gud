@@ -89,20 +89,30 @@ export default function LevelPage() {
         handleNextLevel();
         // Reset the story dialog state when navigating to a new level
         setUserClosedStoryDialog(false);
+        if (!isAdvancedMode) {
+            setShowStoryDialog(true);
+        }
     };
 
     // Story dialog display logic - Reset when levels change
     useEffect(() => {
         if (levelData?.story) {
-            // Reset the user closed flag when the level changes
-            setUserClosedStoryDialog(false);
-
-            // Show story dialog for non-advanced mode
-            if (!isAdvancedMode) {
-                setShowStoryDialog(true);
+            if (!userClosedStoryDialog) {
+                if (!isAdvancedMode) {
+                    setShowStoryDialog(true);
+                } else {
+                    setShowStoryDialog(false);
+                }
             }
+        } else {
+            setShowStoryDialog(false);
         }
-    }, [currentStage, currentLevel, levelData, isAdvancedMode]);
+    }, [currentStage, currentLevel, levelData, isAdvancedMode, userClosedStoryDialog]);
+
+    const handleCloseStoryDialog = () => {
+        setShowStoryDialog(false);
+        setUserClosedStoryDialog(true);
+    };
 
     // Show a list of user-editable files
     const renderEditableFiles = () => {
@@ -219,14 +229,11 @@ export default function LevelPage() {
                         </Button>
 
                         {/* Story button always visible regardless of mode */}
-                        {levelData.story && (
+                        {levelData?.story && (
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => {
-                                    setShowStoryDialog(true);
-                                    setUserClosedStoryDialog(false);
-                                }}
+                                onClick={() => setShowStoryDialog(true)} // Just open, don't reset userClosedStoryDialog
                                 className="flex items-center border-purple-700 text-purple-300 hover:bg-purple-900/50">
                                 <BookOpen className="mr-1 h-4 w-4" />
                                 {t("level.storyButton")}
@@ -389,10 +396,7 @@ export default function LevelPage() {
             {levelData?.story && (
                 <StoryDialog
                     isOpen={showStoryDialog}
-                    onClose={() => {
-                        setShowStoryDialog(false);
-                        setUserClosedStoryDialog(true);
-                    }}
+                    onClose={handleCloseStoryDialog}
                     story={levelData.story}
                     isAdvancedMode={isAdvancedMode}
                     onToggleAdvancedMode={toggleAdvancedMode}

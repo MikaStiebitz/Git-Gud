@@ -7,7 +7,7 @@ interface TerminalSkeletonProps {
 export function TerminalSkeleton({ className = "" }: TerminalSkeletonProps) {
     return (
         <div
-            className={`flex h-[400px] w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}>
+            className={`flex w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg md:h-[580px] ${className}`}>
             {/* Terminal header */}
             <div className="flex items-center justify-between bg-purple-900/50 px-3 py-2 text-sm font-medium text-white">
                 <div className="flex items-center space-x-2">

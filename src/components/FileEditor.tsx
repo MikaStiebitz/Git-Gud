@@ -101,9 +101,6 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
                             {isDirty ? `(${t("editor.unsaved")})` : ""}
                         </span>
                     </DialogTitle>
-                    <Button variant="ghost" size="sm" onClick={handleCancel} className="text-purple-400">
-                        {t("editor.cancel")}
-                    </Button>
                 </DialogHeader>
 
                 <div
@@ -124,6 +121,12 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
                 <DialogFooter className="mt-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
                     <div className="hidden text-xs text-purple-400 md:block">{t("editor.escToCancel")}</div>
                     <div className="flex w-full gap-2 sm:w-auto">
+                        <Button
+                            variant="outline"
+                            onClick={handleCancel}
+                            className="flex-1 border-purple-700 text-purple-400 hover:bg-purple-900/30 sm:flex-auto">
+                            {t("editor.cancel")}
+                        </Button>
                         <Button
                             onClick={handleSave}
                             className="flex-1 bg-purple-600 text-white hover:bg-purple-700 sm:flex-auto">
