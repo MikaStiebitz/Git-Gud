@@ -23,7 +23,7 @@ interface EditableFile {
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [fileSystem] = useState<FileSystem>(new FileSystem());
-    const [gitRepository] = useState<GitRepository>(new GitRepository());
+    const [gitRepository] = useState<GitRepository>(new GitRepository(fileSystem));
     const [commandProcessor] = useState<CommandProcessor>(new CommandProcessor(fileSystem, gitRepository));
     const [levelManager] = useState<LevelManager>(new LevelManager());
     const [progressManager] = useState<ProgressManager>(new ProgressManager());
@@ -94,23 +94,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Add a function to reset terminal for level mode
     const resetTerminalForLevel = () => {
+        // Get the current level data
         const level = levelManager.getLevel(currentStage, currentLevel, t);
 
-        // If this level requires a fresh git repo, do a full reset
-        if (level?.resetGitRepo) {
-            gitRepository.reset();
-            console.log("Full reset");
-        } else {
-            console.log("Partial reset");
-            // Otherwise do a partial reset to maintain initialized state but clear other state
-            gitRepository.partialReset();
-        }
-
-        // Reset to standard file system
-        fileSystem.mkdir("/");
-        fileSystem.writeFile("/README.md", "# Git Learning Game\n\nWelcome to the Git learning game!");
-        fileSystem.mkdir("/src");
-        fileSystem.writeFile("/src/index.js", 'console.log("Hello, Git!");');
+        // Use the LevelManager to set up the environment for this level
+        levelManager.setupLevel(currentStage, currentLevel, fileSystem, gitRepository);
 
         // Reset the terminal output
         setTerminalOutput([
@@ -124,7 +112,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Close any open file editors
         setIsLevelFileEditorOpen(false);
     };
-
     // Load saved progress on mount
     useEffect(() => {
         const savedProgress = progressManager.getProgress();
@@ -209,16 +196,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setIsLevelCompleted(progressManager.isLevelCompleted(stageId, levelId));
                 progressManager.setCurrentLevel(stageId, levelId);
 
-                // Get the next level data to check if we should reset the git repo
-                const nextLevel = levelManager.getLevel(stageId, levelId, t);
-
-                // Only completely reset the repository if the next level requires it
-                if (nextLevel?.resetGitRepo) {
-                    gitRepository.reset();
-                } else {
-                    // Otherwise, use partial reset to keep the repo initialized
-                    gitRepository.partialReset();
-                }
+                // Set up the environment for the next level using LevelManager
+                levelManager.setupLevel(stageId, levelId, fileSystem, gitRepository);
 
                 setTerminalOutput([
                     t("terminal.welcome"),
@@ -264,7 +243,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Reset the current level
     const resetCurrentLevel = () => {
-        gitRepository.reset();
+        // Set up level with the LevelManager
+        levelManager.setupLevel(currentStage, currentLevel, fileSystem, gitRepository);
+
         setIsLevelCompleted(false);
         setTerminalOutput([
             t("terminal.levelReset"),

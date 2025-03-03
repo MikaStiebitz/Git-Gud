@@ -1,4 +1,5 @@
 import type { FileStatus, GitStatus } from "../types";
+import { type FileSystem } from "~/models/FileSystem";
 
 export class GitRepository {
     private initialized = false;
@@ -8,12 +9,11 @@ export class GitRepository {
     private status: GitStatus = {};
     private commits: Record<string, { message: string; timestamp: Date; files: string[] }> = {};
     private stash: Array<{ message: string; timestamp: Date; changes: Record<string, string> }> = [];
-
-    // Track remote repositories
     private remotes: Record<string, string> = {};
+    private fileSystem: FileSystem;
 
-    constructor() {
-        // Start uninitialized - DON'T call this.init() here
+    constructor(fileSystem: FileSystem) {
+        this.fileSystem = fileSystem;
         this.initialized = false;
     }
 
@@ -31,6 +31,20 @@ export class GitRepository {
     // Initialize a new Git repository
     public init(): boolean {
         if (this.initialized) return false;
+
+        // Create .git directory structure in the file system
+        this.fileSystem.mkdir("/.git");
+        this.fileSystem.mkdir("/.git/objects");
+        this.fileSystem.mkdir("/.git/refs");
+        this.fileSystem.mkdir("/.git/refs/heads");
+
+        // Create basic git files
+        this.fileSystem.writeFile("/.git/HEAD", "ref: refs/heads/main");
+        this.fileSystem.writeFile(
+            "/.git/config",
+            "[core]\n\trepositoryformatversion = 0\n\tfilemode = true\n\tbare = false\n",
+        );
+
         this.initialized = true;
         return true;
     }

@@ -67,39 +67,6 @@ export interface FileSystemItem {
     lastModified?: Date;
 }
 
-export type StoryContext = {
-    title: string;
-    narrative: string;
-    realWorldContext: string;
-    taskIntroduction: string;
-};
-
-export type LevelRequirement = {
-    command: string;
-    requiresArgs?: string[];
-    description: string;
-    successMessage?: string;
-};
-
-export type LevelType = {
-    id: number;
-    name: string;
-    description: string;
-    objectives: string[];
-    hints: string[];
-    requirements: LevelRequirement[];
-    story: StoryContext;
-    resetGitRepo?: boolean;
-};
-
-export type StageType = {
-    id: string;
-    name: string;
-    description: string;
-    icon: string;
-    levels: Record<number, LevelType>;
-};
-
 export type UserProgress = {
     completedLevels: Record<string, number[]>;
     currentStage: string;
@@ -119,4 +86,83 @@ export type GitStashEntry = {
 export type RemoteRepository = {
     name: string;
     url: string;
+};
+
+export type FileStructure = {
+    path: string;
+    content: string;
+};
+
+// Git commit definition
+export type GitCommit = {
+    message: string;
+    files: string[];
+    branch?: string; // Optional branch to switch to before committing
+};
+
+// File change definition
+export type FileChange = {
+    path: string;
+    content?: string;
+    status: "modified" | "untracked" | "deleted" | "staged";
+};
+
+// Merge conflict definition
+export type MergeConflict = {
+    file: string;
+    content: string; // Conflicted content with <<<<<<< HEAD, =======, etc. markers
+    branch1?: string;
+    branch2?: string;
+};
+
+// Git repository state
+export type GitState = {
+    initialized: boolean;
+    currentBranch?: string;
+    branches?: string[];
+    commits?: GitCommit[];
+    fileChanges?: FileChange[];
+    mergeConflicts?: MergeConflict[];
+};
+
+// Initial state for a level
+export type LevelInitialState = {
+    files?: FileStructure[];
+    git?: GitState;
+};
+
+// Update the LevelType to include initialState
+export type LevelType = {
+    id: number;
+    name: string;
+    description: string;
+    objectives: string[];
+    hints: string[];
+    requirements: LevelRequirement[];
+    story?: StoryContext; // Make story optional
+    resetGitRepo?: boolean;
+    initialState?: LevelInitialState; // Add initialState property
+};
+
+// The rest of the types remain mostly the same
+export type LevelRequirement = {
+    command: string;
+    requiresArgs?: string[];
+    description: string;
+    successMessage?: string;
+};
+
+export type StoryContext = {
+    title: string;
+    narrative: string;
+    realWorldContext: string;
+    taskIntroduction: string;
+};
+
+export type StageType = {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    levels: Record<number, LevelType>;
 };

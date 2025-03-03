@@ -1,300 +1,181 @@
-import type { StageType, LevelType } from "~/types";
+import type { FileSystem } from "./FileSystem";
+import type { GitRepository } from "./GitRepository";
+import type { StageType, LevelType, FileStructure, GitState, FileChange, MergeConflict } from "~/types";
+import { allStages } from "./LevelCreator";
 
 export class LevelManager {
     private stages: Record<string, StageType>;
 
     constructor() {
-        this.stages = {
-            Intro: {
-                id: "intro",
-                name: "intro.name",
-                description: "intro.description",
-                icon: "🚀",
-                levels: {
-                    1: {
-                        id: 1,
-                        name: "intro.level1.name",
-                        description: "intro.level1.description",
-                        objectives: ["intro.level1.objective1"],
-                        hints: ["intro.level1.hint1", "intro.level1.hint2"],
-                        requirements: [
-                            {
-                                command: "git init",
-                                description: "intro.level1.requirement1.description",
-                                successMessage: "intro.level1.requirement1.success",
-                            },
-                        ],
-                        resetGitRepo: true,
-                        story: {
-                            title: "intro.level1.story.title",
-                            narrative: "intro.level1.story.narrative",
-                            realWorldContext: "intro.level1.story.realWorldContext",
-                            taskIntroduction: "intro.level1.story.taskIntroduction",
-                        },
-                    },
-                    2: {
-                        id: 2,
-                        name: "intro.level2.name",
-                        description: "intro.level2.description",
-                        objectives: ["intro.level2.objective1"],
-                        hints: ["intro.level2.hint1", "intro.level2.hint2"],
-                        requirements: [
-                            {
-                                command: "git status",
-                                description: "intro.level2.requirement1.description",
-                                successMessage: "intro.level2.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "intro.level2.story.title",
-                            narrative: "intro.level2.story.narrative",
-                            realWorldContext: "intro.level2.story.realWorldContext",
-                            taskIntroduction: "intro.level2.story.taskIntroduction",
-                        },
-                    },
-                },
-            },
-            Files: {
-                id: "files",
-                name: "files.name",
-                description: "files.description",
-                icon: "📁",
-                levels: {
-                    1: {
-                        id: 1,
-                        name: "files.level1.name",
-                        description: "files.level1.description",
-                        objectives: ["files.level1.objective1"],
-                        hints: ["files.level1.hint1", "files.level1.hint2"],
-                        requirements: [
-                            {
-                                command: "git add",
-                                requiresArgs: ["."],
-                                description: "files.level1.requirement1.description",
-                                successMessage: "files.level1.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "files.level1.story.title",
-                            narrative: "files.level1.story.narrative",
-                            realWorldContext: "files.level1.story.realWorldContext",
-                            taskIntroduction: "files.level1.story.taskIntroduction",
-                        },
-                    },
-                    2: {
-                        id: 2,
-                        name: "files.level2.name",
-                        description: "files.level2.description",
-                        objectives: ["files.level2.objective1"],
-                        hints: ["files.level2.hint1", "files.level2.hint2"],
-                        requirements: [
-                            {
-                                command: "git commit",
-                                requiresArgs: ["-m"],
-                                description: "files.level2.requirement1.description",
-                                successMessage: "files.level2.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "files.level2.story.title",
-                            narrative: "files.level2.story.narrative",
-                            realWorldContext: "files.level2.story.realWorldContext",
-                            taskIntroduction: "files.level2.story.taskIntroduction",
-                        },
-                    },
-                    3: {
-                        id: 3,
-                        name: "files.level3.name",
-                        description: "files.level3.description",
-                        objectives: ["files.level3.objective1"],
-                        hints: ["files.level3.hint1", "files.level3.hint2"],
-                        requirements: [
-                            {
-                                command: "git rm",
-                                requiresArgs: ["any"],
-                                description: "files.level3.requirement1.description",
-                                successMessage: "files.level3.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "files.level3.story.title",
-                            narrative: "files.level3.story.narrative",
-                            realWorldContext: "files.level3.story.realWorldContext",
-                            taskIntroduction: "files.level3.story.taskIntroduction",
-                        },
-                    },
-                },
-            },
-            Branches: {
-                id: "branches",
-                name: "branches.name",
-                description: "branches.description",
-                icon: "🌿",
-                levels: {
-                    1: {
-                        id: 1,
-                        name: "branches.level1.name",
-                        description: "branches.level1.description",
-                        objectives: ["branches.level1.objective1"],
-                        hints: ["branches.level1.hint1", "branches.level1.hint2"],
-                        requirements: [
-                            {
-                                command: "git branch",
-                                description: "branches.level1.requirement1.description",
-                                successMessage: "branches.level1.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "branches.level1.story.title",
-                            narrative: "branches.level1.story.narrative",
-                            realWorldContext: "branches.level1.story.realWorldContext",
-                            taskIntroduction: "branches.level1.story.taskIntroduction",
-                        },
-                    },
-                    2: {
-                        id: 2,
-                        name: "branches.level2.name",
-                        description: "branches.level2.description",
-                        objectives: ["branches.level2.objective1"],
-                        hints: ["branches.level2.hint1", "branches.level2.hint2"],
-                        requirements: [
-                            {
-                                command: "git checkout",
-                                requiresArgs: ["-b"],
-                                description: "branches.level2.requirement1.description",
-                                successMessage: "branches.level2.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "branches.level2.story.title",
-                            narrative: "branches.level2.story.narrative",
-                            realWorldContext: "branches.level2.story.realWorldContext",
-                            taskIntroduction: "branches.level2.story.taskIntroduction",
-                        },
-                    },
-                    3: {
-                        id: 3,
-                        name: "branches.level3.name",
-                        description: "branches.level3.description",
-                        objectives: ["branches.level3.objective1"],
-                        hints: ["branches.level3.hint1", "branches.level3.hint2"],
-                        requirements: [
-                            {
-                                command: "git switch",
-                                description: "branches.level3.requirement1.description",
-                                successMessage: "branches.level3.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "branches.level3.story.title",
-                            narrative: "branches.level3.story.narrative",
-                            realWorldContext: "branches.level3.story.realWorldContext",
-                            taskIntroduction: "branches.level3.story.taskIntroduction",
-                        },
-                    },
-                },
-            },
-            Merge: {
-                id: "merge",
-                name: "merge.name",
-                description: "merge.description",
-                icon: "🔀",
-                levels: {
-                    1: {
-                        id: 1,
-                        name: "merge.level1.name",
-                        description: "merge.level1.description",
-                        objectives: ["merge.level1.objective1"],
-                        hints: ["merge.level1.hint1", "merge.level1.hint2"],
-                        requirements: [
-                            {
-                                command: "git merge",
-                                requiresArgs: ["any"],
-                                description: "merge.level1.requirement1.description",
-                                successMessage: "merge.level1.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "merge.level1.story.title",
-                            narrative: "merge.level1.story.narrative",
-                            realWorldContext: "merge.level1.story.realWorldContext",
-                            taskIntroduction: "merge.level1.story.taskIntroduction",
-                        },
-                    },
-                    2: {
-                        id: 2,
-                        name: "merge.level2.name",
-                        description: "merge.level2.description",
-                        objectives: ["merge.level2.objective1"],
-                        hints: ["merge.level2.hint1", "merge.level2.hint2"],
-                        requirements: [
-                            {
-                                command: "git merge",
-                                requiresArgs: ["--abort"],
-                                description: "merge.level2.requirement1.description",
-                                successMessage: "merge.level2.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "merge.level2.story.title",
-                            narrative: "merge.level2.story.narrative",
-                            realWorldContext: "merge.level2.story.realWorldContext",
-                            taskIntroduction: "merge.level2.story.taskIntroduction",
-                        },
-                    },
-                },
-            },
-            Remote: {
-                id: "remote",
-                name: "remote.name",
-                description: "remote.description",
-                icon: "🌐",
-                levels: {
-                    1: {
-                        id: 1,
-                        name: "remote.level1.name",
-                        description: "remote.level1.description",
-                        objectives: ["remote.level1.objective1"],
-                        hints: ["remote.level1.hint1", "remote.level1.hint2"],
-                        requirements: [
-                            {
-                                command: "git remote",
-                                requiresArgs: ["add"],
-                                description: "remote.level1.requirement1.description",
-                                successMessage: "remote.level1.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "remote.level1.story.title",
-                            narrative: "remote.level1.story.narrative",
-                            realWorldContext: "remote.level1.story.realWorldContext",
-                            taskIntroduction: "remote.level1.story.taskIntroduction",
-                        },
-                    },
-                    2: {
-                        id: 2,
-                        name: "remote.level2.name",
-                        description: "remote.level2.description",
-                        objectives: ["remote.level2.objective1"],
-                        hints: ["remote.level2.hint1", "remote.level2.hint2"],
-                        requirements: [
-                            {
-                                command: "git push",
-                                description: "remote.level2.requirement1.description",
-                                successMessage: "remote.level2.requirement1.success",
-                            },
-                        ],
-                        story: {
-                            title: "remote.level2.story.title",
-                            narrative: "remote.level2.story.narrative",
-                            realWorldContext: "remote.level2.story.realWorldContext",
-                            taskIntroduction: "remote.level2.story.taskIntroduction",
-                        },
-                    },
-                },
-            },
-        };
+        this.stages = allStages;
     }
+
+    // Setup the environment for a specific level
+    public setupLevel(stageId: string, levelId: number, fileSystem: FileSystem, gitRepository: GitRepository): boolean {
+        try {
+            const level = this.getLevel(stageId, levelId);
+            if (!level) return false;
+
+            // Reset the file system to a clean state
+            this.resetFileSystem(fileSystem);
+
+            // Set up initial file structure if provided
+            if (level.initialState?.files) {
+                this.setupFileStructure(fileSystem, level.initialState.files);
+            } else {
+                // Default file structure if none specified
+                this.setupDefaultFileStructure(fileSystem);
+            }
+
+            // Set up git state if provided
+            if (level.initialState?.git) {
+                this.setupGitState(gitRepository, fileSystem, level.initialState.git);
+            }
+
+            return true;
+        } catch (error) {
+            console.error(`Error setting up level ${stageId}-${levelId}:`, error);
+            return false;
+        }
+    }
+
+    // Reset the file system to a clean state
+    private resetFileSystem(fileSystem: FileSystem): void {
+        // Create root directory
+        fileSystem.mkdir("/");
+    }
+
+    // Set up the file structure based on configuration
+    private setupFileStructure(fileSystem: FileSystem, files: FileStructure[]): void {
+        for (const file of files) {
+            // Create parent directories if they don't exist
+            const dirPath = this.getDirectoryPath(file.path);
+            if (dirPath && dirPath !== "/") {
+                fileSystem.mkdir(dirPath);
+            }
+
+            // Create the file with content
+            fileSystem.writeFile(file.path, file.content);
+        }
+    }
+
+    // Set up default file structure
+    private setupDefaultFileStructure(fileSystem: FileSystem): void {
+        fileSystem.writeFile("/README.md", "# Git Learning Game\n\nWelcome to the Git learning game!");
+        fileSystem.mkdir("/src");
+        fileSystem.writeFile("/src/index.js", 'console.log("Hello, Git!");');
+    }
+
+    // Set up git state based on configuration
+    private setupGitState(gitRepository: GitRepository, fileSystem: FileSystem, gitState: GitState): void {
+        // Initialize git if specified
+        if (gitState.initialized) {
+            gitRepository.init();
+
+            // Create branches if specified
+            if (gitState.branches) {
+                for (const branch of gitState.branches) {
+                    gitRepository.createBranch(branch);
+                }
+            }
+
+            // Create commits if specified
+            if (gitState.commits) {
+                for (const commit of gitState.commits) {
+                    // Stage files for this commit
+                    for (const filePath of commit.files) {
+                        gitRepository.addFile(filePath);
+                    }
+
+                    // Commit the changes
+                    gitRepository.commit(commit.message);
+
+                    // Switch branch if needed for next commit
+                    if (commit.branch && commit.branch !== gitRepository.getCurrentBranch()) {
+                        gitRepository.checkout(commit.branch);
+                    }
+                }
+            }
+
+            // Create merge conflicts if specified
+            if (gitState.mergeConflicts) {
+                this.setupMergeConflicts(gitRepository, fileSystem, gitState.mergeConflicts);
+            }
+
+            // Switch to the specified branch if provided
+            if (gitState.currentBranch) {
+                gitRepository.checkout(gitState.currentBranch);
+            }
+
+            // Apply file changes to create modified/untracked/deleted files
+            if (gitState.fileChanges) {
+                this.applyFileChanges(gitRepository, fileSystem, gitState.fileChanges);
+            }
+        }
+    }
+
+    // Set up merge conflicts
+    private setupMergeConflicts(
+        gitRepository: GitRepository,
+        fileSystem: FileSystem,
+        conflicts: MergeConflict[],
+    ): void {
+        // Implementation would depend on how your GitRepository handles merge conflicts
+        // This is a simplified approach
+        for (const conflict of conflicts) {
+            // Create conflicting changes in the specified file
+            if (conflict.file && conflict.content) {
+                fileSystem.writeFile(conflict.file, conflict.content);
+                gitRepository.updateFileStatus(conflict.file, "modified");
+            }
+        }
+    }
+
+    // Apply file changes to create modified/untracked/deleted files
+    private applyFileChanges(gitRepository: GitRepository, fileSystem: FileSystem, changes: FileChange[]): void {
+        for (const change of changes) {
+            switch (change.status) {
+                case "modified":
+                    // Update file content
+                    if (change.path && change.content) {
+                        fileSystem.writeFile(change.path, change.content);
+                        gitRepository.updateFileStatus(change.path, "modified");
+                    }
+                    break;
+                case "untracked":
+                    // Create new untracked file
+                    if (change.path && change.content) {
+                        fileSystem.writeFile(change.path, change.content);
+                        gitRepository.updateFileStatus(change.path, "untracked");
+                    }
+                    break;
+                case "deleted":
+                    // Delete file
+                    if (change.path) {
+                        fileSystem.delete(change.path);
+                        gitRepository.updateFileStatus(change.path, "deleted");
+                    }
+                    break;
+                case "staged":
+                    // Create and stage file
+                    if (change.path && change.content) {
+                        fileSystem.writeFile(change.path, change.content);
+                        gitRepository.addFile(change.path);
+                    }
+                    break;
+            }
+        }
+    }
+
+    // Helper to extract directory path from a file path
+    private getDirectoryPath(filePath: string): string {
+        const lastSlashIndex = filePath.lastIndexOf("/");
+        if (lastSlashIndex === -1) return "/";
+        return filePath.substring(0, lastSlashIndex) || "/";
+    }
+
+    // The remaining methods from the original LevelManager stay the same
+    // getAllStages, getStage, getLevel, etc.
 
     // Get all stages with translated content
     public getAllStages(translateFunc?: (key: string) => string): Record<string, StageType> {
@@ -359,12 +240,14 @@ export class LevelManager {
                 description: translateFunc(req.description),
                 successMessage: req.successMessage ? translateFunc(req.successMessage) : undefined,
             })),
-            story: {
-                title: translateFunc(level.story.title),
-                narrative: translateFunc(level.story.narrative),
-                realWorldContext: translateFunc(level.story.realWorldContext),
-                taskIntroduction: translateFunc(level.story.taskIntroduction),
-            },
+            story: level.story
+                ? {
+                      title: translateFunc(level.story.title),
+                      narrative: translateFunc(level.story.narrative),
+                      realWorldContext: translateFunc(level.story.realWorldContext),
+                      taskIntroduction: translateFunc(level.story.taskIntroduction),
+                  }
+                : undefined,
         };
     }
 
@@ -393,27 +276,27 @@ export class LevelManager {
             return false;
         }
 
-        // Spezialfall für Git-Befehle
+        // Special case for Git commands
         if (command === "git") {
-            const gitCommand = args[0]; // z.B. "init", "status", etc.
-            const gitArgs = args.slice(1); // Die restlichen Parameter
+            const gitCommand = args[0]; // e.g., "init", "status", etc.
+            const gitArgs = args.slice(1); // The remaining parameters
 
             console.log(`Git command: ${gitCommand}, Git args:`, gitArgs);
 
             for (const requirement of level.requirements) {
                 console.log("Checking requirement:", requirement);
 
-                // Überprüfe, ob dies der richtige Git-Befehl ist
+                // Check if this is the right Git command
                 if (
                     requirement.command === `git ${gitCommand}` ||
                     requirement.command === command ||
                     requirement.command === gitCommand
                 ) {
-                    // Dieser Fall ist wichtig für "git init" etc.
+                    // This case is important for "git init" etc.
 
                     console.log("Command matches!");
 
-                    // Überprüfe die Argumente, falls erforderlich
+                    // Check arguments if required
                     if (requirement.requiresArgs) {
                         const allArgsMatch = requirement.requiresArgs.every(reqArg => {
                             if (reqArg === "any") {
@@ -432,10 +315,10 @@ export class LevelManager {
                 }
             }
         } else if (command === "next") {
-            // Spezieller Fall für den "next"-Befehl
-            return false; // Der "next"-Befehl schließt kein Level ab, sondern navigiert zum nächsten
+            // Special case for the "next" command
+            return false; // The "next" command does not complete any level, it navigates to the next one
         } else {
-            // Nicht-Git-Befehle
+            // Non-Git commands
             for (const requirement of level.requirements) {
                 if (requirement.command === command) {
                     if (requirement.requiresArgs) {

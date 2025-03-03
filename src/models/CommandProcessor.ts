@@ -18,7 +18,7 @@ export class CommandProcessor {
             case "git":
                 return this.processGitCommand(cmdArgs);
             case "ls":
-                return this.processLsCommand();
+                return this.processLsCommand(cmdArgs); // Pass arguments to ls command
             case "cd":
                 return this.processCdCommand(cmdArgs[0]);
             case "cat":
@@ -901,9 +901,73 @@ export class CommandProcessor {
     }
 
     // Process ls command
-    private processLsCommand(): string[] {
+    private processLsCommand(args: string[] = []): string[] {
+        // Parse options
+        const options = {
+            all: false, // -a or --all
+            long: false, // -l
+        };
+
+        for (const arg of args) {
+            if (arg === "-a" || arg === "--all") {
+                options.all = true;
+            } else if (arg === "-l") {
+                options.long = true;
+            } else if (arg.startsWith("-") && arg.includes("a")) {
+                // Handle combined options like -la
+                options.all = true;
+
+                if (arg.includes("l")) {
+                    options.long = true;
+                }
+            }
+        }
+
         const contents = this.fileSystem.getDirectoryContents(this.currentDirectory);
-        return contents ? Object.keys(contents) : ["Cannot list directory contents."];
+        if (!contents) {
+            return ["Cannot list directory contents."];
+        }
+
+        // Filter files based on options
+        let fileNames = Object.keys(contents);
+
+        // If not showing all files, filter out hidden files (starting with .)
+        if (!options.all) {
+            fileNames = fileNames.filter(name => !name.startsWith("."));
+        }
+
+        // Sort alphabetically (with . files first if showing them)
+        fileNames.sort((a, b) => {
+            const aIsHidden = a.startsWith(".");
+            const bIsHidden = b.startsWith(".");
+
+            if (aIsHidden && !bIsHidden) return -1;
+            if (!aIsHidden && bIsHidden) return 1;
+            return a.localeCompare(b);
+        });
+
+        // If long format is requested, add details
+        if (options.long) {
+            return fileNames.map(name => {
+                const item = contents[name];
+                const type = item.type === "directory" ? "d" : "-";
+                const permissions = "rw-r--r--"; // Simplified permissions
+                const owner = "user";
+                const group = "group";
+                const size = item.content?.length || 0;
+                const date = item.lastModified
+                    ? item.lastModified.toISOString().split("T")[0]
+                    : new Date().toISOString().split("T")[0];
+
+                return `${type}${permissions} ${owner} ${group} ${size.toString().padStart(8)} ${date} ${name}${item.type === "directory" ? "/" : ""}`;
+            });
+        }
+
+        // Simple listing with directories having a trailing slash
+        return fileNames.map(name => {
+            const item = contents[name];
+            return item.type === "directory" ? `${name}/` : name;
+        });
     }
 
     // Process cd command

@@ -122,26 +122,73 @@ export function Terminal({
 
     // Process Tab-autocomplete for files
     const handleTabAutocomplete = () => {
-        if (!input.trim().startsWith("nano ") && !input.trim().startsWith("cat ") && !input.trim().startsWith("rm "))
-            return;
+        // List of commands that can use file autocomplete
+        const fileCommands = [
+            "nano",
+            "cat",
+            "rm",
+            "cd",
+            "touch",
+            "git add",
+            "git rm",
+            "git checkout",
+            "git restore",
+            "git mv",
+            "git diff",
+            "git show",
+        ];
 
-        const args = input.trim().split(/\s+/);
-        if (args.length <= 1) return;
+        // Check if current command is eligible for file autocomplete
+        let isFileCommand = false;
+        let commandPart = "";
+        let filePart = "";
 
-        // Get the current input path
-        const currentInputPath = args[1];
+        // Process single-word commands
+        if (input.trim().includes(" ")) {
+            // Extract command part and file part
+            const spaceSplit = input.trim().split(/\s+/);
+            commandPart = spaceSplit[0];
+
+            // Special handling for git commands (two words)
+            if (commandPart === "git" && spaceSplit.length > 1) {
+                commandPart = `git ${spaceSplit[1]}`;
+                filePart = spaceSplit.slice(2).join(" ");
+            } else {
+                filePart = spaceSplit.slice(1).join(" ");
+            }
+
+            // Check if it's in our list of file commands
+            isFileCommand = fileCommands.some(cmd => {
+                // For git commands, we need to check the full "git subcommand"
+                if (cmd.startsWith("git ")) {
+                    return commandPart === cmd;
+                }
+                // For regular commands, just check the first word
+                return spaceSplit[0] === cmd;
+            });
+        }
+
+        if (!isFileCommand) return;
+
+        // Get the current directory
         const currentDir = commandProcessor.getCurrentDirectory();
 
         // Get files in the current directory
         const contents = fileSystem.getDirectoryContents(currentDir);
         if (!contents) return;
 
-        // Filter files based on the current input
-        const matchingFiles = Object.keys(contents).filter(file => file.startsWith(currentInputPath ?? ""));
+        // Filter files based on the current input path
+        const matchingFiles = Object.keys(contents).filter(file => file.startsWith(filePart || ""));
 
         if (matchingFiles.length === 1) {
             // If there's only one match, complete it directly
-            setInput(`${args[0]} ${matchingFiles[0]}`);
+            if (commandPart.startsWith("git ")) {
+                // Format: git command filename
+                setInput(`${commandPart} ${matchingFiles[0]}`);
+            } else {
+                // Format: command filename
+                setInput(`${commandPart} ${matchingFiles[0]}`);
+            }
             setShowAutocomplete(false);
         } else if (matchingFiles.length > 1) {
             // If there are multiple matches, show the autocomplete menu
@@ -152,8 +199,17 @@ export function Terminal({
 
     // Select a suggestion from the autocomplete menu
     const selectAutocompleteOption = (file: string) => {
-        const args = input.trim().split(/\s+/);
-        setInput(`${args[0]} ${file}`);
+        // Split current input into command and arguments
+        const parts = input.trim().split(/\s+/);
+
+        if (parts[0] === "git" && parts.length > 1) {
+            // For git commands: git command filename
+            setInput(`${parts[0]} ${parts[1]} ${file}`);
+        } else {
+            // For regular commands: command filename
+            setInput(`${parts[0]} ${file}`);
+        }
+
         setShowAutocomplete(false);
         if (inputRef.current) {
             inputRef.current.focus();
