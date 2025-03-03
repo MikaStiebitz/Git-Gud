@@ -101,3 +101,8 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 2. Create a new branch for your feature
 3. Make your changes
 4. Submit a pull request with a clear description of your changes
+
+## TODO
+
+1. LevelManager more customizable (custom files, commits, merge conflicts)
+2. Implement file autocomplente on every relevant command

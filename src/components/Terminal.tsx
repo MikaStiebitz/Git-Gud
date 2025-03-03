@@ -3,7 +3,7 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
-import { TerminalIcon, HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle } from "lucide-react";
+import { HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle } from "lucide-react";
 import { useLanguage } from "~/contexts/LanguageContext";
 
 interface TerminalProps {
@@ -373,7 +373,9 @@ export function Terminal({
 
     return (
         <div
-            className={`flex h-[400px] w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}>
+            className={`flex h-[400px] w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}
+            style={{ maxHeight: "400px" }} // Force max height
+        >
             {/* Terminal header */}
             <div className="flex items-center justify-between bg-purple-900/50 px-3 py-2 text-sm font-medium text-white">
                 <div className="flex items-center space-x-2">
@@ -412,9 +414,10 @@ export function Terminal({
                 </div>
             </div>
 
-            {/* Terminal output area */}
+            {/* Terminal output area - fixed height with scrolling */}
             <ScrollArea
                 className="flex-grow overflow-auto px-4 py-3 font-mono text-sm text-purple-300"
+                style={{ height: "calc(400px - 70px)" }} // Adjust this to ensure proper height
                 ref={scrollAreaRef}>
                 <div ref={outputContainerRef} className="pb-4">
                     {terminalOutput.map((line, i) => (

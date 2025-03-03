@@ -6,7 +6,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
 import { useLanguage } from "~/contexts/LanguageContext";
-import { Save, X } from "lucide-react";
+import { Save } from "lucide-react";
 
 interface FileEditorProps {
     isOpen: boolean;
@@ -20,7 +20,6 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
     const { t } = useLanguage();
     const [content, setContent] = useState(initialContent);
     const [isDirty, setIsDirty] = useState(false);
-    const [viewportHeight, setViewportHeight] = useState(0);
 
     // Determine the mode
     const isPlaygroundMode = typeof window !== "undefined" && window.location.pathname.includes("/playground");
@@ -30,20 +29,6 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
         setContent(initialContent);
         setIsDirty(false);
     }, [initialContent, fileName, isPlaygroundMode]);
-
-    // Track viewport height for responsive sizing
-    useEffect(() => {
-        const updateViewportHeight = () => {
-            setViewportHeight(window.innerHeight);
-        };
-
-        // Set initial height
-        updateViewportHeight();
-
-        // Update on resize
-        window.addEventListener("resize", updateViewportHeight);
-        return () => window.removeEventListener("resize", updateViewportHeight);
-    }, []);
 
     const handleSave = () => {
         if (isDirty) {
@@ -99,10 +84,16 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
+        <Dialog open={isOpen} onOpenChange={handleCancel}>
             <DialogContent
-                className="h-[90vh] max-h-[90vh] w-[95vw] max-w-[95vw] border-purple-900/20 bg-[#1a1625] p-3 text-purple-100 sm:h-[85vh] sm:max-h-[85vh] sm:w-[90vw] sm:max-w-[90vw] sm:p-6 md:h-[80vh] md:max-h-[80vh] md:w-[85vw] md:max-w-[85vw] lg:h-auto lg:w-auto lg:max-w-4xl"
-                onKeyDown={handleKeyDown}>
+                className="h-[90vh] max-h-[90vh] max-w-5xl border-purple-900/20 bg-[#1a1625] p-3 text-purple-100 sm:h-[85vh] sm:max-h-[85vh] sm:p-6 md:h-[80vh] md:max-h-[80vh]"
+                onKeyDown={handleKeyDown}
+                // Remove the built-in X button by overriding its CSS
+                style={
+                    {
+                        "--close-button-display": "none",
+                    } as React.CSSProperties
+                }>
                 <DialogHeader className="mb-2 flex flex-row items-center justify-between">
                     <DialogTitle className="mr-2 flex items-center text-white">
                         <span className="max-w-[150px] truncate sm:max-w-[200px] md:max-w-md">{fileName}</span>
@@ -111,7 +102,7 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
                         </span>
                     </DialogTitle>
                     <Button variant="ghost" size="sm" onClick={handleCancel} className="text-purple-400">
-                        <X className="h-4 w-4" />
+                        {t("editor.cancel")}
                     </Button>
                 </DialogHeader>
 
@@ -133,12 +124,6 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
                 <DialogFooter className="mt-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
                     <div className="hidden text-xs text-purple-400 md:block">{t("editor.escToCancel")}</div>
                     <div className="flex w-full gap-2 sm:w-auto">
-                        <Button
-                            variant="outline"
-                            onClick={handleCancel}
-                            className="flex-1 border-purple-700 text-purple-300 hover:bg-purple-900/50 sm:flex-auto">
-                            {t("editor.cancel")}
-                        </Button>
                         <Button
                             onClick={handleSave}
                             className="flex-1 bg-purple-600 text-white hover:bg-purple-700 sm:flex-auto">

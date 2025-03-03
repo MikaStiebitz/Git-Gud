@@ -7,17 +7,7 @@ import { FileEditor } from "~/components/FileEditor";
 import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
-import {
-    HelpCircleIcon,
-    ArrowRightIcon,
-    RotateCcw,
-    Shield,
-    BookOpen,
-    Code,
-    Pencil,
-    Trash2,
-    InfoIcon,
-} from "lucide-react";
+import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, BookOpen, Code, Pencil, Trash2 } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -91,29 +81,28 @@ export default function LevelPage() {
 
     // Open the file editor for a specific file
     const openFileEditor = (fileName: string) => {
-        const content = fileSystem.getFileContents(fileName) ?? "";
         setIsFileEditorOpen(true);
     };
 
-    // Story dialog display logic
+    // Handle next level navigation and reset story dialog state
+    const handleNextLevelWithStory = () => {
+        handleNextLevel();
+        // Reset the story dialog state when navigating to a new level
+        setUserClosedStoryDialog(false);
+    };
+
+    // Story dialog display logic - Reset when levels change
     useEffect(() => {
-        if (levelData?.story && !userClosedStoryDialog) {
-            // When the level changes, reset the userClosedStoryDialog flag
+        if (levelData?.story) {
+            // Reset the user closed flag when the level changes
             setUserClosedStoryDialog(false);
 
-            // Show story dialog for non-advanced mode or when explicitly requested
+            // Show story dialog for non-advanced mode
             if (!isAdvancedMode) {
                 setShowStoryDialog(true);
             }
         }
-    }, [currentStage, currentLevel, levelData, isAdvancedMode, userClosedStoryDialog]);
-
-    // Also update story dialog visibility when toggling advanced mode
-    useEffect(() => {
-        if (levelData?.story && !userClosedStoryDialog) {
-            setShowStoryDialog(!isAdvancedMode);
-        }
-    }, [isAdvancedMode, levelData, userClosedStoryDialog]);
+    }, [currentStage, currentLevel, levelData, isAdvancedMode]);
 
     // Show a list of user-editable files
     const renderEditableFiles = () => {
@@ -246,7 +235,7 @@ export default function LevelPage() {
 
                         {isLevelCompleted && (
                             <Button
-                                onClick={handleNextLevel}
+                                onClick={handleNextLevelWithStory}
                                 className="flex items-center bg-purple-600 text-white hover:bg-purple-700">
                                 <ArrowRightIcon className="mr-1 h-4 w-4" />
                                 {t("level.nextLevel")}
