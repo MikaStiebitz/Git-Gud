@@ -54,8 +54,9 @@ export default function LevelPage() {
     const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
     const [showHints, setShowHints] = useState(false);
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-    const [showStoryDialog, setShowStoryDialog] = useState(false);
     const [editableFiles, setEditableFiles] = useState<Array<{ name: string; path: string }>>([]);
+    const [showStoryDialog, setShowStoryDialog] = useState(false);
+    const [userClosedStoryDialog, setUserClosedStoryDialog] = useState(false);
 
     // Get the current level data with translation
     const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel, t);
@@ -94,9 +95,16 @@ export default function LevelPage() {
     };
 
     useEffect(() => {
-        if (levelData?.story && !isAdvancedMode) {
+        // Reset the user closed flag when level changes
+
+        // Only show the story dialog if it wasn't manually closed and conditions are met
+        if (levelData?.story && !isAdvancedMode && !userClosedStoryDialog) {
             setShowStoryDialog(true);
+            setUserClosedStoryDialog(false);
+        } else {
+            setShowStoryDialog(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentStage, currentLevel, levelData, isAdvancedMode]);
 
     // Show a list of user-editable files
@@ -218,7 +226,10 @@ export default function LevelPage() {
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => setShowStoryDialog(true)}
+                                onClick={() => {
+                                    setShowStoryDialog(true);
+                                    setUserClosedStoryDialog(false);
+                                }}
                                 className="flex items-center border-purple-700 text-purple-300 hover:bg-purple-900/50">
                                 <BookOpen className="mr-1 h-4 w-4" />
                                 {t("level.storyButton")}
@@ -381,7 +392,10 @@ export default function LevelPage() {
             {levelData?.story && (
                 <StoryDialog
                     isOpen={showStoryDialog}
-                    onClose={() => setShowStoryDialog(false)}
+                    onClose={() => {
+                        setShowStoryDialog(false);
+                        setUserClosedStoryDialog(true);
+                    }}
                     story={levelData.story}
                     isAdvancedMode={isAdvancedMode}
                     onToggleAdvancedMode={toggleAdvancedMode}
