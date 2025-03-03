@@ -23,10 +23,12 @@ import { ClientOnly } from "~/components/ClientOnly";
 import { useLanguage } from "~/contexts/LanguageContext";
 import { StoryDialog } from "~/components/StoryDialog";
 import dynamic from "next/dynamic";
+import { TerminalSkeleton } from "~/components/ui/TerminalSkeleton";
 
 // Dynamically import Terminal component with SSR disabled
 const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
     ssr: false,
+    loading: () => <TerminalSkeleton />,
 });
 
 export default function LevelPage() {
@@ -48,10 +50,10 @@ export default function LevelPage() {
         resetTerminalForLevel,
         getEditableFiles,
         handleCommand,
+        currentFile,
     } = useGameContext();
 
     const { t } = useLanguage();
-    const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
     const [showHints, setShowHints] = useState(false);
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
     const [editableFiles, setEditableFiles] = useState<Array<{ name: string; path: string }>>([]);
@@ -90,22 +92,28 @@ export default function LevelPage() {
     // Open the file editor for a specific file
     const openFileEditor = (fileName: string) => {
         const content = fileSystem.getFileContents(fileName) ?? "";
-        setCurrentFile({ name: fileName, content });
         setIsFileEditorOpen(true);
     };
 
+    // Story dialog display logic
     useEffect(() => {
-        // Reset the user closed flag when level changes
-
-        // Only show the story dialog if it wasn't manually closed and conditions are met
-        if (levelData?.story && !isAdvancedMode && !userClosedStoryDialog) {
-            setShowStoryDialog(true);
+        if (levelData?.story && !userClosedStoryDialog) {
+            // When the level changes, reset the userClosedStoryDialog flag
             setUserClosedStoryDialog(false);
-        } else {
-            setShowStoryDialog(false);
+
+            // Show story dialog for non-advanced mode or when explicitly requested
+            if (!isAdvancedMode) {
+                setShowStoryDialog(true);
+            }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentStage, currentLevel, levelData, isAdvancedMode]);
+    }, [currentStage, currentLevel, levelData, isAdvancedMode, userClosedStoryDialog]);
+
+    // Also update story dialog visibility when toggling advanced mode
+    useEffect(() => {
+        if (levelData?.story && !userClosedStoryDialog) {
+            setShowStoryDialog(!isAdvancedMode);
+        }
+    }, [isAdvancedMode, levelData, userClosedStoryDialog]);
 
     // Show a list of user-editable files
     const renderEditableFiles = () => {
@@ -221,7 +229,7 @@ export default function LevelPage() {
                             {showHints ? t("level.hideHints") : t("level.showHints")}
                         </Button>
 
-                        {/* Story button only if not in advanced mode */}
+                        {/* Story button always visible regardless of mode */}
                         {levelData.story && (
                             <Button
                                 variant="outline"

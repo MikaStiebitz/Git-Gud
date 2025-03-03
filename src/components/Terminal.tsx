@@ -29,6 +29,7 @@ export function Terminal({
         currentStage,
         currentLevel,
         isLevelCompleted,
+        openFileEditor,
     } = useGameContext();
 
     const { t } = useLanguage();
@@ -83,6 +84,24 @@ export function Terminal({
         if (input.trim() === "next" && isLevelCompleted) {
             handleCommand("next", isPlaygroundMode); // Special case for the "next" command
         } else {
+            // Special handling for nano command
+            if (input.trim().startsWith("nano ")) {
+                const args = input.trim().split(/\s+/);
+                if (args.length > 1) {
+                    const fileName = args[1] ?? "";
+                    // Call handleCommand first to let it handle creating the file if needed
+                    handleCommand(input, isPlaygroundMode);
+                    // Then open the file editor
+                    openFileEditor(fileName, isPlaygroundMode);
+
+                    // Add to command history
+                    setCommandHistory(prev => [input, ...prev.slice(0, 49)]);
+                    setHistoryIndex(-1);
+                    setInput("");
+                    return;
+                }
+            }
+
             // Normal command processing
             handleCommand(input, isPlaygroundMode);
         }
@@ -341,6 +360,11 @@ export function Terminal({
                     <span className="text-green-400">{line}</span>
                 </div>
             );
+        }
+
+        // Level completion message
+        if (line.includes(t("level.levelCompleted"))) {
+            return <div className="mt-2 rounded bg-green-900/30 p-2 text-center text-white">{line}</div>;
         }
 
         // Default formatting

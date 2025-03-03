@@ -53,6 +53,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
     };
 
+    // Separate file editor states for different modes
+    const [isLevelFileEditorOpen, setIsLevelFileEditorOpen] = useState(false);
+    const [isPlaygroundFileEditorOpen, setIsPlaygroundFileEditorOpen] = useState(false);
+    const [currentLevelFile, setCurrentLevelFile] = useState({ name: "", content: "" });
+    const [currentPlaygroundFile, setCurrentPlaygroundFile] = useState({ name: "", content: "" });
+
+    // Combined getter/setter for file editor state
+    const isFileEditorOpen = isLevelFileEditorOpen || isPlaygroundFileEditorOpen;
+
+    const setIsFileEditorOpen = (isOpen: boolean) => {
+        if (window.location.pathname.includes("/playground")) {
+            setIsPlaygroundFileEditorOpen(isOpen);
+        } else {
+            setIsLevelFileEditorOpen(isOpen);
+        }
+    };
+
     // Add a function to reset terminal for playground mode
     const resetTerminalForPlayground = () => {
         // First reset the git repository to ensure a clean state
@@ -70,6 +87,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Reset the command processor's current directory
         commandProcessor.setCurrentDirectory("/");
+
+        // Close any open file editors
+        setIsPlaygroundFileEditorOpen(false);
     };
 
     // Add a function to reset terminal for level mode
@@ -100,11 +120,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Reset the command processor's current directory
         commandProcessor.setCurrentDirectory("/");
-    };
 
-    // State for FileEditor
-    const [isFileEditorOpen, setIsFileEditorOpen] = useState(false);
-    const [currentFile, setCurrentFile] = useState({ name: "", content: "" });
+        // Close any open file editors
+        setIsLevelFileEditorOpen(false);
+    };
 
     // Load saved progress on mount
     useEffect(() => {
@@ -122,7 +141,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (args.length > 1) {
                 const fileName = args[1] ?? "";
                 setTerminalOutput(prev => [...prev, `$ ${command}`, `Opening ${fileName} in editor...`]);
-                openFileEditor(fileName);
+                openFileEditor(fileName, isPlaygroundMode);
                 return;
             }
         }
@@ -205,6 +224,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     t("terminal.welcome"),
                     t("terminal.levelStarted").replace("{level}", levelId.toString()).replace("{stage}", stageId),
                 ]);
+
+                // Close any open editor when switching levels
+                setIsLevelFileEditorOpen(false);
             } else {
                 // Handle case where there's no next level
                 setTerminalOutput(prev => [...prev, t("terminal.allLevelsCompleted")]);
@@ -213,14 +235,19 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     // Open the FileEditor for a file
-    const openFileEditor = (fileName: string) => {
+    const openFileEditor = (fileName: string, isPlayground = false) => {
         const currentDir = commandProcessor.getCurrentDirectory();
         const filePath = fileName.startsWith("/") ? fileName : `${currentDir}/${fileName}`;
         const content = fileSystem.getFileContents(filePath) ?? "";
 
         // Set the current file data and open the editor
-        setCurrentFile({ name: filePath, content });
-        setIsFileEditorOpen(true);
+        if (isPlayground) {
+            setCurrentPlaygroundFile({ name: filePath, content });
+            setIsPlaygroundFileEditorOpen(true);
+        } else {
+            setCurrentLevelFile({ name: filePath, content });
+            setIsLevelFileEditorOpen(true);
+        }
     };
 
     // Handle file edit (for nano command)
@@ -243,6 +270,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             t("terminal.levelReset"),
             t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
         ]);
+
+        // Close any open editor when resetting the level
+        setIsLevelFileEditorOpen(false);
     };
 
     // Reset all progress
@@ -261,6 +291,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 .replace("{level}", initialProgress.currentLevel.toString())
                 .replace("{stage}", initialProgress.currentStage),
         ]);
+
+        // Close any open editor when resetting all progress
+        setIsLevelFileEditorOpen(false);
     };
 
     // Get all editable files
@@ -303,6 +336,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         terminalOutput,
         isFileEditorOpen,
         isAdvancedMode,
+        currentFile: window.location.pathname.includes("/playground") ? currentPlaygroundFile : currentLevelFile,
 
         handleCommand,
         handleNextLevel,

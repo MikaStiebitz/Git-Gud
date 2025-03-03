@@ -11,14 +11,17 @@ import { PageLayout } from "~/components/layout/PageLayout";
 import { useLanguage } from "~/contexts/LanguageContext";
 import type { CommandType } from "~/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
+import { TerminalSkeleton } from "~/components/ui/TerminalSkeleton";
+import { FileEditor } from "~/components/FileEditor";
 
 // Dynamically import Terminal component with SSR disabled
 const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
     ssr: false,
+    loading: () => <TerminalSkeleton />,
 });
 
 export default function Playground() {
-    const { resetTerminalForPlayground } = useGameContext();
+    const { resetTerminalForPlayground, isFileEditorOpen, setIsFileEditorOpen, currentFile } = useGameContext();
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCommand, setSelectedCommand] = useState<CommandType | null>(null);
@@ -407,12 +410,14 @@ export default function Playground() {
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {/* Terminal Side */}
-                        <Terminal
-                            className="h-full rounded-md"
-                            showHelpButton={true}
-                            showResetButton={false}
-                            isPlaygroundMode={true}
-                        />
+                        <div className={`${terminalCollapsed ? "hidden md:block" : ""}`}>
+                            <Terminal
+                                className="h-full rounded-md"
+                                showHelpButton={true}
+                                showResetButton={false}
+                                isPlaygroundMode={true}
+                            />
+                        </div>
 
                         {/* Cheat Sheet Side */}
                         <Card
@@ -511,6 +516,14 @@ export default function Playground() {
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* File Editor */}
+                    <FileEditor
+                        isOpen={isFileEditorOpen}
+                        onClose={() => setIsFileEditorOpen(false)}
+                        fileName={currentFile.name}
+                        initialContent={currentFile.content}
+                    />
                 </div>
             </div>
         </PageLayout>

@@ -7,6 +7,10 @@ export class GitRepository {
     private HEAD = "main";
     private status: GitStatus = {};
     private commits: Record<string, { message: string; timestamp: Date; files: string[] }> = {};
+    private stash: Array<{ message: string; timestamp: Date; changes: Record<string, string> }> = [];
+
+    // Track remote repositories
+    private remotes: Record<string, string> = {};
 
     constructor() {
         // Start uninitialized - DON'T call this.init() here
@@ -21,6 +25,7 @@ export class GitRepository {
         this.HEAD = "main";
         this.status = {};
         this.commits = {};
+        this.stash = [];
     }
 
     // Initialize a new Git repository
@@ -91,6 +96,18 @@ export class GitRepository {
         return true;
     }
 
+    // Delete a branch
+    public deleteBranch(name: string): boolean {
+        if (!this.initialized || !this.branches.includes(name) || name === this.currentBranch) return false;
+
+        const index = this.branches.indexOf(name);
+        if (index > -1) {
+            this.branches.splice(index, 1);
+            return true;
+        }
+        return false;
+    }
+
     // Switch to a branch
     public checkout(branch: string, createNew = false): boolean {
         if (!this.initialized) return false;
@@ -137,6 +154,104 @@ export class GitRepository {
         return { ...this.status };
     }
 
+    // Save changes to stash
+    public stashSave(message: string = "WIP on " + this.currentBranch): boolean {
+        if (!this.initialized) return false;
+
+        // Simplified stashing - we don't actually save file contents
+        this.stash.push({
+            message,
+            timestamp: new Date(),
+            changes: {}, // In a real implementation, we would save actual changes
+        });
+
+        // Clear modified files after stashing
+        Object.keys(this.status).forEach(file => {
+            if (this.status[file] === "modified" || this.status[file] === "untracked") {
+                delete this.status[file];
+            }
+        });
+
+        return true;
+    }
+
+    // Apply and optionally pop the most recent stash
+    public stashApply(pop = false): boolean {
+        if (!this.initialized || this.stash.length === 0) return false;
+
+        // Simplified stash apply - we don't actually restore file contents
+        // In a real implementation, we would restore the saved changes
+
+        if (pop) {
+            this.stash.pop(); // Remove the stash if popping
+        }
+
+        return true;
+    }
+
+    // Get stash list
+    public getStash(): Array<{ message: string; timestamp: Date }> {
+        return this.stash.map(stash => ({
+            message: stash.message,
+            timestamp: stash.timestamp,
+        }));
+    }
+
+    // Add a remote repository
+    public addRemote(name: string, url: string): boolean {
+        if (!this.initialized) return false;
+
+        if (this.remotes[name]) {
+            return false; // Remote with this name already exists
+        }
+
+        this.remotes[name] = url;
+        return true;
+    }
+
+    // Get all remotes
+    public getRemotes(): Record<string, string> {
+        return { ...this.remotes };
+    }
+
+    // Push to a remote (simulated)
+    public push(remote: string, branch: string): boolean {
+        if (!this.initialized) return false;
+
+        // Check if remote exists
+        if (!this.remotes[remote]) {
+            return false;
+        }
+
+        // Check if branch exists
+        if (!this.branches.includes(branch)) {
+            return false;
+        }
+
+        // In a real implementation, we would actually push the changes
+        // For the learning game, we'll just return true
+        return true;
+    }
+
+    // Pull from a remote (simulated)
+    public pull(remote: string, branch: string): boolean {
+        if (!this.initialized) return false;
+
+        // Check if remote exists
+        if (!this.remotes[remote]) {
+            return false;
+        }
+
+        // Check if branch exists
+        if (!this.branches.includes(branch)) {
+            return false;
+        }
+
+        // In a real implementation, we would actually pull the changes
+        // For the learning game, we'll just return true
+        return true;
+    }
+
     // Generate a simple commit ID
     private generateCommitId(): string {
         return Math.random().toString(16).substring(2, 10);
@@ -150,5 +265,6 @@ export class GitRepository {
         this.HEAD = "main";
         this.status = {};
         this.commits = {};
+        this.stash = [];
     }
 }

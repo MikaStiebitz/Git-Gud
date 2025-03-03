@@ -6,36 +6,37 @@ import type { GitRepository } from "~/models/GitRepository";
 
 // GameContext Props Definition
 export interface GameContextProps {
-    // Modelle
+    // Models
     fileSystem: FileSystem;
     gitRepository: GitRepository;
     commandProcessor: CommandProcessor;
     levelManager: LevelManager;
     progressManager: ProgressManager;
 
-    // Zustandsvariablen
+    // State variables
     currentStage: string;
     currentLevel: number;
     isLevelCompleted: boolean;
     terminalOutput: string[];
     isFileEditorOpen: boolean;
     isAdvancedMode: boolean;
+    currentFile: { name: string; content: string };
 
-    // Funktionen
+    // Functions
     handleCommand: (command: string, isPlaygroundMode: boolean) => void;
     handleNextLevel: () => void;
     handleFileEdit: (path: string, content: string) => void;
     resetCurrentLevel: () => void;
     resetAllProgress: () => void;
     resetTerminalForPlayground: () => void;
-    openFileEditor: (fileName: string) => void;
+    openFileEditor: (fileName: string, isPlayground?: boolean) => void;
     setIsFileEditorOpen: (isOpen: boolean) => void;
     toggleAdvancedMode: () => void;
     resetTerminalForLevel: () => void;
     getEditableFiles: () => { name: string; path: string }[];
 }
 
-// Basis-Typen
+// Base Types
 export type CommandType = {
     name: string;
     description: string;
@@ -105,4 +106,17 @@ export type UserProgress = {
     currentLevel: number;
     score: number;
     lastSavedAt: string;
+};
+
+// Stash related types
+export type GitStashEntry = {
+    message: string;
+    timestamp: Date;
+    changes: Record<string, string>;
+};
+
+// Remote repository types
+export type RemoteRepository = {
+    name: string;
+    url: string;
 };

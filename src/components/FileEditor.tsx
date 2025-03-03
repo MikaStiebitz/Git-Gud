@@ -22,11 +22,14 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
     const [isDirty, setIsDirty] = useState(false);
     const [viewportHeight, setViewportHeight] = useState(0);
 
-    // Reset content when the file changes
+    // Determine the mode
+    const isPlaygroundMode = typeof window !== "undefined" && window.location.pathname.includes("/playground");
+
+    // Reset content when the file or mode changes
     useEffect(() => {
         setContent(initialContent);
         setIsDirty(false);
-    }, [initialContent, fileName]);
+    }, [initialContent, fileName, isPlaygroundMode]);
 
     // Track viewport height for responsive sizing
     useEffect(() => {
