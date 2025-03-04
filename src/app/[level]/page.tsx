@@ -40,6 +40,7 @@ export default function LevelPage() {
         getEditableFiles,
         handleCommand,
         currentFile,
+        openFileEditor,
     } = useGameContext();
 
     const { t } = useLanguage();
@@ -77,11 +78,6 @@ export default function LevelPage() {
 
         return () => clearInterval(intervalId);
     }, [updateEditableFiles]);
-
-    // Open the file editor for a specific file
-    const openFileEditor = (fileName: string) => {
-        setIsFileEditorOpen(true);
-    };
 
     // Handle next level navigation and reset story dialog state
     const handleNextLevelWithStory = () => {
