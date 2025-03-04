@@ -235,7 +235,7 @@ export class CommandProcessor {
                 return [`error: Cannot delete branch '${branchName}' checked out`];
             }
 
-            const deleted = this.gitRepository.deleteBranch(branchName);
+            const deleted = this.gitRepository.deleteBranch(branchName ?? "");
             if (deleted) {
                 return [`Deleted branch ${branchName}`];
             } else {
@@ -244,7 +244,7 @@ export class CommandProcessor {
         }
 
         // Create new branch without switching
-        if (args.length > 0 && !args[0].startsWith("-")) {
+        if (args.length > 0 && args[0] && !args[0].startsWith("-")) {
             const newBranch = args[0];
             const created = this.gitRepository.createBranch(newBranch);
             if (created) {
@@ -479,7 +479,7 @@ export class CommandProcessor {
                 // --hard would reset index and working directory
                 return [
                     "HEAD is now at " +
-                        commits[commits.length - 1].substring(0, 7) +
+                        commits[commits.length - 1]?.substring(0, 7) +
                         " " +
                         "Reset to previous commit (working directory and index changes discarded)",
                 ];
@@ -487,7 +487,7 @@ export class CommandProcessor {
                 // --soft would keep changes staged
                 return [
                     "HEAD is now at " +
-                        commits[commits.length - 1].substring(0, 7) +
+                        commits[commits.length - 1]?.substring(0, 7) +
                         " " +
                         "Reset to previous commit (changes kept in staging area)",
                 ];
@@ -495,7 +495,7 @@ export class CommandProcessor {
                 // --mixed (default) would unstage the changes
                 return [
                     "HEAD is now at " +
-                        commits[commits.length - 1].substring(0, 7) +
+                        commits[commits.length - 1]?.substring(0, 7) +
                         " " +
                         "Reset to previous commit (changes kept in working directory)",
                 ];
@@ -545,7 +545,7 @@ export class CommandProcessor {
         const branches = this.gitRepository.getBranches();
         const currentBranch = this.gitRepository.getCurrentBranch();
 
-        if (!branches.includes(targetBranch)) {
+        if (!branches.includes(targetBranch ?? "")) {
             return [`fatal: invalid reference: ${targetBranch}`];
         }
 
@@ -610,7 +610,7 @@ export class CommandProcessor {
         const commitId = args[0];
 
         // We don't actually perform cherry-pick, just give appropriate message
-        if (commitId.match(/^[0-9a-f]{7,40}$/)) {
+        if (commitId?.match(/^[0-9a-f]{7,40}$/)) {
             return [
                 `[${this.gitRepository.getCurrentBranch()} XXXXXXX] Cherry-picked commit`,
                 "1 file changed, 1 insertion(+)",
@@ -624,7 +624,7 @@ export class CommandProcessor {
     private processGitDiffCommand(args: string[]): string[] {
         // Simplify diff output for the learning game
         let filePath = "";
-        if (args.length > 0 && !args[0].startsWith("--")) {
+        if (args.length > 0 && args[0] && !args[0].startsWith("--")) {
             filePath = this.resolvePath(args[0]);
         }
 
@@ -657,7 +657,7 @@ export class CommandProcessor {
     private processGitShowCommand(args: string[]): string[] {
         let target = "HEAD";
         if (args.length > 0) {
-            target = args[0];
+            target = args[0] ?? "HEAD";
         }
 
         const commits = this.gitRepository.getCommits();
@@ -668,7 +668,10 @@ export class CommandProcessor {
 
         // Simplified show output
         const commitId = Object.keys(commits)[Object.keys(commits).length - 1];
-        const commit = commits[commitId];
+        const commit = commitId && commits[commitId];
+        if (!commit) {
+            return ["Invalid commit ID"];
+        }
 
         return [
             `commit ${commitId}`,
@@ -723,7 +726,6 @@ export class CommandProcessor {
             this.gitRepository.updateFileStatus(filePath, "deleted");
 
             // Then stage the deletion if --cached is not used
-            const isForceOption = args.includes("-f") || args.includes("--force");
             const isCachedOption = args.includes("--cached");
 
             if (!isCachedOption) {
@@ -762,7 +764,7 @@ export class CommandProcessor {
             const name = args[1];
             const url = args[2];
 
-            const success = this.gitRepository.addRemote(name, url);
+            const success = this.gitRepository.addRemote(name ?? "", url ?? "");
             return success ? [`Added remote '${name}' with URL '${url}'`] : [`error: remote '${name}' already exists`];
         }
 
@@ -793,10 +795,10 @@ export class CommandProcessor {
         for (let i = 0; i < args.length; i++) {
             if (args[i] === "-u" || args[i] === "--set-upstream") {
                 setUpstream = true;
-            } else if (i === 0 && !args[i].startsWith("-")) {
-                remote = args[i];
-            } else if (i === 1 && !args[i].startsWith("-")) {
-                branch = args[i];
+            } else if (i === 0 && args[i] && !args[i]?.startsWith("-")) {
+                remote = args[i] ?? "origin";
+            } else if (i === 1 && args[i] && !args[i]?.startsWith("-")) {
+                branch = args[i] ?? this.gitRepository.getCurrentBranch();
             }
         }
 
@@ -834,11 +836,11 @@ export class CommandProcessor {
         let branch = this.gitRepository.getCurrentBranch();
 
         // Parse arguments
-        if (args.length > 0 && !args[0].startsWith("-")) {
-            remote = args[0];
+        if (args.length > 0 && !args[0]?.startsWith("-")) {
+            remote = args[0] ?? "origin";
         }
-        if (args.length > 1 && !args[1].startsWith("-")) {
-            branch = args[1];
+        if (args.length > 1 && !args[1]?.startsWith("-")) {
+            branch = args[1] ?? this.gitRepository.getCurrentBranch();
         }
 
         // Check if remote exists
@@ -950,23 +952,23 @@ export class CommandProcessor {
         if (options.long) {
             return fileNames.map(name => {
                 const item = contents[name];
-                const type = item.type === "directory" ? "d" : "-";
+                const type = item?.type === "directory" ? "d" : "-";
                 const permissions = "rw-r--r--"; // Simplified permissions
                 const owner = "user";
                 const group = "group";
-                const size = item.content?.length || 0;
-                const date = item.lastModified
+                const size = item?.content?.length ?? 0;
+                const date = item?.lastModified
                     ? item.lastModified.toISOString().split("T")[0]
                     : new Date().toISOString().split("T")[0];
 
-                return `${type}${permissions} ${owner} ${group} ${size.toString().padStart(8)} ${date} ${name}${item.type === "directory" ? "/" : ""}`;
+                return `${type}${permissions} ${owner} ${group} ${size.toString().padStart(8)} ${date} ${name}${item?.type === "directory" ? "/" : ""}`;
             });
         }
 
         // Simple listing with directories having a trailing slash
         return fileNames.map(name => {
             const item = contents[name];
-            return item.type === "directory" ? `${name}/` : name;
+            return item?.type === "directory" ? `${name}/` : name;
         });
     }
 

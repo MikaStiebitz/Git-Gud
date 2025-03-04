@@ -9,7 +9,6 @@ import { TerminalIcon, Search, BookOpen, Command, ChevronUp, ChevronDown } from 
 import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { useLanguage } from "~/contexts/LanguageContext";
-import type { CommandType } from "~/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
 import { TerminalSkeleton } from "~/components/ui/TerminalSkeleton";
 import { FileEditor } from "~/components/FileEditor";
@@ -24,7 +23,6 @@ export default function Playground() {
     const { resetTerminalForPlayground, isFileEditorOpen, setIsFileEditorOpen, currentFile } = useGameContext();
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCommand, setSelectedCommand] = useState<CommandType | null>(null);
     const [terminalCollapsed, setTerminalCollapsed] = useState(false);
     const [cheatSheetCollapsed, setCheatSheetCollapsed] = useState(true);
 

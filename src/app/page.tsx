@@ -157,7 +157,7 @@ export default function Home() {
                                                     {stageData.description}
                                                 </p>
                                                 <div className="mt-4 flex flex-wrap gap-2">
-                                                    {Object.entries(stageData.levels).map(([levelId, levelData]) => {
+                                                    {Object.entries(stageData.levels).map(([levelId]) => {
                                                         const level = parseInt(levelId);
                                                         const levelUnlocked = isLevelUnlocked(stageId, level);
                                                         const levelCompleted = isLevelCompleted(stageId, level);

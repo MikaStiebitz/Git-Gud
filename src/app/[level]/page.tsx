@@ -29,7 +29,6 @@ export default function LevelPage() {
         handleNextLevel,
         levelManager,
         progressManager,
-        fileSystem,
         gitRepository,
         resetCurrentLevel,
         resetAllProgress,

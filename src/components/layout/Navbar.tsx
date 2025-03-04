@@ -19,7 +19,6 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
 
     // Determine which page we're on
     const isHomePage = pathname === "/";
-    const isLevelPage = pathname.includes("/level") || pathname === "/[level]";
     const isPlaygroundPage = pathname === "/playground";
 
     // Toggle language

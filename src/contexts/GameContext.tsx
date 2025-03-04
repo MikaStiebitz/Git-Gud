@@ -63,7 +63,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const isFileEditorOpen = isLevelFileEditorOpen || isPlaygroundFileEditorOpen;
 
     const setIsFileEditorOpen = (isOpen: boolean) => {
-        if (window.location.pathname.includes("/playground")) {
+        if (typeof window !== "undefined" && window.location.pathname.includes("/playground")) {
             setIsPlaygroundFileEditorOpen(isOpen);
         } else {
             setIsLevelFileEditorOpen(isOpen);
@@ -94,9 +94,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Add a function to reset terminal for level mode
     const resetTerminalForLevel = () => {
-        // Get the current level data
-        const level = levelManager.getLevel(currentStage, currentLevel, t);
-
         // Use the LevelManager to set up the environment for this level
         levelManager.setupLevel(currentStage, currentLevel, fileSystem, gitRepository);
 
@@ -160,9 +157,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Handle special case for git commands
         if (cmd === "git") {
-            const gitCommand = args[0]; // The actual Git command (init, status, etc.)
-            const gitArgs = args.slice(1); // The arguments for the Git command
-
             // Check Git command with the LevelManager
             if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
                 markLevelAsCompleted();
@@ -305,6 +299,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return files;
     };
 
+    // Determine current file based on environment
+    const getCurrentFile = () => {
+        if (typeof window !== "undefined" && window.location.pathname.includes("/playground")) {
+            return currentPlaygroundFile;
+        }
+        return currentLevelFile;
+    };
+
     const value = {
         fileSystem,
         gitRepository,
@@ -317,7 +319,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         terminalOutput,
         isFileEditorOpen,
         isAdvancedMode,
-        currentFile: window.location.pathname.includes("/playground") ? currentPlaygroundFile : currentLevelFile,
+        currentFile: getCurrentFile(),
 
         handleCommand,
         handleNextLevel,

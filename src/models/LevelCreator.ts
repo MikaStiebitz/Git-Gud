@@ -9,7 +9,7 @@ import type {
 } from "~/types";
 
 /**
- * Erstellt eine Level-Konfiguration mit Typenprüfung
+ * Creates a Level configuration with type checking
  */
 export function createLevel(params: {
     id: number;
@@ -39,7 +39,7 @@ export function createLevel(params: {
 }
 
 /**
- * Erstellt einen Story-Kontext mit Typenprüfung
+ * Creates a Story context with type checking
  */
 export function createStory(params: {
     title: string;
@@ -56,7 +56,7 @@ export function createStory(params: {
 }
 
 /**
- * Erstellt eine Level-Anforderung mit Typenprüfung
+ * Creates a Level requirement with type checking
  */
 export function createRequirement(params: {
     command: string;
@@ -73,14 +73,14 @@ export function createRequirement(params: {
 }
 
 /**
- * Erstellt eine Dateistruktur für ein Level
+ * Creates a file structure for a level
  */
 export function createFileStructure(path: string, content: string): FileStructure {
     return { path, content };
 }
 
 /**
- * Erstellt eine Git-Zustandskonfiguration
+ * Creates a Git state configuration
  */
 export function createGitState(params: {
     initialized: boolean;
@@ -114,7 +114,7 @@ export function createGitState(params: {
 }
 
 /**
- * Erstellt einen initialen Level-Zustand
+ * Creates an initial level state
  */
 export function createInitialState(params: { files?: FileStructure[]; git?: GitState }): LevelInitialState {
     return {
@@ -124,12 +124,12 @@ export function createInitialState(params: { files?: FileStructure[]; git?: GitS
 }
 
 /**
- * Erstellt einen Merge-Konflikt-Inhalt
+ * Creates merge conflict content
  */
 export function createMergeConflictContent(
     currentBranchContent: string,
     otherBranchContent: string,
-    surroundingContent: string = "",
+    surroundingContent = "",
 ): string {
     return `${surroundingContent}
 <<<<<<< HEAD
@@ -141,7 +141,7 @@ ${surroundingContent}`;
 }
 
 /**
- * Erstellt eine Stage mit Typenprüfung
+ * Creates a Stage with type checking
  */
 export function createStage(params: {
     id: string;
@@ -159,7 +159,7 @@ export function createStage(params: {
     };
 }
 
-// ===== LEVEL DEFINITIONEN =====
+// ===== LEVEL DEFINITIONS =====
 
 // ===== INTRO STAGE =====
 const introLevel1 = createLevel({
@@ -188,7 +188,7 @@ const introLevel1 = createLevel({
             createFileStructure("/src/index.js", 'console.log("Hello, Git!");'),
         ],
         git: createGitState({
-            initialized: false, // Git noch nicht initialisiert für dieses Level
+            initialized: false, // Git not initialized for this level
         }),
     }),
 });
@@ -218,7 +218,7 @@ const introLevel2 = createLevel({
             createFileStructure("/src/index.js", 'console.log("Hello, Git!");'),
         ],
         git: createGitState({
-            initialized: true, // Git bereits initialisiert für dieses Level
+            initialized: true, // Git already initialized for this level
             currentBranch: "main",
         }),
     }),
@@ -254,7 +254,7 @@ const filesLevel1 = createLevel({
         git: createGitState({
             initialized: true,
             currentBranch: "main",
-            // Alle Dateien sind untracked in diesem Level
+            // All files are untracked in this level
             fileChanges: [
                 { path: "/README.md", status: "untracked" },
                 { path: "/src/index.js", status: "untracked" },
@@ -293,7 +293,7 @@ const filesLevel2 = createLevel({
         git: createGitState({
             initialized: true,
             currentBranch: "main",
-            // Alle Dateien sind bereits staged
+            // All files are already staged
             fileChanges: [
                 { path: "/README.md", status: "staged" },
                 { path: "/src/index.js", status: "staged" },
@@ -333,14 +333,14 @@ const filesLevel3 = createLevel({
         git: createGitState({
             initialized: true,
             currentBranch: "main",
-            // Alle Dateien sind bereits commited
+            // All files are already committed
             commits: [
                 {
                     message: "Initial commit",
                     files: ["/README.md", "/src/index.js", "/src/app.js", "/temp.txt"],
                 },
             ],
-            // Eine Datei, die wir entfernen wollen
+            // A file we want to remove
             fileChanges: [{ path: "/temp.txt", status: "committed" }],
         }),
     }),
@@ -541,7 +541,7 @@ const mergeLevel2 = createLevel({
                 "# Merge Conflict Project\n\nA project for learning about merge conflicts.",
             ),
             createFileStructure("/src/main.js", 'console.log("Main branch");'),
-            // Diese Datei wird in beiden Branches unterschiedlich sein
+            // This file will be different in both branches
             createFileStructure(
                 "/src/config.js",
                 '// Configuration file\nconst config = {\n  port: 3000,\n  host: "localhost",\n  debug: true\n};\n\nmodule.exports = config;',
@@ -557,20 +557,20 @@ const mergeLevel2 = createLevel({
                     message: "Initial commit",
                     files: ["/README.md", "/src/main.js", "/src/config.js"],
                 },
-                // Änderung an config.js auf dem feature-Branch
+                // Change to config.js on the feature branch
                 {
                     message: "Update config for production",
                     files: ["/src/config.js"],
                     branch: "feature",
                 },
-                // Änderung an config.js auf dem main-Branch
+                // Change to config.js on the main branch
                 {
                     message: "Update config for debugging",
                     files: ["/src/config.js"],
                     branch: "main",
                 },
             ],
-            // Merge-Konflikt simulieren
+            // Simulate merge conflict
             mergeConflicts: [
                 {
                     file: "/src/config.js",
@@ -658,13 +658,13 @@ const remoteLevel2 = createLevel({
                     files: ["/README.md", "/src/index.js"],
                 },
             ],
-            // Remote bereits hinzugefügt für dieses Level
+            // Remote already added for this level
             fileChanges: [],
         }),
     }),
 });
 
-// ===== STAGES SAMMLUNG =====
+// ===== STAGES COLLECTION =====
 export const allStages = {
     Intro: createStage({
         id: "intro",
