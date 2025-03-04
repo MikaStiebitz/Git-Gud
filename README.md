@@ -112,3 +112,4 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 6. Remove the Remote repository level
 7. Level should not marked as done if the command was right but it didnt work
 8. Progress bar calculation not working
+9. On git status no .git folder should be visible
