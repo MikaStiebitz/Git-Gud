@@ -81,7 +81,6 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 3. Fix: It should be possible to have no files for a level
 4. git rm level has no commited files
 5. LevelCreator it should be possible to use multiple commands as trigger for the next level
-6. Remove the Remote repository level
-7. Level should not marked as done if the command was right but it didnt work
-8. Progress bar calculation not working
-9. On git status no .git folder should be visible
+6. Level should not marked as done if the command was right but it didnt work
+7. Progress bar calculation not working
+8. On git status no .git folder should be visible

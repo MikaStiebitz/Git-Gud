@@ -311,6 +311,40 @@ const translations = {
         "remote.level2.story.realWorldContext":
             "Pushing is how you share your work in a Git-based workflow. It's the opposite of pulling, which brings others' changes to your local repository.",
         "remote.level2.story.taskIntroduction": "Push your changes to the remote repository.",
+
+        // Rebase Stage
+        "rebase.name": "Rebasing",
+        "rebase.description": "Learn how to rebase branches",
+
+        // Rebase Level 1
+        "rebase.level1.name": "Basic Rebasing",
+        "rebase.level1.description": "Apply commits from one branch onto another",
+        "rebase.level1.objective1": "Rebase the current branch onto another branch",
+        "rebase.level1.hint1": "Use the git rebase <branch> command",
+        "rebase.level1.hint2": "This rewrites history by applying your commits on top of the target branch",
+        "rebase.level1.requirement1.description": "Rebase onto another branch",
+        "rebase.level1.requirement1.success": "Great job! You've successfully rebased the branch.",
+        "rebase.level1.story.title": "Creating a Clean History",
+        "rebase.level1.story.narrative":
+            '"I see you\'re getting comfortable with merging," says Sarah. "Now let\'s explore a different approach to integrating changes: rebasing."\n\nShe explains: "While merging combines histories, rebasing rewrites it by moving your commits to appear after the commits from another branch. This creates a more linear, cleaner history."',
+        "rebase.level1.story.realWorldContext":
+            "Rebasing is often preferred when you want to maintain a clean, linear project history. Many teams use it to integrate feature branches before merging them to the main branch.",
+        "rebase.level1.story.taskIntroduction": "Try rebasing your current branch onto another branch.",
+
+        // Rebase Level 2
+        "rebase.level2.name": "Handling Rebase Conflicts",
+        "rebase.level2.description": "Learn how to handle or abort rebases with conflicts",
+        "rebase.level2.objective1": "Abort a rebase with conflicts",
+        "rebase.level2.hint1": "Use the git rebase --abort command",
+        "rebase.level2.hint2": "This will stop the rebase process and return to the state before the rebase began",
+        "rebase.level2.requirement1.description": "Abort a rebase with conflicts",
+        "rebase.level2.requirement1.success": "Excellent! You've successfully aborted the rebase operation.",
+        "rebase.level2.story.title": "When Rebases Get Complicated",
+        "rebase.level2.story.narrative":
+            '"Just like merging, rebasing can lead to conflicts," Alex points out. "But resolving conflicts during a rebase can be more complex because Git applies each of your commits one by one."\n\nHe continues: "If you\'re in the middle of a rebase and decide it\'s too complex or you need to rethink your approach, you can always abort the process."',
+        "rebase.level2.story.realWorldContext":
+            "Knowing when and how to abort a rebase is important in real-world development. Sometimes the conflicts are too complex to resolve immediately, or you realize a different strategy would be better.",
+        "rebase.level2.story.taskIntroduction": "Practice aborting a rebase operation using git rebase --abort.",
     },
     de: {
         // Navigation
@@ -617,6 +651,42 @@ const translations = {
         "remote.level2.story.realWorldContext":
             "Pushen ist die Art und Weise, wie du deine Arbeit in einem Git-basierten Workflow teilst. Es ist das Gegenteil von Pulling, das die Änderungen anderer in dein lokales Repository bringt.",
         "remote.level2.story.taskIntroduction": "Pushe deine Änderungen zum Remote-Repository.",
+
+        // Rebase Stage
+        "rebase.name": "Rebasing",
+        "rebase.description": "Lerne, wie du Branches rebasen kannst",
+
+        // Rebase Level 1
+        "rebase.level1.name": "Grundlegendes Rebasing",
+        "rebase.level1.description": "Wende Commits von einem Branch auf einen anderen an",
+        "rebase.level1.objective1": "Rebase den aktuellen Branch auf einen anderen Branch",
+        "rebase.level1.hint1": "Verwende den Befehl git rebase <branch>",
+        "rebase.level1.hint2":
+            "Dies schreibt die Historie um, indem deine Commits auf den Ziel-Branch angewendet werden",
+        "rebase.level1.requirement1.description": "Rebase auf einen anderen Branch",
+        "rebase.level1.requirement1.success": "Großartig! Du hast den Branch erfolgreich rebasiert.",
+        "rebase.level1.story.title": "Erstellen einer sauberen Historie",
+        "rebase.level1.story.narrative":
+            '"Ich sehe, du wirst vertraut mit dem Mergen", sagt Sarah. "Lass uns jetzt einen anderen Ansatz zur Integration von Änderungen erkunden: Rebasing."\n\nSie erklärt: "Während das Mergen Historien zusammenführt, schreibt Rebasing sie um, indem deine Commits so verschoben werden, dass sie nach den Commits eines anderen Branches erscheinen. Dies erzeugt eine linearere, sauberere Historie."',
+        "rebase.level1.story.realWorldContext":
+            "Rebasing wird oft bevorzugt, wenn du eine saubere, lineare Projekthistorie beibehalten möchtest. Viele Teams nutzen es, um Feature-Branches zu integrieren, bevor sie in den Hauptbranch gemerged werden.",
+        "rebase.level1.story.taskIntroduction":
+            "Versuche, deinen aktuellen Branch auf einen anderen Branch zu rebasen.",
+
+        // Rebase Level 2
+        "rebase.level2.name": "Umgang mit Rebase-Konflikten",
+        "rebase.level2.description": "Lerne, wie man mit Rebase-Konflikten umgeht oder Rebases abbricht",
+        "rebase.level2.objective1": "Brich einen Rebase mit Konflikten ab",
+        "rebase.level2.hint1": "Verwende den Befehl git rebase --abort",
+        "rebase.level2.hint2": "Dies stoppt den Rebase-Prozess und kehrt zum Zustand vor dem Rebase zurück",
+        "rebase.level2.requirement1.description": "Brich einen Rebase mit Konflikten ab",
+        "rebase.level2.requirement1.success": "Ausgezeichnet! Du hast den Rebase-Vorgang erfolgreich abgebrochen.",
+        "rebase.level2.story.title": "Wenn Rebases kompliziert werden",
+        "rebase.level2.story.narrative":
+            '"Genau wie beim Mergen kann Rebasing zu Konflikten führen", weist Alex darauf hin. "Aber das Lösen von Konflikten während eines Rebases kann komplexer sein, weil Git jeden deiner Commits einzeln anwendet."\n\nEr fährt fort: "Wenn du mitten in einem Rebase bist und entscheidest, dass es zu komplex ist oder du deinen Ansatz überdenken musst, kannst du den Prozess jederzeit abbrechen."',
+        "rebase.level2.story.realWorldContext":
+            "Zu wissen, wann und wie man einen Rebase abbricht, ist in der realen Entwicklung wichtig. Manchmal sind die Konflikte zu komplex, um sie sofort zu lösen, oder du erkennst, dass eine andere Strategie besser wäre.",
+        "rebase.level2.story.taskIntroduction": "Übe das Abbrechen eines Rebase-Vorgangs mit git rebase --abort.",
     },
 };
 

@@ -586,6 +586,132 @@ const mergeLevel2 = createLevel({
     }),
 });
 
+// ===== REBASE STAGE =====
+const rebaseLevel1 = createLevel({
+    id: 1,
+    name: "rebase.level1.name",
+    description: "rebase.level1.description",
+    objectives: ["rebase.level1.objective1"],
+    hints: ["rebase.level1.hint1", "rebase.level1.hint2"],
+    requirements: [
+        createRequirement({
+            command: "git rebase",
+            requiresArgs: ["any"],
+            description: "rebase.level1.requirement1.description",
+            successMessage: "rebase.level1.requirement1.success",
+        }),
+    ],
+    story: createStory({
+        title: "rebase.level1.story.title",
+        narrative: "rebase.level1.story.narrative",
+        realWorldContext: "rebase.level1.story.realWorldContext",
+        taskIntroduction: "rebase.level1.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure("/README.md", "# Rebase Project\n\nA project for learning about Git rebases."),
+            createFileStructure("/src/main.js", 'console.log("Main branch");'),
+            createFileStructure("/src/feature.js", 'console.log("Feature implementation");'),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            branches: ["main", "feature"],
+            commits: [
+                // Initial commit on main
+                {
+                    message: "Initial commit",
+                    files: ["/README.md", "/src/main.js"],
+                },
+                // Switch to feature branch and add feature.js
+                {
+                    message: "Add feature implementation",
+                    files: ["/src/feature.js"],
+                    branch: "feature",
+                },
+                // Switch back to main for the user to rebase
+                {
+                    message: "",
+                    files: [],
+                    branch: "main",
+                },
+            ],
+        }),
+    }),
+});
+
+const rebaseLevel2 = createLevel({
+    id: 2,
+    name: "rebase.level2.name",
+    description: "rebase.level2.description",
+    objectives: ["rebase.level2.objective1"],
+    hints: ["rebase.level2.hint1", "rebase.level2.hint2"],
+    requirements: [
+        createRequirement({
+            command: "git rebase",
+            requiresArgs: ["--abort"],
+            description: "rebase.level2.requirement1.description",
+            successMessage: "rebase.level2.requirement1.success",
+        }),
+    ],
+    story: createStory({
+        title: "rebase.level2.story.title",
+        narrative: "rebase.level2.story.narrative",
+        realWorldContext: "rebase.level2.story.realWorldContext",
+        taskIntroduction: "rebase.level2.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure(
+                "/README.md",
+                "# Rebase Conflict Project\n\nA project for learning about rebase conflicts.",
+            ),
+            createFileStructure("/src/main.js", 'console.log("Main branch");'),
+            // This file will be different in both branches
+            createFileStructure(
+                "/src/config.js",
+                '// Configuration file\nconst config = {\n  port: 3000,\n  host: "localhost",\n  debug: true\n};\n\nmodule.exports = config;',
+            ),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            branches: ["main", "feature"],
+            commits: [
+                // Initial commit on main
+                {
+                    message: "Initial commit",
+                    files: ["/README.md", "/src/main.js", "/src/config.js"],
+                },
+                // Change to config.js on the feature branch
+                {
+                    message: "Update config for production",
+                    files: ["/src/config.js"],
+                    branch: "feature",
+                },
+                // Change to config.js on the main branch
+                {
+                    message: "Update config for debugging",
+                    files: ["/src/config.js"],
+                    branch: "main",
+                },
+            ],
+            // Simulate rebase conflict
+            mergeConflicts: [
+                {
+                    file: "/src/config.js",
+                    content: createMergeConflictContent(
+                        '// Configuration file\nconst config = {\n  port: 3000,\n  host: "localhost\n  debug: true\n};\n\nmodule.exports = config;',
+                        '// Configuration file\nconst config = {\n  port: 8080,\n  host: "example.com",\n  debug: false\n};\n\nmodule.exports = config;',
+                    ),
+                    branch1: "main",
+                    branch2: "feature",
+                },
+            ],
+        }),
+    }),
+});
+
 // ===== REMOTE STAGE =====
 const remoteLevel1 = createLevel({
     id: 1,
@@ -706,6 +832,16 @@ export const allStages = {
         levels: {
             1: mergeLevel1,
             2: mergeLevel2,
+        },
+    }),
+    Rebase: createStage({
+        id: "rebase",
+        name: "rebase.name",
+        description: "rebase.description",
+        icon: "🔁",
+        levels: {
+            1: rebaseLevel1,
+            2: rebaseLevel2,
         },
     }),
     Remote: createStage({
