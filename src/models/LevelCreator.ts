@@ -94,7 +94,7 @@ export function createGitState(params: {
     fileChanges?: {
         path: string;
         content?: string;
-        status: "modified" | "untracked" | "deleted" | "staged";
+        status: "modified" | "untracked" | "deleted" | "staged" | "committed";
     }[];
     mergeConflicts?: {
         file: string;

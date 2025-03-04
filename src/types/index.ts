@@ -104,7 +104,7 @@ export type GitCommit = {
 export type FileChange = {
     path: string;
     content?: string;
-    status: "modified" | "untracked" | "deleted" | "staged";
+    status: "modified" | "untracked" | "deleted" | "staged" | "committed";
 };
 
 // Merge conflict definition
