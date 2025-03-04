@@ -104,5 +104,5 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 
 ## TODO
 
-1. LevelManager more customizable (custom files, commits, merge conflicts)
-2. Implement file autocomplente on every relevant command
+1. Make Translations simpler
+2. Fix: Terminal and Challange card should have the same height

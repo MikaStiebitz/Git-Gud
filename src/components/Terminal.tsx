@@ -147,7 +147,7 @@ export function Terminal({
         if (input.trim().includes(" ")) {
             // Extract command part and file part
             const spaceSplit = input.trim().split(/\s+/);
-            commandPart = spaceSplit[0];
+            commandPart = spaceSplit[0] ?? "";
 
             // Special handling for git commands (two words)
             if (commandPart === "git" && spaceSplit.length > 1) {
