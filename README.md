@@ -54,24 +54,6 @@ GitGud is a modern, interactive platform designed to help developers master Git 
 - Radix UI Components
 - Lucide React Icons
 
-## Recent Fixes
-
-### 1. Fix for Nano Command & Modal Colors
-
-The nano command has been improved to correctly open the file editor modal. Modal styling has been updated to match the app's dark purple theme.
-
-### 2. Terminal Game Logic Separation
-
-The playground mode now correctly separates game logic from the level progression system, ensuring users can't accidentally complete levels while in playground mode.
-
-### 3. Language Switcher
-
-A new language toggle has been added to the navbar, allowing users to switch between English and German. The application now includes a comprehensive translation system with context.
-
-### 4. Git Repository Re-initialization Fix
-
-Fixed issue where Git repository was unnecessarily reset between levels. Now the repository maintains its initialization state when moving between levels, except for specific levels that require a fresh Git environment.
-
 ## Installation Instructions
 
 To implement these fixes:
@@ -82,16 +64,6 @@ To implement these fixes:
 4. Update the FileEditor component for better styling.
 5. Add the language switcher to the navbar.
 6. Fix the Git repository reset behavior to maintain initialization between levels.
-
-## Development Roadmap
-
-Consider these future enhancements:
-
-- **Mobile Responsiveness**: Optimize the terminal experience for smaller screens
-- **Social Sharing**: Allow users to share their progress with others
-- **More Git Functionality**: Add support for remote repositories and GitHub integration
-- **Custom Challenges**: Let users create and share their own Git challenges
-- **Achievement System**: Add badges and achievements for completing specific tasks
 
 ## Contributing
 
