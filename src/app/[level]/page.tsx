@@ -123,44 +123,43 @@ export default function LevelPage() {
         return (
             <div className="mt-4">
                 <h3 className="mb-2 font-medium text-purple-200">{t("level.filesToEdit")}</h3>
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                     {editableFiles.map(file => (
-                        <div key={file.path} className="flex items-center">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="flex-1 justify-start border-purple-700 text-left text-purple-300 hover:bg-purple-900/50"
-                                onClick={() => openFileEditor(file.path)}>
+                        <div
+                            key={file.path}
+                            className="flex w-full items-center justify-between rounded border border-purple-700 px-2 py-0.5 hover:bg-purple-900/50">
+                            <div className="truncate text-left text-purple-300" title={file.path}>
                                 {file.name}
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="ml-1 h-9 w-9 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-purple-100"
-                                onClick={() => openFileEditor(file.path)}
-                                title={t("level.editFile")}>
-                                <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="ml-1 h-9 w-9 p-0 text-purple-300 hover:bg-red-900/30 hover:text-red-300"
-                                onClick={() => {
-                                    if (window.confirm(t("level.confirmDelete").replace("{file}", file.name))) {
-                                        handleCommand(`rm ${file.path}`, false);
-                                        updateEditableFiles();
-                                    }
-                                }}
-                                title={t("level.deleteFile")}>
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                            </div>
+                            <div className="flex">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="ml-1 h-8 w-8 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-purple-100"
+                                    onClick={() => openFileEditor(file.path)}
+                                    title={t("level.editFile")}>
+                                    <Pencil className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="ml-1 h-8 w-8 p-0 text-purple-300 hover:bg-red-900/30 hover:text-red-300"
+                                    onClick={() => {
+                                        if (window.confirm(t("level.confirmDelete").replace("{file}", file.name))) {
+                                            handleCommand(`rm ${file.path}`, false);
+                                            updateEditableFiles();
+                                        }
+                                    }}
+                                    title={t("level.deleteFile")}>
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                            </div>
                         </div>
                     ))}
                 </div>
             </div>
         );
     };
-
     // Render the current level's challenge details
     const renderLevelChallenge = () => {
         if (!levelData) {
@@ -366,14 +365,14 @@ export default function LevelPage() {
                     <h1 className="mb-6 text-center text-3xl font-bold text-white">Git Learning Game</h1>
                     <ProgressBar score={progress.score} maxScore={150} className="mb-6" />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Card className="border-purple-900/20 bg-purple-900/10 md:order-2">
+                        <Card className="flex h-full flex-col border-purple-900/20 bg-purple-900/10 md:order-2">
                             <CardHeader>
                                 <CardTitle className="flex items-center text-white">
                                     <Shield className="mr-2 h-5 w-5 text-purple-400" />
                                     {t("level.currentChallenge")}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="flex-grow overflow-auto">
                                 {renderLevelChallenge()}
                                 {renderGitStatus()}
                             </CardContent>

@@ -116,7 +116,10 @@ export class CommandProcessor {
         const status = this.gitRepository.getStatus();
 
         // Find files that exist in the filesystem but aren't in the git status
-        currentFiles.forEach(file => {
+        // Filter out .git directory and its contents
+        const nonGitFiles = currentFiles.filter(file => !file.startsWith("/.git") && !file.includes("/.git/"));
+
+        nonGitFiles.forEach(file => {
             if (!Object.prototype.hasOwnProperty.call(status, file)) {
                 this.gitRepository.updateFileStatus(file, "untracked");
             }
@@ -130,17 +133,20 @@ export class CommandProcessor {
         const modified: string[] = [];
         const untracked: string[] = [];
 
+        // Filter out .git directory entries
         Object.entries(updatedStatus).forEach(([file, fileStatus]) => {
-            switch (fileStatus) {
-                case "staged":
-                    staged.push(file);
-                    break;
-                case "modified":
-                    modified.push(file);
-                    break;
-                case "untracked":
-                    untracked.push(file);
-                    break;
+            if (!file.startsWith("/.git") && !file.includes("/.git/")) {
+                switch (fileStatus) {
+                    case "staged":
+                        staged.push(file);
+                        break;
+                    case "modified":
+                        modified.push(file);
+                        break;
+                    case "untracked":
+                        untracked.push(file);
+                        break;
+                }
             }
         });
 
@@ -1127,6 +1133,11 @@ export class CommandProcessor {
         if (!contents) return files;
 
         Object.entries(contents).forEach(([name, item]) => {
+            // Skip .git directory and its contents
+            if (name === ".git" || name.startsWith(".git/")) {
+                return;
+            }
+
             const path = prefix ? `${prefix}/${name}` : name;
 
             if (item.type === "file") {

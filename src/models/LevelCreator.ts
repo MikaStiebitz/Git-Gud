@@ -183,10 +183,7 @@ const introLevel1 = createLevel({
         taskIntroduction: "intro.level1.story.taskIntroduction",
     }),
     initialState: createInitialState({
-        files: [
-            createFileStructure("/README.md", "# Git Learning Game\n\nWelcome to the Git learning game!"),
-            createFileStructure("/src/index.js", 'console.log("Hello, Git!");'),
-        ],
+        files: [],
         git: createGitState({
             initialized: false, // Git not initialized for this level
         }),

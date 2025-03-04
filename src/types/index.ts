@@ -131,7 +131,7 @@ export type LevelInitialState = {
     git?: GitState;
 };
 
-// Update the LevelType to include initialState
+// Level types
 export type LevelType = {
     id: number;
     name: string;
@@ -139,13 +139,16 @@ export type LevelType = {
     objectives: string[];
     hints: string[];
     requirements: LevelRequirement[];
-    story?: StoryContext; // Make story optional
+    requirementLogic?: "any" | "all";
+    completedRequirements?: string[];
+    story?: StoryContext;
     resetGitRepo?: boolean;
-    initialState?: LevelInitialState; // Add initialState property
+    initialState?: LevelInitialState;
 };
 
 // The rest of the types remain mostly the same
 export type LevelRequirement = {
+    id?: string;
     command: string;
     requiresArgs?: string[];
     description: string;

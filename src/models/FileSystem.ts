@@ -3,28 +3,11 @@ import type { FileSystemItem } from "../types";
 export class FileSystem {
     private root: FileSystemItem;
 
-    constructor(initialFileSystem?: FileSystemItem) {
-        this.root = initialFileSystem ?? {
+    constructor() {
+        this.root = {
             type: "directory",
             name: "/",
-            children: {
-                "README.md": {
-                    type: "file",
-                    name: "README.md",
-                    content: "# Git Learning Game\n\nWelcome to the Git learning game!",
-                },
-                src: {
-                    type: "directory",
-                    name: "src",
-                    children: {
-                        "index.js": {
-                            type: "file",
-                            name: "index.js",
-                            content: 'console.log("Hello, Git!");',
-                        },
-                    },
-                },
-            },
+            children: {},
         };
     }
 

@@ -78,9 +78,8 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 
 1. Make Translations simpler
 2. Fix: Terminal and Challange card should have the same height (Files to Edit could be a grid, as one File dont take to much space)
-3. Fix: It should be possible to have no files for a level
-4. git rm level has no commited files
-5. LevelCreator it should be possible to use multiple commands as trigger for the next level
-6. Level should not marked as done if the command was right but it didnt work
-7. Progress bar calculation not working
-8. On git status no .git folder should be visible
+3. git rm level has no commited files
+4. Level should not marked as done if the command was right but it didnt work
+5. Progress bar calculation not working
+6. On Progress reset, update the state and change Level
+7. Level Selection not working, always the level of the localstorage

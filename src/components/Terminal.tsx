@@ -472,7 +472,6 @@ export function Terminal({
             {/* Terminal output area - fixed height with scrolling */}
             <ScrollArea
                 className="flex-grow overflow-auto px-4 py-3 font-mono text-sm text-purple-300"
-                style={{ height: "calc(400px - 70px)" }} // Adjust this to ensure proper height
                 ref={scrollAreaRef}>
                 <div ref={outputContainerRef} className="pb-4">
                     {terminalOutput.map((line, i) => (

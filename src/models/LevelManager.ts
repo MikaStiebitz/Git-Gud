@@ -19,11 +19,16 @@ export class LevelManager {
             // Reset the file system to a clean state
             this.resetFileSystem(fileSystem);
 
-            // Set up initial file structure if provided
-            if (level.initialState?.files) {
-                this.setupFileStructure(fileSystem, level.initialState.files);
+            // Set up initial file structure based on the level configuration
+            if (level.initialState?.files !== undefined) {
+                // If files array is provided (even if empty)
+                if (level.initialState.files.length > 0) {
+                    // Set up the specified files
+                    this.setupFileStructure(fileSystem, level.initialState.files);
+                }
+                // If files is an empty array, don't create any files
             } else {
-                // Default file structure if none specified
+                // Default file structure if files property is not specified
                 this.setupDefaultFileStructure(fileSystem);
             }
 
@@ -276,6 +281,14 @@ export class LevelManager {
             return false;
         }
 
+        // Initialize completed requirements array if not present
+        if (!level.completedRequirements) {
+            level.completedRequirements = [];
+        }
+
+        // Track if the current command satisfies any requirement
+        let requirementSatisfied = false;
+
         // Special case for Git commands
         if (command === "git") {
             const gitCommand = args[0]; // e.g., "init", "status", etc.
@@ -284,7 +297,10 @@ export class LevelManager {
             console.log(`Git command: ${gitCommand}, Git args:`, gitArgs);
 
             for (const requirement of level.requirements) {
-                console.log("Checking requirement:", requirement);
+                // Skip already completed requirements
+                if (requirement.id && level.completedRequirements.includes(requirement.id)) {
+                    continue;
+                }
 
                 // Check if this is the right Git command
                 if (
@@ -292,8 +308,6 @@ export class LevelManager {
                     requirement.command === command ||
                     requirement.command === gitCommand
                 ) {
-                    // This case is important for "git init" etc.
-
                     console.log("Command matches!");
 
                     // Check arguments if required
@@ -308,18 +322,27 @@ export class LevelManager {
                         console.log("Args required:", requirement.requiresArgs);
                         console.log("Args match:", allArgsMatch);
 
-                        if (!allArgsMatch) return false;
+                        if (!allArgsMatch) continue;
                     }
 
-                    return true;
+                    // Mark this requirement as completed
+                    if (requirement.id) {
+                        level.completedRequirements.push(requirement.id);
+                    }
+                    requirementSatisfied = true;
                 }
             }
         } else if (command === "next") {
             // Special case for the "next" command
-            return false; // The "next" command does not complete any level, it navigates to the next one
+            return false; // The "next" command does not complete any level
         } else {
             // Non-Git commands
             for (const requirement of level.requirements) {
+                // Skip already completed requirements
+                if (requirement.id && level.completedRequirements.includes(requirement.id)) {
+                    continue;
+                }
+
                 if (requirement.command === command) {
                     if (requirement.requiresArgs) {
                         const allArgsMatch = requirement.requiresArgs.every(reqArg => {
@@ -329,15 +352,29 @@ export class LevelManager {
                             return args.includes(reqArg);
                         });
 
-                        if (!allArgsMatch) return false;
+                        if (!allArgsMatch) continue;
                     }
 
-                    return true;
+                    // Mark this requirement as completed
+                    if (requirement.id) {
+                        level.completedRequirements.push(requirement.id);
+                    }
+                    requirementSatisfied = true;
                 }
             }
         }
 
-        return false;
+        // For single requirement or 'any' logic, return true if any requirement is satisfied
+        if (level.requirementLogic !== "all" || level.requirements.length === 1) {
+            return requirementSatisfied;
+        }
+
+        // For 'all' logic, check if all requirements have been completed
+        const allRequirementsCompleted = level.requirements.every(
+            req => !req.id || level.completedRequirements?.includes(req.id),
+        );
+
+        return allRequirementsCompleted;
     }
 
     // Get next level information
