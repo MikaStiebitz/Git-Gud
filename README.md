@@ -105,4 +105,10 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 ## TODO
 
 1. Make Translations simpler
-2. Fix: Terminal and Challange card should have the same height
+2. Fix: Terminal and Challange card should have the same height (Files to Edit could be a grid, as one File dont take to much space)
+3. Fix: It should be possible to have no files for a level
+4. git rm level has no commited files
+5. LevelCreator it should be possible to use multiple commands as trigger for the next level
+6. Remove the Remote repository level
+7. Level should not marked as done if the command was right but it didnt work
+8. Progress bar calculation not working
