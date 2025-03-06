@@ -256,15 +256,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         gitRepository.reset();
 
         const initialProgress = progressManager.getProgress();
-        setCurrentStage(initialProgress.currentStage);
-        setCurrentLevel(initialProgress.currentLevel);
+        const defaultStage = "Intro";
+        const defaultLevel = 1;
+
+        // Explicitly set to first level
+        setCurrentStage(defaultStage);
+        setCurrentLevel(defaultLevel);
         setIsLevelCompleted(false);
+
+        // Use LevelManager to setup the first level
+        levelManager.setupLevel(defaultStage, defaultLevel, fileSystem, gitRepository);
 
         setTerminalOutput([
             t("terminal.progressReset"),
-            t("terminal.levelStarted")
-                .replace("{level}", initialProgress.currentLevel.toString())
-                .replace("{stage}", initialProgress.currentStage),
+            t("terminal.levelStarted").replace("{level}", defaultLevel.toString()).replace("{stage}", defaultStage),
         ]);
 
         // Close any open editor when resetting all progress

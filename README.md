@@ -81,5 +81,4 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 3. git rm level has no commited files
 4. Level should not marked as done if the command was right but it didnt work
 5. Progress bar calculation not working
-6. On Progress reset, update the state and change Level
-7. Level Selection not working, always the level of the localstorage
+6. Level Selection not working, always the level of the localstorage

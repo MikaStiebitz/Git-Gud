@@ -3,7 +3,7 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
-import { HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle } from "lucide-react";
+import { HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle, ArrowUpIcon } from "lucide-react";
 import { useLanguage } from "~/contexts/LanguageContext";
 
 interface TerminalProps {
@@ -265,6 +265,10 @@ export function Terminal({
         const modifiedCount = Object.values(status).filter(s => s === "modified").length;
         const untrackedCount = Object.values(status).filter(s => s === "untracked").length;
 
+        // Check for unpushed commits (simplified for game simulation)
+        const commits = gitRepository.getCommits();
+        const unpushedCommitsCount = Object.keys(commits).length;
+
         // Format display path
         const displayPath = currentDir === "/" ? "/" : currentDir;
         const pathSegments = displayPath.split("/").filter(Boolean);
@@ -313,6 +317,14 @@ export function Terminal({
                             <span className="ml-1 flex items-center text-red-300">
                                 <X className="h-3 w-3" />
                                 {untrackedCount}
+                            </span>
+                        )}
+
+                        {/* Unpushed commits indicator */}
+                        {unpushedCommitsCount > 0 && (
+                            <span className="ml-1 flex items-center text-blue-300">
+                                <ArrowUpIcon className="mr-0.5 h-3 w-3" />
+                                {unpushedCommitsCount}
                             </span>
                         )}
                     </span>

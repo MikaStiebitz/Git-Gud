@@ -173,7 +173,7 @@ export default function LevelPage() {
                         <h2 className="text-xl font-semibold text-white">{levelData.name}</h2>
 
                         {/* Advanced Mode Toggle Button */}
-                        <div className="relative">
+                        <div className="group relative">
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -185,19 +185,16 @@ export default function LevelPage() {
                                 }`}>
                                 {isAdvancedMode ? (
                                     <>
-                                        <Code className="mr-1 h-3 w-3" />
-                                        {t("level.techModeOn")}
+                                        <Code className="h-3 w-3 md:mr-1" />
+                                        <span className="hidden md:inline">{t("level.techModeOn")}</span>
                                     </>
                                 ) : (
                                     <>
-                                        <BookOpen className="mr-1 h-3 w-3" />
-                                        {t("level.storyModeOn")}
+                                        <BookOpen className="h-3 w-3 md:mr-1" />
+                                        <span className="hidden md:inline">{t("level.storyModeOn")}</span>
                                     </>
                                 )}
                             </Button>
-                            <div className="absolute left-0 top-full z-10 mt-1 hidden w-64 rounded border border-purple-700 bg-purple-900/90 p-2 text-xs text-purple-200 group-hover:block">
-                                {isAdvancedMode ? t("level.techModeDescription") : t("level.storyModeDescription")}
-                            </div>
                         </div>
                     </div>
 
