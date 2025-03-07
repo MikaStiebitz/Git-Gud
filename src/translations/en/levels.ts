@@ -1,4 +1,4 @@
-export default {
+const levels = {
     // Level Page
     "level.gitTerminal": "Git Terminal",
     "level.currentChallenge": "Current Challenge",
@@ -263,3 +263,5 @@ export default {
         "Knowing when and how to abort a rebase is important in real-world development. Sometimes the conflicts are too complex to resolve immediately, or you realize a different strategy would be better.",
     "rebase.level2.story.taskIntroduction": "Practice aborting a rebase operation using git rebase --abort.",
 };
+
+export default levels;

@@ -1,4 +1,4 @@
-export default {
+const terminal = {
     // Terminal
     "terminal.welcome": "Welcome to the Git Terminal Simulator!",
     "terminal.levelStarted": "Level {level} of {stage} started. Type 'help' for help.",
@@ -20,3 +20,5 @@ export default {
     "editor.escToCancel": "Press ESC to cancel, CTRL+Enter to save",
     "editor.unsavedChanges": "You have unsaved changes. Do you really want to cancel?",
 };
+
+export default terminal;

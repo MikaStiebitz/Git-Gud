@@ -1,4 +1,4 @@
-export default {
+const common = {
     // Navigation
     "nav.home": "Home",
     "nav.terminal": "Terminal",
@@ -21,3 +21,5 @@ export default {
     "progress.gitMaster": "Git Master",
     "progress.points": "points",
 };
+
+export default common;

@@ -1,4 +1,4 @@
-export default {
+const level = {
     // Level Page
 
     "level.gitTerminal": "Git Terminal",
@@ -267,3 +267,5 @@ export default {
         "Zu wissen, wann und wie man einen Rebase abbricht, ist in der realen Entwicklung wichtig. Manchmal sind die Konflikte zu komplex, um sie sofort zu lösen, oder du erkennst, dass eine andere Strategie besser wäre.",
     "rebase.level2.story.taskIntroduction": "Übe das Abbrechen eines Rebase-Vorgangs mit git rebase --abort.",
 };
+
+export default level;

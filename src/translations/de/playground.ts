@@ -1,4 +1,4 @@
-export default {
+const playground = {
     // Playground
     "playground.title": "Git Playground",
     "playground.subtitle": "Experimentiere frei mit Git-Befehlen und lerne aus dem Spickzettel",
@@ -11,3 +11,5 @@ export default {
     "playground.noCommands": "Keine Befehle gefunden für",
     "playground.resetSearch": "Suche zurücksetzen",
 };
+
+export default playground;

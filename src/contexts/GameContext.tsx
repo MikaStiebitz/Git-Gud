@@ -281,7 +281,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         progressManager.resetProgress();
         gitRepository.reset();
 
-        const initialProgress = progressManager.getProgress();
         const defaultStage = "Intro";
         const defaultLevel = 1;
 

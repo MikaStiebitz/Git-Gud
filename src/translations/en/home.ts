@@ -1,4 +1,4 @@
-export default {
+const home = {
     // Home Page
     "home.title": "Master Git Through",
     "home.title2": "Play",
@@ -13,3 +13,5 @@ export default {
     "home.startLevel": "Start Level",
     "home.locked": "Locked",
 };
+
+export default home;
