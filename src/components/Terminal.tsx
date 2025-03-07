@@ -442,7 +442,7 @@ export function Terminal({
 
     return (
         <div
-            className={`flex w-full flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg md:h-[580px] ${className}`}>
+            className={`flex flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}>
             {/* Terminal header */}
             <div className="flex items-center justify-between bg-purple-900/50 px-3 py-2 text-sm font-medium text-white">
                 <div className="flex items-center space-x-2">
@@ -500,10 +500,8 @@ export function Terminal({
             </ScrollArea>
 
             {/* Terminal input area */}
-            <div className="relative">
-                <form
-                    onSubmit={handleFormSubmit}
-                    className="flex flex-grow items-center border-t border-purple-800/50 px-3 py-2">
+            <div className="relative border-t border-purple-800/50">
+                <form onSubmit={handleFormSubmit} className="flex items-center px-3 py-2">
                     <div className="mr-2 hidden sm:block">{renderFancyPrompt()}</div>
                     <Input
                         ref={inputRef}

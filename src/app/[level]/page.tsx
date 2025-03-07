@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { FileEditor } from "~/components/FileEditor";
@@ -41,14 +42,56 @@ export default function LevelPage() {
         handleCommand,
         currentFile,
         openFileEditor,
+        fileSystem,
     } = useGameContext();
 
+    const searchParams = useSearchParams();
+    const levelParamProcessedRef = useRef(false);
     const { t } = useLanguage();
     const [showHints, setShowHints] = useState(false);
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
     const [editableFiles, setEditableFiles] = useState<Array<{ name: string; path: string }>>([]);
     const [showStoryDialog, setShowStoryDialog] = useState(false);
     const [userClosedStoryDialog, setUserClosedStoryDialog] = useState(false);
+
+    // Handle URL query parameters for level selection
+    useEffect(() => {
+        const stageParam = searchParams.get("stage");
+        const levelParam = searchParams.get("level");
+
+        // Only process URL parameters once per page load
+        if (!levelParamProcessedRef.current && stageParam && levelParam) {
+            const levelNum = parseInt(levelParam);
+
+            if (!isNaN(levelNum) && (stageParam !== currentStage || levelNum !== currentLevel)) {
+                // Check if stage and level exist
+                const levelExists = levelManager.getLevel(stageParam, levelNum);
+
+                if (levelExists) {
+                    // Mark that we've processed the URL parameters
+                    levelParamProcessedRef.current = true;
+
+                    // Set up the environment for this level
+                    levelManager.setupLevel(stageParam, levelNum, fileSystem, gitRepository);
+
+                    // Update progress manager
+                    progressManager.setCurrentLevel(stageParam, levelNum);
+
+                    // Reset the terminal output
+                    resetTerminalForLevel();
+                }
+            }
+        }
+    }, [
+        searchParams,
+        currentStage,
+        currentLevel,
+        levelManager,
+        progressManager,
+        fileSystem,
+        gitRepository,
+        resetTerminalForLevel,
+    ]);
 
     // Get the current level data with translation
     const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel, t);
@@ -57,6 +100,10 @@ export default function LevelPage() {
     // Reset terminal once when the component mounts
     useEffect(() => {
         resetTerminalForLevel();
+
+        return () => {
+            levelParamProcessedRef.current = false;
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -361,21 +408,24 @@ export default function LevelPage() {
                 <div className="container mx-auto p-4">
                     <h1 className="mb-6 text-center text-3xl font-bold text-white">Git Learning Game</h1>
                     <ProgressBar score={progress.score} maxScore={150} className="mb-6" />
+
+                    {/* Ensuring equal heights between challenge card and terminal */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Card className="flex h-full flex-col border-purple-900/20 bg-purple-900/10 md:order-2">
-                            <CardHeader>
+                        <Card className="flex h-[580px] flex-col overflow-hidden border-purple-900/20 bg-purple-900/10 md:order-2">
+                            <CardHeader className="shrink-0">
                                 <CardTitle className="flex items-center text-white">
                                     <Shield className="mr-2 h-5 w-5 text-purple-400" />
                                     {t("level.currentChallenge")}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="flex-grow overflow-auto">
+                            <CardContent className="flex-grow overflow-auto pb-4">
                                 {renderLevelChallenge()}
                                 {renderGitStatus()}
                             </CardContent>
                         </Card>
-                        <Terminal className="h-full rounded-md" />
+                        <Terminal className="h-[580px] rounded-md" />
                     </div>
+
                     <FileEditor
                         isOpen={isFileEditorOpen}
                         onClose={() => setIsFileEditorOpen(false)}

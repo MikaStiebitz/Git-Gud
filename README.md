@@ -76,9 +76,6 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 
 ## TODO
 
-1. Make Translations simpler
-2. Fix: Terminal and Challange card should have the same height (Files to Edit could be a grid, as one File dont take to much space)
-3. git rm level has no commited files
-4. Level should not marked as done if the command was right but it didnt work
-5. Progress bar calculation not working
-6. Level Selection not working, always the level of the localstorage
+1. git rm level has no commited files
+2. Progress bar calculation not working
+3. Remove Terminal scroll loop

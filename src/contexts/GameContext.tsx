@@ -119,28 +119,38 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Process a command and update the state
     const handleCommand = (command: string, isPlaygroundMode = false) => {
-        // Special case for nano command
-        if (command.trim().startsWith("nano ")) {
-            const args = command.trim().split(/\s+/);
-            if (args.length > 1) {
-                const fileName = args[1] ?? "";
-                setTerminalOutput(prev => [...prev, `$ ${command}`, `Opening ${fileName} in editor...`]);
-                openFileEditor(fileName, isPlaygroundMode);
-                return;
-            }
-        }
+        // Check if the command is empty
+        if (!command.trim()) return;
 
+        // Special case for clearing the terminal
         if (command.trim() === "clear") {
             setTerminalOutput([]);
             return;
         }
 
+        // Add the command to the terminal output
         setTerminalOutput(prev => [...prev, `$ ${command}`]);
 
         // Special case for "next" command
         if (command.trim() === "next" && isLevelCompleted) {
             handleNextLevel();
             return;
+        }
+
+        // Special case for nano command - handle it directly
+        if (command.trim().startsWith("nano ")) {
+            const args = command.trim().split(/\s+/);
+            if (args.length > 1) {
+                const fileName = args[1] ?? "";
+
+                // Add nano command output
+                setTerminalOutput(prev => [...prev, `Opening ${fileName} in editor...`]);
+
+                // Then open the file editor
+                openFileEditor(fileName, isPlaygroundMode);
+
+                return;
+            }
         }
 
         // Process the command and get output
@@ -150,6 +160,22 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Skip level completion checks if in playground mode
         if (isPlaygroundMode) {
             return;
+        }
+
+        // Check if the command was successful by looking for error messages in the output
+        const commandFailed = output.some(
+            line =>
+                line.toLowerCase().includes("error:") ||
+                line.toLowerCase().includes("fatal:") ||
+                line.toLowerCase().includes("failed") ||
+                line.toLowerCase().includes("not a git repository") ||
+                line.toLowerCase().includes("nothing specified") ||
+                line.toLowerCase().includes("did not match any files") ||
+                (line.toLowerCase().includes("pathspec") && line.toLowerCase().includes("did not match")),
+        );
+
+        if (commandFailed) {
+            return; // Don't mark level as completed if command failed
         }
 
         // Check if the command completes the level
