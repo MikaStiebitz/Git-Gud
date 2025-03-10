@@ -76,6 +76,11 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 
 ## TODO
 
-1. git rm level has no commited files
 2. Progress bar calculation not working
 3. Remove Terminal scroll loop
+4. Check on level start for uncommited files and update terminal display
+5. git add <filename> not properly working, only git add . (after git add <filename> its tracked but still untracked)
+6. git reset --hard HEAD not working
+7. On next Level reset file, state, commits everything to default / level state
+8. In Level add all files, git add . is not the only solution.
+9. terminal tab suggestion should also wort with one space between command
