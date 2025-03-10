@@ -76,11 +76,9 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 
 ## TODO
 
-2. Progress bar calculation not working
-3. Remove Terminal scroll loop
-4. Check on level start for uncommited files and update terminal display
-5. git add <filename> not properly working, only git add . (after git add <filename> its tracked but still untracked)
-6. git reset --hard HEAD not working
-7. On next Level reset file, state, commits everything to default / level state
-8. In Level add all files, git add . is not the only solution.
-9. terminal tab suggestion should also wort with one space between command
+1. git add <filename> not properly working, only git add . (after git add <filename> its tracked but still untracked)
+2. In Level add all files, git add . is not the only solution.
+3. terminal tab suggestion menu should also work with one space between command
+4. More Rebasing levels
+5. Terminal command suggestion (example: i type git a and the terminal always looks for the best suggestion and displays git add and the user can apply this suggestion with tab)
+6. git push is not working

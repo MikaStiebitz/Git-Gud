@@ -47,18 +47,13 @@ export function Terminal({
     // Auto-scroll to bottom when terminal output changes
     useEffect(() => {
         if (scrollAreaRef.current) {
-            // Longer delay to ensure content is fully rendered
-            setTimeout(() => {
-                if (scrollAreaRef.current) {
-                    // Get the actual scrollable div inside the ScrollArea
-                    const scrollableDiv = scrollAreaRef.current.querySelector('div[style*="overflow"]');
-                    if (scrollableDiv) {
-                        scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
-                    }
-                    // Fallback to the ref itself
-                    scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-                }
-            }, 50); // Increased from 10ms to 50ms
+            // Get the actual scrollable div inside the ScrollArea
+            const scrollableDiv = scrollAreaRef.current.querySelector('div[style*="overflow"]');
+            if (scrollableDiv) {
+                scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+            }
+            // Fallback to the ref itself if needed
+            scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
         }
     }, [terminalOutput]);
 

@@ -18,6 +18,8 @@ export class LevelManager {
 
             // Reset the file system to a clean state
             this.resetFileSystem(fileSystem);
+            this.resetGitRepository(gitRepository);
+            this.resetLevelState(level);
 
             // Set up initial file structure based on the level configuration
             if (level.initialState?.files !== undefined) {
@@ -48,6 +50,14 @@ export class LevelManager {
     private resetFileSystem(fileSystem: FileSystem): void {
         // Create root directory
         fileSystem.mkdir("/");
+    }
+
+    private resetGitRepository(gitRepository: GitRepository): void {
+        gitRepository.reset();
+    }
+
+    private resetLevelState(level: LevelType): void {
+        level.completedRequirements = [];
     }
 
     // Set up the file structure based on configuration
