@@ -169,6 +169,7 @@ export default function Home() {
                                                                         ? `/level?stage=${stageId}&level=${levelId}`
                                                                         : "#"
                                                                 }
+                                                                replace
                                                                 className={levelUnlocked ? "" : "pointer-events-none"}>
                                                                 <Button
                                                                     variant="outline"

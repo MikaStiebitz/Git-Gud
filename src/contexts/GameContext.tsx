@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { CommandProcessor } from "~/models/CommandProcessor";
 import { FileSystem } from "~/models/FileSystem";
 import { LevelManager } from "~/models/LevelManager";
@@ -22,6 +23,7 @@ interface EditableFile {
 }
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const router = useRouter();
     const [fileSystem] = useState<FileSystem>(new FileSystem());
     const [gitRepository] = useState<GitRepository>(new GitRepository(fileSystem));
     const [commandProcessor] = useState<CommandProcessor>(new CommandProcessor(fileSystem, gitRepository));
@@ -70,6 +72,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    // Sync URL with current level state
+    const syncURLWithCurrentLevel = () => {
+        if (typeof window !== "undefined" && window.location.pathname.includes("/level")) {
+            router.replace(`/level?stage=${currentStage}&level=${currentLevel}`);
+        }
+    };
+
     // Add a function to reset terminal for playground mode
     const resetTerminalForPlayground = () => {
         // First reset the git repository to ensure a clean state
@@ -106,7 +115,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Reset the command processor's current directory
         commandProcessor.setCurrentDirectory("/");
 
-        // Close any open file editors
+        // Close any open editor when resetting the level
         setIsLevelFileEditorOpen(false);
     };
     // Load saved progress on mount
@@ -226,11 +235,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
                 // Close any open editor when switching levels
                 setIsLevelFileEditorOpen(false);
+
+                // Sync URL with the new level state
+                syncURLWithCurrentLevel();
+
+                return { stageId, levelId };
             } else {
                 // Handle case where there's no next level
                 setTerminalOutput(prev => [...prev, t("terminal.allLevelsCompleted")]);
+                return null;
             }
         }
+        return null;
     };
 
     // Open the FileEditor for a file
@@ -299,6 +315,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Close any open editor when resetting all progress
         setIsLevelFileEditorOpen(false);
+
+        // Update URL to reflect reset
+        syncURLWithCurrentLevel();
     };
 
     // Get all editable files
@@ -362,6 +381,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetTerminalForLevel,
         toggleAdvancedMode,
         getEditableFiles,
+        syncURLWithCurrentLevel,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

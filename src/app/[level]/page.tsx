@@ -46,6 +46,7 @@ export default function LevelPage() {
     } = useGameContext();
 
     const searchParams = useSearchParams();
+
     const levelParamProcessedRef = useRef(false);
     const { t } = useLanguage();
     const [showHints, setShowHints] = useState(false);
@@ -56,29 +57,35 @@ export default function LevelPage() {
 
     // Handle URL query parameters for level selection
     useEffect(() => {
-        const stageParam = searchParams.get("stage");
-        const levelParam = searchParams.get("level");
+        // Check if we're on a client-side render
+        if (typeof window !== "undefined") {
+            const stageParam = searchParams.get("stage");
+            const levelParam = searchParams.get("level");
 
-        // Only process URL parameters once per page load
-        if (!levelParamProcessedRef.current && stageParam && levelParam) {
-            const levelNum = parseInt(levelParam);
+            // Make sure we have stage and level parameters
+            if (stageParam && levelParam) {
+                const levelNum = parseInt(levelParam);
 
-            if (!isNaN(levelNum) && (stageParam !== currentStage || levelNum !== currentLevel)) {
-                // Check if stage and level exist
-                const levelExists = levelManager.getLevel(stageParam, levelNum);
+                if (!isNaN(levelNum)) {
+                    // Only process if either parameters have changed or we haven't processed them yet
+                    if (!levelParamProcessedRef.current && (stageParam !== currentStage || levelNum !== currentLevel)) {
+                        // Check if stage and level exist
+                        const levelExists = levelManager.getLevel(stageParam, levelNum);
 
-                if (levelExists) {
-                    // Mark that we've processed the URL parameters
-                    levelParamProcessedRef.current = true;
+                        if (levelExists) {
+                            // Mark that we've processed the URL parameters
+                            levelParamProcessedRef.current = true;
 
-                    // Set up the environment for this level
-                    levelManager.setupLevel(stageParam, levelNum, fileSystem, gitRepository);
+                            // Set up the environment for this level
+                            levelManager.setupLevel(stageParam, levelNum, fileSystem, gitRepository);
 
-                    // Update progress manager
-                    progressManager.setCurrentLevel(stageParam, levelNum);
+                            // Update progress manager
+                            progressManager.setCurrentLevel(stageParam, levelNum);
 
-                    // Reset the terminal output
-                    resetTerminalForLevel();
+                            // Reset the terminal output
+                            resetTerminalForLevel();
+                        }
+                    }
                 }
             }
         }
@@ -116,19 +123,8 @@ export default function LevelPage() {
         updateEditableFiles();
     }, [updateEditableFiles]);
 
-    // Monitor for file system changes
-    useEffect(() => {
-        // Set up an interval to check for file changes
-        const intervalId = setInterval(() => {
-            updateEditableFiles();
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, [updateEditableFiles]);
-
     // Handle next level navigation and reset story dialog state
     const handleNextLevelWithStory = () => {
-        handleNextLevel();
         // Reset the story dialog state when navigating to a new level
         setUserClosedStoryDialog(false);
         if (!isAdvancedMode) {
