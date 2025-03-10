@@ -209,8 +209,8 @@ export default function LevelPage() {
 
     // Handle URL query parameters for level selection
     useEffect(() => {
-        // Check if we're on a client-side render
-        if (typeof window !== "undefined") {
+        // Check if we're on a client-side render and not already processed
+        if (typeof window !== "undefined" && !levelParamProcessedRef.current) {
             const stageParam = searchParams.get("stage");
             const levelParam = searchParams.get("level");
 
@@ -256,7 +256,10 @@ export default function LevelPage() {
 
     // Always sync URL when component mounts or if currentStage/currentLevel changes
     useEffect(() => {
-        syncURLWithCurrentLevel();
+        // Only sync URL if we're not already processing URL parameters
+        if (!levelParamProcessedRef.current) {
+            syncURLWithCurrentLevel();
+        }
     }, [currentStage, currentLevel, syncURLWithCurrentLevel]);
 
     // Get the current level data with translation

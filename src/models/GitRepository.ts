@@ -1,3 +1,5 @@
+// Fix for src/models/GitRepository.ts
+
 import type { FileStatus, GitStatus } from "../types";
 import { type FileSystem } from "~/models/FileSystem";
 
@@ -11,7 +13,7 @@ export class GitRepository {
     private stash: Array<{ message: string; timestamp: Date; changes: Record<string, string> }> = [];
     private remotes: Record<string, string> = {};
     private fileSystem: FileSystem;
-    private pushedCommits: Set<string> = new Set(); // Track which commits have been pushed
+    private pushedCommits: Set<string> = new Set<string>();
 
     constructor(fileSystem: FileSystem) {
         this.fileSystem = fileSystem;
@@ -97,9 +99,6 @@ export class GitRepository {
             this.status[file] = "committed";
         }
 
-        // Commits are not automatically pushed
-        // We don't add the commit to pushedCommits
-
         return commitId;
     }
 
@@ -111,6 +110,11 @@ export class GitRepository {
     // Check if there are unpushed commits
     public hasUnpushedCommits(): boolean {
         return Object.keys(this.commits).some(id => !this.pushedCommits.has(id));
+    }
+
+    // Get number of unpushed commits - fixed to accurately count only unpushed commits
+    public getUnpushedCommitCount(): number {
+        return Object.keys(this.commits).filter(id => !this.pushedCommits.has(id)).length;
     }
 
     // Create a new branch
@@ -238,7 +242,7 @@ export class GitRepository {
         return { ...this.remotes };
     }
 
-    // Push to a remote (simulated)
+    // Push to a remote (simulated) - FIX: properly update pushedCommits
     public push(remote: string, branch: string): boolean {
         if (!this.initialized) return false;
 

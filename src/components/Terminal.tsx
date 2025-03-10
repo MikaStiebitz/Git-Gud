@@ -144,8 +144,8 @@ export function Terminal({
         setInput("");
     };
 
-    const getCommandSuggestion = (partialCommand: string): string | null => {
-        if (!partialCommand || partialCommand.trim() === "") return null;
+    const getCommandSuggestion = (partialCommand: string): string | undefined => {
+        if (!partialCommand || partialCommand.trim() === "") return undefined;
 
         // Normalize input (lowercase, trim spaces)
         const normalizedInput = partialCommand.toLowerCase().trim();
@@ -154,7 +154,7 @@ export function Terminal({
         const matches = commonGitCommands.filter(cmd => cmd.toLowerCase().startsWith(normalizedInput));
 
         // Return the first match or null
-        return matches.length > 0 ? matches[0] : null;
+        return matches.length > 0 ? matches[0] : undefined;
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -326,9 +326,8 @@ export function Terminal({
         const modifiedCount = Object.values(status).filter(s => s === "modified").length;
         const untrackedCount = Object.values(status).filter(s => s === "untracked").length;
 
-        // Check for unpushed commits (simplified for game simulation)
-        const commits = gitRepository.getCommits();
-        const unpushedCommitsCount = Object.keys(commits).length;
+        // Check for unpushed commits - FIX: use the proper getUnpushedCommitCount method
+        const unpushedCommitsCount = gitRepository.getUnpushedCommitCount();
 
         // Format display path
         const displayPath = currentDir === "/" ? "/" : currentDir;
@@ -381,7 +380,7 @@ export function Terminal({
                             </span>
                         )}
 
-                        {/* Unpushed commits indicator */}
+                        {/* Unpushed commits indicator - only show if there are actual unpushed commits */}
                         {unpushedCommitsCount > 0 && (
                             <span className="ml-1 flex items-center text-blue-300">
                                 <ArrowUpIcon className="mr-0.5 h-3 w-3" />

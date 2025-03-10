@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { CommandProcessor } from "~/models/CommandProcessor";
 import { FileSystem } from "~/models/FileSystem";
@@ -73,11 +73,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     // Sync URL with current level state
-    const syncURLWithCurrentLevel = () => {
+    const syncURLWithCurrentLevel = useCallback(() => {
         if (typeof window !== "undefined" && window.location.pathname.includes("/level")) {
-            router.replace(`/level?stage=${currentStage}&level=${currentLevel}`, { scroll: false });
+            const currentParams = new URLSearchParams(window.location.search);
+            const currentStageParam = currentParams.get("stage");
+            const currentLevelParam = currentParams.get("level");
+
+            // Only update URL if the parameters have actually changed
+            if (currentStageParam !== currentStage || currentLevelParam !== currentLevel.toString()) {
+                router.replace(`/level?stage=${currentStage}&level=${currentLevel}`, { scroll: false });
+            }
         }
-    };
+    }, [currentStage, currentLevel, router]);
 
     // Add a function to reset terminal for playground mode
     const resetTerminalForPlayground = () => {

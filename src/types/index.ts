@@ -4,62 +4,6 @@ import type { LevelManager } from "~/models/LevelManager";
 import type { ProgressManager } from "~/models/ProgressManager";
 import type { GitRepository } from "~/models/GitRepository";
 
-// GameContext Props Definition
-export interface GameContextProps {
-    // Models
-    fileSystem: FileSystem;
-    gitRepository: GitRepository;
-    commandProcessor: CommandProcessor;
-    levelManager: LevelManager;
-    progressManager: ProgressManager;
-
-    // State variables
-    currentStage: string;
-    currentLevel: number;
-    isLevelCompleted: boolean;
-    terminalOutput: string[];
-    isFileEditorOpen: boolean;
-    isAdvancedMode: boolean;
-    currentFile: { name: string; content: string };
-
-    // Functions
-    handleCommand: (command: string, isPlaygroundMode: boolean) => void;
-    handleNextLevel: () => void;
-    handleFileEdit: (path: string, content: string) => void;
-    resetCurrentLevel: () => void;
-    resetAllProgress: () => void;
-    resetTerminalForPlayground: () => void;
-    openFileEditor: (fileName: string, isPlayground?: boolean) => void;
-    setIsFileEditorOpen: (isOpen: boolean) => void;
-    toggleAdvancedMode: () => void;
-    resetTerminalForLevel: () => void;
-    getEditableFiles: () => { name: string; path: string }[];
-    syncURLWithCurrentLevel: () => void; // Added this function
-}
-
-// Base Types
-export type CommandType = {
-    name: string;
-    description: string;
-    usage: string;
-    examples?: string[];
-    args?: {
-        name: string;
-        description: string;
-        required?: boolean;
-    }[];
-    example?: string;
-    explanation?: string;
-};
-
-export type GitCommand = CommandType & {
-    requiresInitializedRepo?: boolean;
-};
-
-export type FileStatus = "untracked" | "modified" | "staged" | "committed" | "deleted";
-
-export type GitStatus = Record<string, FileStatus>;
-
 export interface FileSystemItem {
     type: "file" | "directory";
     name: string;
@@ -67,14 +11,6 @@ export interface FileSystemItem {
     children?: Record<string, FileSystemItem>;
     lastModified?: Date;
 }
-
-export type UserProgress = {
-    completedLevels: Record<string, number[]>;
-    currentStage: string;
-    currentLevel: number;
-    score: number;
-    lastSavedAt: string;
-};
 
 // Stash related types
 export type GitStashEntry = {
@@ -92,13 +28,6 @@ export type RemoteRepository = {
 export type FileStructure = {
     path: string;
     content: string;
-};
-
-// Git commit definition
-export type GitCommit = {
-    message: string;
-    files: string[];
-    branch?: string; // Optional branch to switch to before committing
 };
 
 // File change definition
@@ -170,3 +99,89 @@ export type StageType = {
     icon: string;
     levels: Record<number, LevelType>;
 };
+
+// Base CommandType with shared properties
+export type CommandType = {
+    name: string;
+    description: string;
+    usage: string;
+    example?: string;
+    explanation?: string;
+};
+
+// GitCommand extends CommandType with additional properties
+export type GitCommand = CommandType & {
+    requiresInitializedRepo?: boolean;
+};
+
+// FileStatus enum for better type safety
+export type FileStatus = "untracked" | "modified" | "staged" | "committed" | "deleted";
+
+// GitStatus type
+export type GitStatus = Record<string, FileStatus>;
+
+// FileSystemItem with improved optional handling
+export interface FileSystemItem {
+    type: "file" | "directory";
+    name: string;
+    content?: string;
+    children?: Record<string, FileSystemItem>;
+    lastModified?: Date;
+}
+
+// FileEditorState to consolidate file editor related state
+export type FileEditorState = {
+    isOpen: boolean;
+    fileName: string;
+    content: string;
+    mode: "level" | "playground";
+};
+
+// UserProgress with better typing
+export type UserProgress = {
+    completedLevels: Record<string, number[]>;
+    currentStage: string;
+    currentLevel: number;
+    score: number;
+    lastSavedAt: string;
+};
+
+// Git commit definition with better types
+export type GitCommit = {
+    message: string;
+    files: string[];
+    branch?: string; // Optional branch to switch to before committing
+};
+
+// Consolidated types for GameContext
+export interface GameContextProps {
+    // Models
+    fileSystem: FileSystem;
+    gitRepository: GitRepository;
+    commandProcessor: CommandProcessor;
+    levelManager: LevelManager;
+    progressManager: ProgressManager;
+
+    // State variables
+    currentStage: string;
+    currentLevel: number;
+    isLevelCompleted: boolean;
+    terminalOutput: string[];
+    isFileEditorOpen: boolean;
+    isAdvancedMode: boolean;
+    currentFile: { name: string; content: string };
+
+    // Functions
+    handleCommand: (command: string, isPlaygroundMode?: boolean) => void;
+    handleNextLevel: () => { stageId?: string; levelId: number } | null;
+    handleFileEdit: (path: string, content: string) => void;
+    resetCurrentLevel: () => void;
+    resetAllProgress: () => void;
+    resetTerminalForPlayground: () => void;
+    resetTerminalForLevel: () => void;
+    openFileEditor: (fileName: string, isPlayground?: boolean) => void;
+    setIsFileEditorOpen: (isOpen: boolean) => void;
+    toggleAdvancedMode: () => void;
+    getEditableFiles: () => Array<{ name: string; path: string }>;
+    syncURLWithCurrentLevel: () => void;
+}

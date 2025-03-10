@@ -879,6 +879,7 @@ export class CommandProcessor {
 
         // Check if there are unpushed commits before pushing
         const hasUnpushedCommits = this.gitRepository.hasUnpushedCommits();
+        const unpushedCommitCount = this.gitRepository.getUnpushedCommitCount();
 
         // Perform push
         const success = this.gitRepository.push(remote, branch);
@@ -888,19 +889,19 @@ export class CommandProcessor {
                 if (setUpstream) {
                     return [
                         `Branch '${branch}' set up to track remote branch '${branch}' from '${remote}'.`,
-                        `Enumerating objects: 5, done.`,
-                        `Counting objects: 100% (5/5), done.`,
-                        `Writing objects: 100% (3/3), 256 bytes | 256.00 KiB/s, done.`,
-                        `Total 3 (delta 0), reused 0 (delta 0)`,
+                        `Enumerating objects: ${unpushedCommitCount * 2 + 1}, done.`,
+                        `Counting objects: 100% (${unpushedCommitCount * 2 + 1}/${unpushedCommitCount * 2 + 1}), done.`,
+                        `Writing objects: 100% (${unpushedCommitCount}/${unpushedCommitCount}), 256 bytes | 256.00 KiB/s, done.`,
+                        `Total ${unpushedCommitCount} (delta 0), reused 0 (delta 0)`,
                         `To ${remotes[remote]}`,
                         `   a1b2c3d..e4f5g6h  ${branch} -> ${branch}`,
                     ];
                 } else {
                     return [
-                        `Enumerating objects: 5, done.`,
-                        `Counting objects: 100% (5/5), done.`,
-                        `Writing objects: 100% (3/3), 256 bytes | 256.00 KiB/s, done.`,
-                        `Total 3 (delta 0), reused 0 (delta 0)`,
+                        `Enumerating objects: ${unpushedCommitCount * 2 + 1}, done.`,
+                        `Counting objects: 100% (${unpushedCommitCount * 2 + 1}/${unpushedCommitCount * 2 + 1}), done.`,
+                        `Writing objects: 100% (${unpushedCommitCount}/${unpushedCommitCount}), 256 bytes | 256.00 KiB/s, done.`,
+                        `Total ${unpushedCommitCount} (delta 0), reused 0 (delta 0)`,
                         `To ${remotes[remote]}`,
                         `   a1b2c3d..e4f5g6h  ${branch} -> ${branch}`,
                     ];
@@ -912,6 +913,9 @@ export class CommandProcessor {
             return [`error: failed to push to '${remote}'`];
         }
     }
+
+    // Optimi
+
     // Process git pull command
     private processGitPullCommand(args: string[]): string[] {
         // Default values
@@ -1072,18 +1076,6 @@ export class CommandProcessor {
         }
     }
 
-    // Process cat command
-    private processCatCommand(file?: string): string[] {
-        if (!file) {
-            return ["Please specify a file."];
-        }
-
-        const filePath = this.resolvePath(file);
-        const contents = this.fileSystem.getFileContents(filePath);
-
-        return contents !== null ? [contents] : [`File not found: ${file}`];
-    }
-
     // Process nano command - Now with special handling
     private processNanoCommand(file?: string): string[] {
         if (!file) {
@@ -1101,69 +1093,6 @@ export class CommandProcessor {
         // Just return a confirmation message
         // The actual file opening is handled by the Terminal component
         return [`Opening file ${file} in editor...`];
-    }
-
-    // Process touch command
-    private processTouchCommand(file?: string): string[] {
-        if (!file) {
-            return ["Please specify a file name."];
-        }
-
-        const filePath = this.resolvePath(file);
-        const success = this.fileSystem.writeFile(filePath, "");
-
-        if (success) {
-            // Use the resolved file path for the Git status update
-            this.gitRepository.updateFileStatus(filePath, "untracked");
-            return [`Created file: ${file}`];
-        } else {
-            return [`Failed to create file: ${file}`];
-        }
-    }
-
-    // Process mkdir command
-    private processMkdirCommand(dir?: string): string[] {
-        if (!dir) {
-            return ["Please specify a directory name."];
-        }
-
-        const dirPath = this.resolvePath(dir);
-        const success = this.fileSystem.mkdir(dirPath);
-
-        return success ? [`Created directory: ${dir}`] : [`Failed to create directory: ${dir}`];
-    }
-
-    // Process rm command
-    private processRmCommand(filePath?: string): string[] {
-        if (!filePath) {
-            return ["Please specify a file to remove."];
-        }
-
-        const resolvedPath = this.resolvePath(filePath);
-
-        // Check if the path is a directory
-        if (this.fileSystem.getDirectoryContents(resolvedPath)) {
-            return [`Cannot remove '${filePath}': Is a directory. Use 'rm -r' for directories (not implemented yet).`];
-        }
-
-        // Check if the file exists
-        if (this.fileSystem.getFileContents(resolvedPath) === null) {
-            return [`Cannot remove '${filePath}': No such file.`];
-        }
-
-        // Remove the file
-        const success = this.fileSystem.delete(resolvedPath);
-
-        // Update Git status if file was tracked
-        if (success) {
-            const status = this.gitRepository.getStatus();
-            if (resolvedPath in status) {
-                // Remove the file from Git status
-                delete status[resolvedPath];
-            }
-        }
-
-        return success ? [`Removed file '${filePath}'.`] : [`Failed to remove '${filePath}'.`];
     }
 
     // Process help command
@@ -1245,5 +1174,89 @@ export class CommandProcessor {
         }
 
         return this.currentDirectory === "/" ? `/${path}` : `${this.currentDirectory}/${path}`;
+    }
+
+    // Consolidated file operation function
+    private handleFileOperation(
+        operation: "read" | "write" | "delete" | "mkdir",
+        path: string,
+        content?: string,
+    ): string[] {
+        const resolvedPath = this.resolvePath(path);
+
+        switch (operation) {
+            case "read":
+                const fileContent = this.fileSystem.getFileContents(resolvedPath);
+                return fileContent !== null ? [fileContent] : [`File not found: ${path}`];
+
+            case "write":
+                const writeSuccess = this.fileSystem.writeFile(resolvedPath, content ?? "");
+                if (writeSuccess) {
+                    this.gitRepository.updateFileStatus(resolvedPath, "untracked");
+                    return [`Created file: ${path}`];
+                }
+                return [`Failed to create file: ${path}`];
+
+            case "delete":
+                // Check if path is a directory
+                if (this.fileSystem.getDirectoryContents(resolvedPath)) {
+                    return [
+                        `Cannot remove '${path}': Is a directory. Use 'rm -r' for directories (not implemented yet).`,
+                    ];
+                }
+
+                // Check if file exists
+                if (this.fileSystem.getFileContents(resolvedPath) === null) {
+                    return [`Cannot remove '${path}': No such file.`];
+                }
+
+                const deleteSuccess = this.fileSystem.delete(resolvedPath);
+
+                // Update Git status if file was tracked
+                if (deleteSuccess) {
+                    const status = this.gitRepository.getStatus();
+                    if (resolvedPath in status) {
+                        delete status[resolvedPath];
+                    }
+                }
+
+                return deleteSuccess ? [`Removed file '${path}'.`] : [`Failed to remove '${path}'.`];
+
+            case "mkdir":
+                const mkdirSuccess = this.fileSystem.mkdir(resolvedPath);
+                return mkdirSuccess ? [`Created directory: ${path}`] : [`Failed to create directory: ${path}`];
+
+            default:
+                return [`Unknown file operation: ${operation as string}`];
+        }
+    }
+
+    // Then use this consolidated function in the command methods:
+    private processCatCommand(file?: string): string[] {
+        if (!file) {
+            return ["Please specify a file."];
+        }
+        return this.handleFileOperation("read", file);
+    }
+
+    private processTouchCommand(file?: string): string[] {
+        if (!file) {
+            return ["Please specify a file name."];
+        }
+        return this.handleFileOperation("write", file, "");
+    }
+
+    private processMkdirCommand(dir?: string): string[] {
+        if (!dir) {
+            return ["Please specify a directory name."];
+        }
+        return this.handleFileOperation("mkdir", dir);
+    }
+
+    private processRmCommand(filePath?: string): string[] {
+        if (!filePath) {
+            return ["Please specify a file to remove."];
+        }
+        return this.handleFileOperation("delete", filePath);
     }
 }

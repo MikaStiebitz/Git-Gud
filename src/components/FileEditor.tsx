@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
@@ -21,36 +21,34 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
     const [content, setContent] = useState(initialContent);
     const [isDirty, setIsDirty] = useState(false);
 
-    // Determine the mode
-    const isPlaygroundMode = typeof window !== "undefined" && window.location.pathname.includes("/playground");
-
-    // Reset content when the file or mode changes
+    // Reset content when the file or mode changes - with useCallback for performance
     useEffect(() => {
         setContent(initialContent);
         setIsDirty(false);
-    }, [initialContent, fileName, isPlaygroundMode]);
+    }, [initialContent, fileName]);
 
-    const handleSave = () => {
+    // Memoize handlers for better performance
+    const handleSave = useCallback(() => {
         if (isDirty) {
             handleFileEdit(fileName, content);
         }
         onClose();
-    };
+    }, [isDirty, fileName, content, handleFileEdit, onClose]);
 
-    const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleContentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.target.value);
         setIsDirty(true);
-    };
+    }, []);
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         if (isDirty && !window.confirm(t("editor.unsavedChanges"))) {
             return;
         }
         onClose();
-    };
+    }, [isDirty, onClose, t]);
 
-    // Check if device is likely mobile
-    const isMobileDevice = () => {
+    // Check if device is likely mobile - memoized for performance
+    const isMobileDevice = useCallback(() => {
         if (typeof window !== "undefined") {
             return (
                 /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
@@ -58,30 +56,33 @@ export function FileEditor({ isOpen, onClose, fileName, initialContent = "" }: F
             );
         }
         return false;
-    };
+    }, []);
 
-    // Calculate editor height based on viewport
-    const getEditorHeight = () => {
+    // Calculate editor height based on viewport - memoized for performance
+    const getEditorHeight = useCallback(() => {
         // Base height on viewport size, smaller percentage for small screens
         const isMobile = isMobileDevice();
         const heightPercentage = isMobile ? 40 : 60;
         return `${Math.min(heightPercentage, 60)}vh`;
-    };
+    }, [isMobileDevice]);
 
-    // Handle keyboard shortcuts
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        // Support Ctrl+Enter or Cmd+Enter to save
-        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-            e.preventDefault();
-            handleSave();
-        }
+    // Handle keyboard shortcuts - memoized for performance
+    const handleKeyDown = useCallback(
+        (e: React.KeyboardEvent) => {
+            // Support Ctrl+Enter or Cmd+Enter to save
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                e.preventDefault();
+                handleSave();
+            }
 
-        // Use Escape to cancel
-        if (e.key === "Escape") {
-            e.preventDefault();
-            handleCancel();
-        }
-    };
+            // Use Escape to cancel
+            if (e.key === "Escape") {
+                e.preventDefault();
+                handleCancel();
+            }
+        },
+        [handleSave, handleCancel],
+    );
 
     return (
         <Dialog open={isOpen} onOpenChange={handleCancel}>
