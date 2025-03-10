@@ -262,6 +262,37 @@ const levels = {
     "rebase.level2.story.realWorldContext":
         "Knowing when and how to abort a rebase is important in real-world development. Sometimes the conflicts are too complex to resolve immediately, or you realize a different strategy would be better.",
     "rebase.level2.story.taskIntroduction": "Practice aborting a rebase operation using git rebase --abort.",
+
+    // Rebase Level 3
+    "rebase.level3.name": "Interactive Rebasing",
+    "rebase.level3.description": "Learn how to use interactive rebasing to modify commit history",
+    "rebase.level3.objective1": "Start an interactive rebase session",
+    "rebase.level3.hint1": "Use the git rebase -i command",
+    "rebase.level3.hint2": "Interactive rebasing allows you to reorder, edit, squash, or delete commits",
+    "rebase.level3.requirement1.description": "Start an interactive rebase",
+    "rebase.level3.requirement1.success": "Perfect! You've started an interactive rebase session.",
+    "rebase.level3.story.title": "Cleaning Up History",
+    "rebase.level3.story.narrative":
+        '"Your feature is looking good," says Alex, reviewing your code. "But I notice you have several small commits with typo fixes and minor changes. Before we merge this to main, let\'s clean up the commit history."\n\nHe explains, "Git offers a powerful tool called interactive rebasing that lets you modify your commit history. You can combine small commits, reword commit messages, or even delete commits entirely."',
+    "rebase.level3.story.realWorldContext":
+        "Interactive rebasing is commonly used to create a clean, coherent commit history before merging feature branches. This makes the codebase history more readable and meaningful.",
+    "rebase.level3.story.taskIntroduction": "Start an interactive rebase session to modify your commit history.",
+
+    // Rebase Level 4
+    "rebase.level4.name": "Rebasing onto Main",
+    "rebase.level4.description": "Learn the workflow of rebasing feature branches onto updated main branches",
+    "rebase.level4.objective1": "Rebase your feature branch onto the updated main branch",
+    "rebase.level4.hint1": "Use git rebase main while on your feature branch",
+    "rebase.level4.hint2": "This will apply your feature changes on top of the latest main branch changes",
+    "rebase.level4.requirement1.description": "Rebase feature onto main",
+    "rebase.level4.requirement1.success": "Excellent! You've rebased your feature branch onto the latest main branch.",
+    "rebase.level4.story.title": "Staying Up to Date",
+    "rebase.level4.story.narrative":
+        '"I see that while you\'ve been working on your feature, someone else has pushed changes to the main branch," Sarah points out. "Before we merge your work, you should incorporate these latest changes."\n\nShe continues, "Instead of merging main into your branch, which creates a merge commit, I recommend rebasing your branch onto main. This keeps the history cleaner."',
+    "rebase.level4.story.realWorldContext":
+        "In collaborative environments, main branches are frequently updated. Rebasing feature branches onto main is a common workflow that helps avoid merge conflicts and keeps feature branches up to date.",
+    "rebase.level4.story.taskIntroduction":
+        "Rebase your feature branch onto the updated main branch to incorporate the latest changes.",
 };
 
 export default levels;

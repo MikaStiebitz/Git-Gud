@@ -87,6 +87,12 @@ export class LevelManager {
         if (gitState.initialized) {
             gitRepository.init();
 
+            // Add a default remote if none specified
+            const remotes = gitRepository.getRemotes();
+            if (Object.keys(remotes).length === 0) {
+                gitRepository.addRemote("origin", "https://github.com/user/repo.git");
+            }
+
             // Create branches if specified
             if (gitState.branches) {
                 for (const branch of gitState.branches) {
@@ -189,8 +195,15 @@ export class LevelManager {
         return filePath.substring(0, lastSlashIndex) || "/";
     }
 
-    // The remaining methods from the original LevelManager stay the same
-    // getAllStages, getStage, getLevel, etc.
+    // Check if all files are staged (for git add level)
+    private areAllFilesStaged(gitRepository: GitRepository): boolean {
+        const status = gitRepository.getStatus();
+        // Get all non-.git files
+        const files = Object.keys(status).filter(file => !file.startsWith("/.git") && !file.includes("/.git/"));
+
+        // Check if all files are staged
+        return files.length > 0 && files.every(file => status[file] === "staged");
+    }
 
     // Get all stages with translated content
     public getAllStages(translateFunc?: (key: string) => string): Record<string, StageType> {
@@ -281,7 +294,13 @@ export class LevelManager {
     }
 
     // Check if a command completes a level requirement
-    public checkLevelCompletion(stageId: string, levelId: number, command: string, args: string[]): boolean {
+    public checkLevelCompletion(
+        stageId: string,
+        levelId: number,
+        command: string,
+        args: string[],
+        gitRepository: GitRepository,
+    ): boolean {
         console.log(`Checking level completion for stage: ${stageId}, level: ${levelId}`);
         console.log(`Command: ${command}, args:`, args);
 
@@ -310,6 +329,18 @@ export class LevelManager {
                 // Skip already completed requirements
                 if (requirement.id && level.completedRequirements.includes(requirement.id)) {
                     continue;
+                }
+
+                // Special case for git add level
+                if (requirement.command === "git add" && gitCommand === "add") {
+                    // Check if all files are staged after the command
+                    if (this.areAllFilesStaged(gitRepository)) {
+                        if (requirement.id) {
+                            level.completedRequirements.push(requirement.id);
+                        }
+                        requirementSatisfied = true;
+                        continue;
+                    }
                 }
 
                 // Check if this is the right Git command

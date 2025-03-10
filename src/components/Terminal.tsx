@@ -13,6 +13,33 @@ interface TerminalProps {
     isPlaygroundMode?: boolean;
 }
 
+const commonGitCommands = [
+    "next",
+    "git init",
+    "git status",
+    "git add",
+    "git commit",
+    "git branch",
+    "git checkout",
+    "git merge",
+    "git pull",
+    "git push",
+    "git clone",
+    "git remote",
+    "git log",
+    "git diff",
+    "git reset",
+    "git revert",
+    "git stash",
+    "git rm",
+    "git mv",
+    "git show",
+    "git rebase",
+    "git switch",
+    "git restore",
+    "git fetch",
+];
+
 export function Terminal({
     className,
     showHelpButton = true,
@@ -39,6 +66,8 @@ export function Terminal({
     const [historyIndex, setHistoryIndex] = useState(-1);
     const [fileAutocomplete, setFileAutocomplete] = useState<string[]>([]);
     const [showAutocomplete, setShowAutocomplete] = useState(false);
+    const [commandSuggestion, setCommandSuggestion] = useState<string>("");
+    const [showCommandSuggestion, setShowCommandSuggestion] = useState<boolean>(false);
 
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -115,6 +144,32 @@ export function Terminal({
         setInput("");
     };
 
+    const getCommandSuggestion = (partialCommand: string): string | null => {
+        if (!partialCommand || partialCommand.trim() === "") return null;
+
+        // Normalize input (lowercase, trim spaces)
+        const normalizedInput = partialCommand.toLowerCase().trim();
+
+        // Find matching commands that start with the input
+        const matches = commonGitCommands.filter(cmd => cmd.toLowerCase().startsWith(normalizedInput));
+
+        // Return the first match or null
+        return matches.length > 0 ? matches[0] : null;
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setInput(newValue);
+
+        // Get command suggestion if applicable
+        const suggestion = getCommandSuggestion(newValue);
+        setCommandSuggestion(suggestion ?? "");
+        setShowCommandSuggestion(!!suggestion);
+
+        // Hide file autocomplete when typing
+        setShowAutocomplete(false);
+    };
+
     // Process Tab-autocomplete for files
     const handleTabAutocomplete = () => {
         // List of commands that can use file autocomplete
@@ -133,15 +188,18 @@ export function Terminal({
             "git show",
         ];
 
+        // Normalize input by removing excess spaces
+        const normalizedInput = input.trim().replace(/\s+/g, " ");
+
         // Check if current command is eligible for file autocomplete
         let isFileCommand = false;
         let commandPart = "";
         let filePart = "";
 
-        // Process single-word commands
-        if (input.trim().includes(" ")) {
+        // Process single-word commands and commands with arguments
+        if (normalizedInput.includes(" ")) {
             // Extract command part and file part
-            const spaceSplit = input.trim().split(/\s+/);
+            const spaceSplit = normalizedInput.split(" ");
             commandPart = spaceSplit[0] ?? "";
 
             // Special handling for git commands (two words)
@@ -232,9 +290,17 @@ export function Terminal({
             }
         } else if (e.key === "Tab") {
             e.preventDefault();
+            // If we have a command suggestion, use it
+            if (showCommandSuggestion && commandSuggestion) {
+                setInput(commandSuggestion);
+                setShowCommandSuggestion(false);
+                return;
+            }
+            // Otherwise, try file autocomplete
             handleTabAutocomplete();
         } else if (e.key === "Escape") {
             setShowAutocomplete(false);
+            setShowCommandSuggestion(false);
         }
     };
 
@@ -498,11 +564,16 @@ export function Terminal({
             <div className="relative border-t border-purple-800/50">
                 <form onSubmit={handleFormSubmit} className="flex items-center px-3 py-2">
                     <div className="mr-2 hidden sm:block">{renderFancyPrompt()}</div>
+                    {showCommandSuggestion && (
+                        <div className="absolute left-0 top-0 z-10 mt-[-30px] rounded border border-purple-800 bg-purple-900/70 px-2 py-1 text-xs text-purple-300">
+                            Press Tab to complete: <span className="font-mono font-semibold">{commandSuggestion}</span>
+                        </div>
+                    )}
                     <Input
                         ref={inputRef}
                         type="text"
                         value={input}
-                        onChange={e => setInput(e.target.value)}
+                        onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         className="flex-grow border-none bg-transparent font-mono text-sm text-purple-300 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder={t("terminal.enterCommand")}

@@ -266,6 +266,41 @@ const level = {
     "rebase.level2.story.realWorldContext":
         "Zu wissen, wann und wie man einen Rebase abbricht, ist in der realen Entwicklung wichtig. Manchmal sind die Konflikte zu komplex, um sie sofort zu lösen, oder du erkennst, dass eine andere Strategie besser wäre.",
     "rebase.level2.story.taskIntroduction": "Übe das Abbrechen eines Rebase-Vorgangs mit git rebase --abort.",
+
+    // Rebase Level 3
+    "rebase.level3.name": "Interaktives Rebasing",
+    "rebase.level3.description": "Lerne, wie man interaktives Rebasing nutzt, um die Commit-Historie zu ändern",
+    "rebase.level3.objective1": "Starte eine interaktive Rebasing-Sitzung",
+    "rebase.level3.hint1": "Verwende den Befehl git rebase -i",
+    "rebase.level3.hint2":
+        "Interaktives Rebasing ermöglicht dir, Commits zu ordnen, zu bearbeiten, zusammenzuführen oder zu löschen",
+    "rebase.level3.requirement1.description": "Starte ein interaktives Rebase",
+    "rebase.level3.requirement1.success": "Perfekt! Du hast eine interaktive Rebasing-Sitzung gestartet.",
+    "rebase.level3.story.title": "Aufräumen der Historie",
+    "rebase.level3.story.narrative":
+        '"Dein Feature sieht gut aus", sagt Alex, während er deinen Code überprüft. "Aber ich sehe, dass du mehrere kleine Commits mit Tippfehler-Korrekturen und kleinen Änderungen hast. Bevor wir das in den main-Branch mergen, sollten wir die Commit-Historie aufräumen."\n\nEr erklärt: "Git bietet ein mächtiges Werkzeug namens interaktives Rebasing, mit dem du deine Commit-Historie ändern kannst. Du kannst kleine Commits zusammenführen, Commit-Nachrichten umformulieren oder sogar Commits komplett löschen."',
+    "rebase.level3.story.realWorldContext":
+        "Interaktives Rebasing wird häufig verwendet, um eine saubere, zusammenhängende Commit-Historie zu erstellen, bevor Feature-Branches gemerged werden. Dies macht die Codebase-Historie lesbarer und aussagekräftiger.",
+    "rebase.level3.story.taskIntroduction":
+        "Starte eine interaktive Rebasing-Sitzung, um deine Commit-Historie zu modifizieren.",
+
+    // Rebase Level 4
+    "rebase.level4.name": "Rebasing auf Main",
+    "rebase.level4.description":
+        "Lerne den Workflow des Rebasings von Feature-Branches auf aktualisierte Main-Branches",
+    "rebase.level4.objective1": "Rebase deinen Feature-Branch auf den aktualisierten Main-Branch",
+    "rebase.level4.hint1": "Verwende git rebase main während du auf deinem Feature-Branch bist",
+    "rebase.level4.hint2": "Dies wird deine Feature-Änderungen auf den neuesten Stand des Main-Branches anwenden",
+    "rebase.level4.requirement1.description": "Rebase Feature auf Main",
+    "rebase.level4.requirement1.success":
+        "Ausgezeichnet! Du hast deinen Feature-Branch auf den neuesten Main-Branch rebasiert.",
+    "rebase.level4.story.title": "Auf dem neuesten Stand bleiben",
+    "rebase.level4.story.narrative":
+        '"Ich sehe, dass während du an deinem Feature gearbeitet hast, jemand anderes Änderungen zum Main-Branch gepusht hat", weist Sarah hin. "Bevor wir deine Arbeit mergen, solltest du diese neuesten Änderungen einarbeiten."\n\nSie fährt fort: "Anstatt Main in deinen Branch zu mergen, was einen Merge-Commit erzeugt, empfehle ich, deinen Branch auf Main zu rebasen. Das hält die Historie sauberer."',
+    "rebase.level4.story.realWorldContext":
+        "In kollaborativen Umgebungen werden Main-Branches häufig aktualisiert. Das Rebasing von Feature-Branches auf Main ist ein gängiger Workflow, der hilft, Merge-Konflikte zu vermeiden und Feature-Branches auf dem neuesten Stand zu halten.",
+    "rebase.level4.story.taskIntroduction":
+        "Rebase deinen Feature-Branch auf den aktualisierten Main-Branch, um die neuesten Änderungen einzuarbeiten.",
 };
 
 export default level;

@@ -234,7 +234,12 @@ export class GitRepository {
 
         // Check if remote exists
         if (!this.remotes[remote]) {
-            return false;
+            // If no remotes exist but pushing to origin, create a default remote
+            if (remote === "origin" && Object.keys(this.remotes).length === 0) {
+                this.remotes[remote] = "https://github.com/user/repo.git";
+            } else {
+                return false;
+            }
         }
 
         // Check if branch exists

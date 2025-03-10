@@ -184,12 +184,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Handle special case for git commands
         if (cmd === "git") {
             // Check Git command with the LevelManager
-            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args)) {
+            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args, gitRepository)) {
                 markLevelAsCompleted();
             }
         } else {
             // For non-Git commands - direct check
-            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd ?? "", args)) {
+            if (levelManager.checkLevelCompletion(currentStage, currentLevel, cmd ?? "", args, gitRepository)) {
                 markLevelAsCompleted();
             }
         }

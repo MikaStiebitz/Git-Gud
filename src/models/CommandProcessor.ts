@@ -203,7 +203,19 @@ export class CommandProcessor {
                 return [`pathspec '${args[0]}' did not match any files`];
             }
 
+            // Fix: First mark as untracked if not already tracked, then add
+            const status = this.gitRepository.getStatus();
+            if (!status[filePath]) {
+                this.gitRepository.updateFileStatus(filePath, "untracked");
+            }
+
+            // Now stage the file
             this.gitRepository.addFile(filePath);
+
+            // Fix: Ensure UI is updated - force update in GitRepository object
+            const updatedStatus = this.gitRepository.getStatus();
+            updatedStatus[filePath] = "staged";
+
             return [`Added ${args[0]} to staging area.`];
         }
     }
@@ -798,6 +810,13 @@ export class CommandProcessor {
         if (args.length === 0) {
             // List remotes
             const remotes = Object.keys(this.gitRepository.getRemotes());
+
+            // If no remotes exist and we're not in a specific level, add a default remote
+            if (remotes.length === 0 && !this.gitRepository.isInitialized()) {
+                this.gitRepository.addRemote("origin", "https://github.com/user/repo.git");
+                return ["origin"];
+            }
+
             return remotes.length === 0 ? [] : remotes;
         }
 
