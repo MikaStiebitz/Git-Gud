@@ -11,6 +11,7 @@ export class GitRepository {
     private stash: Array<{ message: string; timestamp: Date; changes: Record<string, string> }> = [];
     private remotes: Record<string, string> = {};
     private fileSystem: FileSystem;
+    private pushedCommits: Set<string> = new Set(); // Track which commits have been pushed
 
     constructor(fileSystem: FileSystem) {
         this.fileSystem = fileSystem;
@@ -26,6 +27,7 @@ export class GitRepository {
         this.status = {};
         this.commits = {};
         this.stash = [];
+        this.pushedCommits = new Set();
     }
 
     // Initialize a new Git repository
@@ -95,12 +97,20 @@ export class GitRepository {
             this.status[file] = "committed";
         }
 
+        // Commits are not automatically pushed
+        // We don't add the commit to pushedCommits
+
         return commitId;
     }
 
     // Get all commits
     public getCommits(): Record<string, { message: string; timestamp: Date; files: string[] }> {
         return { ...this.commits };
+    }
+
+    // Check if there are unpushed commits
+    public hasUnpushedCommits(): boolean {
+        return Object.keys(this.commits).some(id => !this.pushedCommits.has(id));
     }
 
     // Create a new branch
@@ -247,8 +257,19 @@ export class GitRepository {
             return false;
         }
 
-        // In a real implementation, we would actually push the changes
-        // For the learning game, we'll just return true
+        // Find unpushed commits
+        const unpushedCommits = Object.keys(this.commits).filter(id => !this.pushedCommits.has(id));
+
+        // If no unpushed commits, nothing to do
+        if (unpushedCommits.length === 0) {
+            return true; // Success, but nothing to push
+        }
+
+        // Mark all commits as pushed
+        for (const commitId of unpushedCommits) {
+            this.pushedCommits.add(commitId);
+        }
+
         return true;
     }
 
@@ -285,5 +306,6 @@ export class GitRepository {
         this.status = {};
         this.commits = {};
         this.stash = [];
+        this.pushedCommits = new Set();
     }
 }

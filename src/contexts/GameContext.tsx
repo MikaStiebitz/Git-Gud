@@ -75,7 +75,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Sync URL with current level state
     const syncURLWithCurrentLevel = () => {
         if (typeof window !== "undefined" && window.location.pathname.includes("/level")) {
-            router.replace(`/level?stage=${currentStage}&level=${currentLevel}`);
+            router.replace(`/level?stage=${currentStage}&level=${currentLevel}`, { scroll: false });
         }
     };
 

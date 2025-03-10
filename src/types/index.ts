@@ -34,6 +34,7 @@ export interface GameContextProps {
     toggleAdvancedMode: () => void;
     resetTerminalForLevel: () => void;
     getEditableFiles: () => { name: string; path: string }[];
+    syncURLWithCurrentLevel: () => void; // Added this function
 }
 
 // Base Types

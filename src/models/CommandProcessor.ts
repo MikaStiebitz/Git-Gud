@@ -877,14 +877,34 @@ export class CommandProcessor {
             ];
         }
 
+        // Check if there are unpushed commits before pushing
+        const hasUnpushedCommits = this.gitRepository.hasUnpushedCommits();
+
         // Perform push
         const success = this.gitRepository.push(remote, branch);
         if (success) {
-            if (setUpstream) {
-                return [
-                    `Branch '${branch}' set up to track remote branch '${branch}' from '${remote}'.`,
-                    "Everything up-to-date",
-                ];
+            if (hasUnpushedCommits) {
+                // Show a more realistic push output when commits are actually pushed
+                if (setUpstream) {
+                    return [
+                        `Branch '${branch}' set up to track remote branch '${branch}' from '${remote}'.`,
+                        `Enumerating objects: 5, done.`,
+                        `Counting objects: 100% (5/5), done.`,
+                        `Writing objects: 100% (3/3), 256 bytes | 256.00 KiB/s, done.`,
+                        `Total 3 (delta 0), reused 0 (delta 0)`,
+                        `To ${remotes[remote]}`,
+                        `   a1b2c3d..e4f5g6h  ${branch} -> ${branch}`,
+                    ];
+                } else {
+                    return [
+                        `Enumerating objects: 5, done.`,
+                        `Counting objects: 100% (5/5), done.`,
+                        `Writing objects: 100% (3/3), 256 bytes | 256.00 KiB/s, done.`,
+                        `Total 3 (delta 0), reused 0 (delta 0)`,
+                        `To ${remotes[remote]}`,
+                        `   a1b2c3d..e4f5g6h  ${branch} -> ${branch}`,
+                    ];
+                }
             } else {
                 return ["Everything up-to-date"];
             }
@@ -892,7 +912,6 @@ export class CommandProcessor {
             return [`error: failed to push to '${remote}'`];
         }
     }
-
     // Process git pull command
     private processGitPullCommand(args: string[]): string[] {
         // Default values

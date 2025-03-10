@@ -8,7 +8,20 @@ import { FileEditor } from "~/components/FileEditor";
 import { ProgressBar } from "~/components/ProgressBar";
 import { useGameContext } from "~/contexts/GameContext";
 import { type LevelType } from "~/types";
-import { HelpCircleIcon, ArrowRightIcon, RotateCcw, Shield, BookOpen, Code, Pencil, Trash2 } from "lucide-react";
+import {
+    HelpCircleIcon,
+    ArrowRightIcon,
+    RotateCcw,
+    Shield,
+    BookOpen,
+    Code,
+    Pencil,
+    Trash2,
+    ChevronDown,
+    ChevronRight,
+    FileIcon,
+    Folder,
+} from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -21,6 +34,14 @@ const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ de
     ssr: false,
     loading: () => <TerminalSkeleton />,
 });
+
+// File tree node type definition
+interface FileTreeNode {
+    name: string;
+    path: string;
+    isDirectory: boolean;
+    children: Record<string, FileTreeNode>;
+}
 
 export default function LevelPage() {
     const {
@@ -43,6 +64,7 @@ export default function LevelPage() {
         currentFile,
         openFileEditor,
         fileSystem,
+        syncURLWithCurrentLevel,
     } = useGameContext();
 
     const searchParams = useSearchParams();
@@ -54,6 +76,136 @@ export default function LevelPage() {
     const [editableFiles, setEditableFiles] = useState<Array<{ name: string; path: string }>>([]);
     const [showStoryDialog, setShowStoryDialog] = useState(false);
     const [userClosedStoryDialog, setUserClosedStoryDialog] = useState(false);
+
+    // Helper function to convert flat file list to tree structure
+    const getFileTree = (files: Array<{ name: string; path: string }>): FileTreeNode => {
+        const root: FileTreeNode = {
+            name: "/",
+            path: "/",
+            isDirectory: true,
+            children: {},
+        };
+
+        // Sort files to ensure parent directories are processed before their children
+        const sortedFiles = [...files].sort((a, b) => a.path.localeCompare(b.path));
+
+        for (const file of sortedFiles) {
+            // Split path into segments
+            const segments = file.path.split("/").filter(Boolean);
+
+            if (segments.length === 0) continue; // Skip root
+
+            const fileName = segments.pop() ?? "";
+
+            // Navigate to the correct directory
+            let currentDir = root;
+            for (const segment of segments) {
+                // Create directory if it doesn't exist
+                if (!currentDir.children[segment]) {
+                    currentDir.children[segment] = {
+                        name: segment,
+                        path: `${currentDir.path === "/" ? "" : currentDir.path}/${segment}`,
+                        isDirectory: true,
+                        children: {},
+                    };
+                }
+                currentDir = currentDir.children[segment];
+            }
+
+            // Add file to the directory
+            currentDir.children[fileName] = {
+                name: fileName,
+                path: file.path,
+                isDirectory: false,
+                children: {},
+            };
+        }
+
+        return root;
+    };
+
+    // Recursive component to render a file tree item
+    const FileTreeItem = ({
+        item,
+        level = 0,
+        onEditFile,
+        onDeleteFile,
+    }: {
+        item: FileTreeNode;
+        level?: number;
+        onEditFile: (path: string) => void;
+        onDeleteFile: (path: string, name: string) => void;
+    }) => {
+        const [isOpen, setIsOpen] = useState(level === 0); // Root is open by default
+
+        if (item.isDirectory) {
+            // Directory
+            const hasChildren = Object.keys(item.children).length > 0;
+
+            return (
+                <div className="mb-1">
+                    <div
+                        className="flex cursor-pointer items-center rounded px-2 py-0.5 hover:bg-purple-900/30"
+                        onClick={() => setIsOpen(!isOpen)}>
+                        <span className="mr-1 text-purple-400">
+                            {isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                        </span>
+                        <Folder className="mr-1 h-3.5 w-3.5 text-purple-400" />
+                        <span className="font-medium text-purple-300">{item.name === "/" ? "root" : item.name}</span>
+                    </div>
+
+                    {isOpen && hasChildren && (
+                        <div className="ml-4 border-l border-purple-800/50 pl-2">
+                            {Object.values(item.children)
+                                .sort((a, b) => {
+                                    // Directories first, then files
+                                    if (a.isDirectory && !b.isDirectory) return -1;
+                                    if (!a.isDirectory && b.isDirectory) return 1;
+                                    return a.name.localeCompare(b.name);
+                                })
+                                .map(child => (
+                                    <FileTreeItem
+                                        key={child.path}
+                                        item={child}
+                                        level={level + 1}
+                                        onEditFile={onEditFile}
+                                        onDeleteFile={onDeleteFile}
+                                    />
+                                ))}
+                        </div>
+                    )}
+                </div>
+            );
+        } else {
+            // File
+            return (
+                <div className="mb-1 flex items-center justify-between rounded px-2 py-0.5 hover:bg-purple-900/30">
+                    <div className="flex items-center truncate text-left text-purple-300" title={item.path}>
+                        <FileIcon className="mr-1 h-3 w-3 text-purple-400" />
+                        <span>{item.name}</span>
+                    </div>
+                    <div className="flex">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-1 h-6 w-6 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-purple-100"
+                            onClick={() => onEditFile(item.path)}
+                            title={t("level.editFile")}>
+                            <Pencil className="h-3 w-3" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-1 h-6 w-6 p-0 text-purple-300 hover:bg-red-900/30 hover:text-red-300"
+                            onClick={() => onDeleteFile(item.path, item.name)}
+                            title={t("level.deleteFile")}>
+                            <Trash2 className="h-3 w-3" />
+                        </Button>
+                    </div>
+                </div>
+            );
+        }
+    };
 
     // Handle URL query parameters for level selection
     useEffect(() => {
@@ -67,23 +219,25 @@ export default function LevelPage() {
                 const levelNum = parseInt(levelParam);
 
                 if (!isNaN(levelNum)) {
-                    // Only process if either parameters have changed or we haven't processed them yet
-                    if (!levelParamProcessedRef.current && (stageParam !== currentStage || levelNum !== currentLevel)) {
+                    // Check if the URL parameters don't match the current state
+                    if (stageParam !== currentStage || levelNum !== currentLevel) {
                         // Check if stage and level exist
                         const levelExists = levelManager.getLevel(stageParam, levelNum);
 
                         if (levelExists) {
-                            // Mark that we've processed the URL parameters
-                            levelParamProcessedRef.current = true;
+                            console.log(`Loading level from URL parameters: ${stageParam}-${levelNum}`);
 
                             // Set up the environment for this level
                             levelManager.setupLevel(stageParam, levelNum, fileSystem, gitRepository);
 
-                            // Update progress manager
+                            // Update progress manager with the URL parameters
                             progressManager.setCurrentLevel(stageParam, levelNum);
 
-                            // Reset the terminal output
+                            // Reset the terminal output for the new level
                             resetTerminalForLevel();
+
+                            // Mark that we've processed the URL parameters
+                            levelParamProcessedRef.current = true;
                         }
                     }
                 }
@@ -99,6 +253,11 @@ export default function LevelPage() {
         gitRepository,
         resetTerminalForLevel,
     ]);
+
+    // Always sync URL when component mounts or if currentStage/currentLevel changes
+    useEffect(() => {
+        syncURLWithCurrentLevel();
+    }, [currentStage, currentLevel, syncURLWithCurrentLevel]);
 
     // Get the current level data with translation
     const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel, t);
@@ -130,6 +289,7 @@ export default function LevelPage() {
         if (!isAdvancedMode) {
             setShowStoryDialog(true);
         }
+        handleNextLevel();
     };
 
     // Story dialog display logic - Reset when levels change
@@ -152,7 +312,7 @@ export default function LevelPage() {
         setUserClosedStoryDialog(true);
     };
 
-    // Show a list of user-editable files
+    // Show a list of user-editable files as a hierarchical tree
     const renderEditableFiles = () => {
         if (editableFiles.length === 0) {
             return (
@@ -163,46 +323,30 @@ export default function LevelPage() {
             );
         }
 
+        // Create file tree structure for hierarchical view
+        const fileTree = getFileTree(editableFiles);
+
+        const handleEditFile = (path: string) => {
+            openFileEditor(path);
+        };
+
+        const handleDeleteFile = (path: string, name: string) => {
+            if (window.confirm(t("level.confirmDelete").replace("{file}", name))) {
+                handleCommand(`rm ${path}`, false);
+                updateEditableFiles();
+            }
+        };
+
         return (
             <div className="mt-4">
                 <h3 className="mb-2 font-medium text-purple-200">{t("level.filesToEdit")}</h3>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                    {editableFiles.map(file => (
-                        <div
-                            key={file.path}
-                            className="flex w-full items-center justify-between rounded border border-purple-700 px-2 py-0.5 hover:bg-purple-900/50">
-                            <div className="truncate text-left text-purple-300" title={file.path}>
-                                {file.name}
-                            </div>
-                            <div className="flex">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="ml-1 h-8 w-8 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-purple-100"
-                                    onClick={() => openFileEditor(file.path)}
-                                    title={t("level.editFile")}>
-                                    <Pencil className="h-3.5 w-3.5" />
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="ml-1 h-8 w-8 p-0 text-purple-300 hover:bg-red-900/30 hover:text-red-300"
-                                    onClick={() => {
-                                        if (window.confirm(t("level.confirmDelete").replace("{file}", file.name))) {
-                                            handleCommand(`rm ${file.path}`, false);
-                                            updateEditableFiles();
-                                        }
-                                    }}
-                                    title={t("level.deleteFile")}>
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
+                <div className="rounded border border-purple-800/30 bg-purple-900/10 p-3">
+                    <FileTreeItem item={fileTree} onEditFile={handleEditFile} onDeleteFile={handleDeleteFile} />
                 </div>
             </div>
         );
     };
+
     // Render the current level's challenge details
     const renderLevelChallenge = () => {
         if (!levelData) {
