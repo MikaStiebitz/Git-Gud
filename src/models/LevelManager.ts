@@ -357,6 +357,12 @@ export class LevelManager {
                             if (reqArg === "any") {
                                 return gitArgs.length > 0;
                             }
+
+                            // Fix for --abort flags
+                            if (reqArg === "--abort") {
+                                return gitArgs.includes(reqArg);
+                            }
+
                             return gitArgs.includes(reqArg);
                         });
 

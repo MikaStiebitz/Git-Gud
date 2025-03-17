@@ -592,8 +592,16 @@ export class CommandProcessor {
 
     // Process git rebase command
     private processGitRebaseCommand(args: string[]): string[] {
+        // Handle empty arguments
         if (args.length === 0) {
             return ["You must specify a branch to rebase onto."];
+        }
+
+        // For the --abort flag - ensure this is properly recognized
+        if (args[0] === "--abort") {
+            // Here we should add any state cleanup needed for aborting a rebase
+            // For now, just return a confirmation message
+            return ["Rebase aborted successfully."];
         }
 
         const targetBranch = args[0];
