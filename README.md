@@ -1,84 +1,119 @@
-# GitGud - Interactive Git Learning Platform
+# GitGud: Master Git Through Play
 
-<p align="center">
-  <img src="./public/gitBranch.svg" alt="GitGud Logo" width="120" height="120" />
-</p>
+<div align="center">
+  <a href="https://www.gitmastery.me">
+    <img src="./public/gitBranch.svg" alt="GitGud Logo" width="140" height="140" />
+  </a>
 
-<p align="center">
-  <strong>Learn Git through play - A modern interactive learning experience</strong>
-</p>
+  <h3 align="center">An interactive Git learning platform that makes mastering Git fun</h3>
 
-## Overview
+  <p align="center">
+    <a href="https://www.gitmastery.me">Try It Live</a>
+    ·
+    <a href="#features">Features</a>
+    ·
+    <a href="#getting-started">Getting Started</a>
+    ·
+    <a href="#contributing">Contributing</a>
+  </p>
 
-GitGud is a modern, interactive platform designed to help developers master Git through hands-on learning. Instead of passive tutorials, GitGud provides a fully simulated Git environment where you can practice commands and see real-time results in a gamified experience.
+  <p align="center">
+    <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js 14" />
+    <img src="https://img.shields.io/badge/TypeScript-blue?style=for-the-badge&logo=typescript" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" />
+  </p>
+</div>
 
-## Features
+## 🚀 About The Project
 
-- **Interactive Terminal**: Practice Git commands in a simulated environment
-- **Structured Learning Path**: Progress through carefully designed levels of increasing complexity
-- **Visual Git Status**: See your repository status visually update as you work
-- **Playground Mode**: Freely experiment with Git commands without level requirements
-- **Command Cheat Sheet**: Quick reference for Git commands with explanations
-- **Progress Tracking**: Track your learning journey with a visual progress system
-- **Multi-language Support**: Available in both English and German
+**GitGud** is an interactive learning platform designed to help developers master Git through hands-on practice. While traditional tutorials often rely on passive learning, GitGud provides a fully simulated Git environment where you can:
 
-## Getting Started
+- Execute real Git commands in a safe sandbox
+- See immediate visual feedback
+- Progress through structured, bite-sized challenges
+- Learn Git intuitively through gamification
+
+Whether you're a complete beginner or looking to level up your Git skills, GitGud offers an engaging, interactive approach to learning this essential developer tool.
+
+**🌐 Visit GitGud at [www.gitmastery.me](https://www.gitmastery.me) to start your journey!**
+
+## ✨ Features
+
+- **🖥️ Interactive Terminal**: Practice Git commands in a realistic simulated environment
+- **🎯 Structured Learning Path**: Progress through carefully designed levels of increasing complexity
+- **📊 Visual Git Status**: See your repository status visually update as you work
+- **🎮 Playground Mode**: Freely experiment with Git commands without level requirements
+- **📝 Command Cheat Sheet**: Quick reference for Git commands with explanations
+- **📈 Progress Tracking**: Track your learning journey with a visual progress system
+- **🌍 Multi-language Support**: Available in both English and German
+
+## 🛠️ Tech Stack
+
+GitGud is built with modern web technologies:
+
+- **Next.js 14**: For server-side rendering and routing
+- **TypeScript**: For type safety and improved developer experience
+- **Tailwind CSS**: For responsive styling
+- **Radix UI**: For accessible UI components
+- **Lucide React**: For beautiful icons
+
+## 🚦 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm (v8 or higher)
+
+### Installation
 
 1. **Clone the repository**
 
-    ```bash
-    git clone https://github.com/yourusername/gitgud.git
-    cd gitgud
-    ```
+```bash
+git clone https://github.com/yourusername/gitgud.git
+cd gitgud
+```
 
 2. **Install dependencies**
 
-    ```bash
-    npm install
-    ```
+```bash
+npm install
+```
 
 3. **Start the development server**
 
-    ```bash
-    npm run dev
-    ```
+```bash
+npm run dev
+```
 
 4. **Open your browser**
-   Navigate to `http://localhost:3000` to start learning Git!
 
-## Tech Stack
+Navigate to `http://localhost:3000` to start learning Git!
 
-- Next.js 14
-- TypeScript
-- Tailwind CSS
-- Radix UI Components
-- Lucide React Icons
-
-## Installation Instructions
-
-To implement these fixes:
-
-1. Create the necessary files and update the existing ones as shown in the code snippets.
-2. Update the application's layout to include the LanguageProvider.
-3. Modify the Terminal component to correctly handle the nano command.
-4. Update the FileEditor component for better styling.
-5. Add the language switcher to the navbar.
-6. Fix the Git repository reset behavior to maintain initialization between levels.
-
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions to GitGud! Whether you're fixing bugs, improving the documentation, or adding new features, please follow these steps:
 
 1. Fork the repository
-2. Create a new branch for your feature
+2. Create a new branch for your feature (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Submit a pull request with a clear description of your changes
+4. Commit your changes (`git commit -m 'Add some amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
-## TODO
+## 📝 Upcoming Improvements
 
-1. git add <filename> not properly working, only git add . (after git add <filename> its tracked but still untracked)
-2. In Level add all files, git add . is not the only solution.
-3. terminal tab suggestion menu should also work with one space between command
-4. More Rebasing levels
-5. Terminal command suggestion (example: i type git a and the terminal always looks for the best suggestion and displays git add and the user can apply this suggestion with tab)
-6. git push is not working
+- Enhance git add <filename> functionality to properly track files
+- Improve terminal tab suggestion menu to work with spaces
+- Add more rebasing levels
+- Implement advanced terminal command suggestions
+- Add git push functionality
+
+## 📜 License
+
+This project is licensed under the Restricted Use License - see the LICENSE file for details.
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/MikaStiebitz">Mika Stiebitz</a>
+</p>
