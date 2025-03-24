@@ -421,40 +421,41 @@ export default function LevelPage() {
 
                     {renderEditableFiles()}
 
-                    <div className="mt-4 border-t border-purple-900/30 pt-4">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
-                            className="text-purple-400 hover:bg-purple-900/30 hover:text-purple-200">
-                            {showAdvancedOptions ? t("level.hideAdvancedOptions") : t("level.advancedOptions")}
-                        </Button>
-
-                        {showAdvancedOptions && (
-                            <div className="mt-2 space-y-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="w-full border-amber-800/50 text-amber-400 hover:bg-amber-900/30"
-                                    onClick={resetCurrentLevel}>
-                                    <RotateCcw className="mr-1 h-4 w-4" />
-                                    {t("level.resetLevel")}
-                                </Button>
-
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="w-full border-red-800/50 text-red-400 hover:bg-red-900/30"
-                                    onClick={() => {
-                                        if (window.confirm(t("level.resetConfirm"))) {
-                                            resetAllProgress();
-                                        }
-                                    }}>
-                                    <RotateCcw className="mr-1 h-4 w-4" />
-                                    {t("level.resetAllProgress")}
-                                </Button>
-                            </div>
-                        )}
+                    <div className="mt-4 flex w-full flex-col gap-4 border-t border-purple-900/30 md:flex-row">
+                        <div className="pt-4 md:flex-1">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+                                className="w-full text-purple-400 hover:bg-purple-900/30 hover:text-purple-200">
+                                {showAdvancedOptions ? t("level.hideAdvancedOptions") : t("level.advancedOptions")}
+                            </Button>
+                            {showAdvancedOptions && (
+                                <div className="mt-2 space-y-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full border-amber-800/50 text-amber-400 hover:bg-amber-900/30"
+                                        onClick={resetCurrentLevel}>
+                                        <RotateCcw className="mr-1 h-4 w-4" />
+                                        {t("level.resetLevel")}
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full border-red-800/50 text-red-400 hover:bg-red-900/30"
+                                        onClick={() => {
+                                            if (window.confirm(t("level.resetConfirm"))) {
+                                                resetAllProgress();
+                                            }
+                                        }}>
+                                        <RotateCcw className="mr-1 h-4 w-4" />
+                                        {t("level.resetAllProgress")}
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                        <div className="md:flex-1">{renderGitStatus()}</div>
                     </div>
                 </div>
             </ClientOnly>
@@ -538,10 +539,7 @@ export default function LevelPage() {
                                     {t("level.currentChallenge")}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="flex-grow overflow-auto pb-4">
-                                {renderLevelChallenge()}
-                                {renderGitStatus()}
-                            </CardContent>
+                            <CardContent className="flex-grow overflow-auto pb-4">{renderLevelChallenge()}</CardContent>
                         </Card>
                         <Terminal className="h-[580px] rounded-md" />
                     </div>
