@@ -5,6 +5,7 @@ const common = {
     "nav.playground": "Playground",
     "nav.startLearning": "Start Learning",
     "nav.language": "Language",
+    "nav.installation": "Installation",
 
     // Command Categories
     "category.basics": "Basics",

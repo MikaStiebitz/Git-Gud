@@ -1,8 +1,9 @@
+// Update imports to include the Download icon
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "~/components/ui/button";
-import { GitBranch, Terminal, BookCopy, Home, Code, Languages, Menu, X, Github, Star } from "lucide-react";
+import { GitBranch, Terminal, BookCopy, Home, Code, Languages, Menu, X, Github, Star, Download } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { useLanguage } from "~/contexts/LanguageContext";
 import { ClientOnly } from "~/components/ClientOnly";
@@ -22,6 +23,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
     // Determine which page we're on
     const isHomePage = pathname === "/";
     const isPlaygroundPage = pathname === "/playground";
+    const isInstallationPage = pathname === "/installation";
 
     // Toggle language
     const toggleLanguage = () => {
@@ -90,6 +92,11 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                     <span className="ml-4 hidden text-purple-300 md:block">{t("nav.playground")}</span>
                 )}
 
+                {/* Show installation text on relevant pages */}
+                {isInstallationPage && (
+                    <span className="ml-4 hidden text-purple-300 md:block">{t("nav.installation")}</span>
+                )}
+
                 {/* Desktop navigation */}
                 <div className="ml-auto hidden items-center space-x-4 md:flex">
                     {/* GitHub star button - elegant with tooltip */}
@@ -153,6 +160,18 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <BookCopy className="mr-2 h-4 w-4" />
                                 {t("nav.playground")}
+                            </Button>
+                        </Link>
+                    )}
+
+                    {/* Installation link - NEW */}
+                    {!isInstallationPage && (
+                        <Link href="/installation">
+                            <Button
+                                variant="ghost"
+                                className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <Download className="mr-2 h-4 w-4" />
+                                {t("nav.installation")}
                             </Button>
                         </Link>
                     )}
@@ -248,6 +267,16 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <BookCopy className="mr-2 h-4 w-4" />
                                 {t("nav.playground")}
+                            </Button>
+                        </Link>
+
+                        {/* Installation link for mobile - NEW */}
+                        <Link href="/installation" onClick={() => setMobileMenuOpen(false)}>
+                            <Button
+                                variant="ghost"
+                                className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <Download className="mr-2 h-4 w-4" />
+                                {t("nav.installation")}
                             </Button>
                         </Link>
 
