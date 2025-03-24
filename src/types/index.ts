@@ -184,4 +184,5 @@ export interface GameContextProps {
     toggleAdvancedMode: () => void;
     getEditableFiles: () => Array<{ name: string; path: string }>;
     syncURLWithCurrentLevel: () => void;
+    handleLevelFromUrl: (stageId: string, levelId: number) => void;
 }

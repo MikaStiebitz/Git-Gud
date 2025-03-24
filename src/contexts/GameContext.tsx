@@ -363,6 +363,33 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return currentLevelFile;
     };
 
+    const handleLevelFromUrl = useCallback(
+        (stageId: string, levelId: number) => {
+            // Only update if different from current values to prevent loops
+            if (stageId !== currentStage || levelId !== currentLevel) {
+                console.log(`Loading level from URL: ${stageId}-${levelId}`);
+
+                // First set up the environment
+                levelManager.setupLevel(stageId, levelId, fileSystem, gitRepository);
+
+                // Then update state in a single batch to prevent cascading renders
+                setCurrentStage(stageId);
+                setCurrentLevel(levelId);
+                setIsLevelCompleted(progressManager.isLevelCompleted(stageId, levelId));
+
+                // Update terminal output
+                setTerminalOutput([
+                    t("terminal.welcome"),
+                    t("terminal.levelStarted").replace("{level}", levelId.toString()).replace("{stage}", stageId),
+                ]);
+
+                // Update localStorage last
+                progressManager.setCurrentLevel(stageId, levelId);
+            }
+        },
+        [currentStage, currentLevel, fileSystem, gitRepository, levelManager, progressManager, t],
+    );
+
     const value = {
         fileSystem,
         gitRepository,
@@ -389,6 +416,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toggleAdvancedMode,
         getEditableFiles,
         syncURLWithCurrentLevel,
+        handleLevelFromUrl,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

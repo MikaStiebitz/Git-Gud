@@ -65,6 +65,7 @@ export default function LevelPage() {
         openFileEditor,
         fileSystem,
         syncURLWithCurrentLevel,
+        handleLevelFromUrl,
     } = useGameContext();
 
     const searchParams = useSearchParams();
@@ -76,6 +77,7 @@ export default function LevelPage() {
     const [editableFiles, setEditableFiles] = useState<Array<{ name: string; path: string }>>([]);
     const [showStoryDialog, setShowStoryDialog] = useState(false);
     const [userClosedStoryDialog, setUserClosedStoryDialog] = useState(false);
+    const [urlParamsProcessed, setUrlParamsProcessed] = useState(false);
 
     // Helper function to convert flat file list to tree structure
     const getFileTree = (files: Array<{ name: string; path: string }>): FileTreeNode => {
@@ -209,50 +211,24 @@ export default function LevelPage() {
 
     // Handle URL query parameters for level selection
     useEffect(() => {
-        // Check if we're on a client-side render and not already processed
-        if (typeof window !== "undefined" && !levelParamProcessedRef.current) {
+        // Only process URL params once per mount
+        if (typeof window !== "undefined" && !urlParamsProcessed) {
             const stageParam = searchParams.get("stage");
             const levelParam = searchParams.get("level");
 
-            // Make sure we have stage and level parameters
             if (stageParam && levelParam) {
                 const levelNum = parseInt(levelParam);
-
                 if (!isNaN(levelNum)) {
-                    // Check if the URL parameters don't match the current state
-                    if (stageParam !== currentStage || levelNum !== currentLevel) {
-                        // Check if stage and level exist
-                        const levelExists = levelManager.getLevel(stageParam, levelNum);
-
-                        if (levelExists) {
-                            console.log(`Loading level from URL parameters: ${stageParam}-${levelNum}`);
-
-                            // Set up the environment for this level
-                            levelManager.setupLevel(stageParam, levelNum, fileSystem, gitRepository);
-
-                            // Update progress manager with the URL parameters
-                            progressManager.setCurrentLevel(stageParam, levelNum);
-
-                            // Reset the terminal output for the new level
-                            resetTerminalForLevel();
-
-                            // Mark that we've processed the URL parameters
-                            levelParamProcessedRef.current = true;
-                        }
+                    // Check if level exists
+                    const levelExists = levelManager.getLevel(stageParam, levelNum);
+                    if (levelExists) {
+                        handleLevelFromUrl(stageParam, levelNum);
+                        setUrlParamsProcessed(true);
                     }
                 }
             }
         }
-    }, [
-        searchParams,
-        currentStage,
-        currentLevel,
-        levelManager,
-        progressManager,
-        fileSystem,
-        gitRepository,
-        resetTerminalForLevel,
-    ]);
+    }, [searchParams, levelManager, handleLevelFromUrl, urlParamsProcessed]);
 
     // Always sync URL when component mounts or if currentStage/currentLevel changes
     useEffect(() => {
@@ -271,6 +247,7 @@ export default function LevelPage() {
         resetTerminalForLevel();
 
         return () => {
+            setUrlParamsProcessed(false);
             levelParamProcessedRef.current = false;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps

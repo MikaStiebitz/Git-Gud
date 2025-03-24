@@ -6,10 +6,25 @@ import { LanguageProvider } from "~/contexts/LanguageContext";
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
-    title: "GitGud - Learn Git Through Play",
+    title: "GitGud - Master Git Through Play | Interactive Git Learning Platform",
     description:
-        "A gamified Git learning platform that helps you master Git commands and concepts through interactive challenges.",
-    icons: [{ rel: "icon", url: "/gitBranch.svg" }],
+        "Learn Git commands and concepts through fun, interactive challenges. Practice Git in a safe environment with visual feedback and structured learning paths.",
+    keywords: "git, learn git, git tutorial, git commands, git practice, git visualization, interactive git learning",
+    openGraph: {
+        title: "GitGud - Master Git Through Play",
+        description: "Learn Git commands and concepts through fun, interactive challenges",
+        url: "https://www.gitmastery.me",
+        siteName: "GitGud",
+        images: [
+            {
+                url: "https://www.gitmastery.me/home-screen.png",
+                width: 1200,
+                height: 630,
+                alt: "GitGud - Learn Git Through Play",
+            },
+        ],
+        type: "website",
+    },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -20,6 +35,24 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <LanguageProvider>
                     <GameProvider>{children}</GameProvider>
                 </LanguageProvider>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "WebApplication",
+                            name: "GitGud - Learn Git Through Play",
+                            description: "An interactive Git learning platform with hands-on practice",
+                            applicationCategory: "EducationalApplication",
+                            operatingSystem: "Web",
+                            offers: {
+                                "@type": "Offer",
+                                price: "0",
+                                priceCurrency: "USD",
+                            },
+                        }),
+                    }}
+                />
             </body>
         </html>
     );

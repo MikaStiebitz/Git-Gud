@@ -106,7 +106,10 @@ export default function Home() {
 
     // Navigation function to fix the level selection issue
     const navigateToLevel = (stageId: string, levelId: number) => {
+        // Set the progress first - this ensures GameContext has the right data
         progressManager.setCurrentLevel(stageId, levelId);
+
+        // Then navigate - the URL parameters will be processed on the level page
         router.push(`/level?stage=${stageId}&level=${levelId}`);
     };
 
