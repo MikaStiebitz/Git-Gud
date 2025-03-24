@@ -18,6 +18,14 @@
   </p>
 
   <p align="center">
+    <a href="https://github.com/MikaStiebitz/Git-Gud" target="_blank">
+      <img src="https://img.shields.io/github/stars/MikaStiebitz/Git-Gud?style=social" alt="GitHub stars" />
+    </a>
+    <br/>
+    <b>If you find this project helpful, please consider giving it a star on <a href="https://github.com/MikaStiebitz/Git-Gud">GitHub</a>!</b>
+  </p>
+
+  <p align="center">
     <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js 14" />
     <img src="https://img.shields.io/badge/TypeScript-blue?style=for-the-badge&logo=typescript" alt="TypeScript" />
     <img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" />
@@ -36,6 +44,8 @@
 Whether you're a complete beginner or looking to level up your Git skills, GitGud offers an engaging, interactive approach to learning this essential developer tool.
 
 **🌐 Visit GitGud at [www.gitmastery.me](https://www.gitmastery.me) to start your journey!**
+
+###### No registration needed!
 
 ## ✨ Features
 
@@ -107,6 +117,16 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 - Add more rebasing levels
 - Implement advanced terminal command suggestions
 - Add git push functionality
+
+## ⭐ Support This Project
+
+If you find GitGud helpful in your Git learning journey, please consider:
+
+- **Giving it a star on GitHub**: Visit [github.com/MikaStiebitz/Git-Gud](https://github.com/MikaStiebitz/Git-Gud) and click the star button
+- **Sharing it** with friends and colleagues who are learning Git
+- **Contributing** to make it even better
+
+Your support helps this educational tool reach more developers!
 
 ## 📜 License
 
