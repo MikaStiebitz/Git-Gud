@@ -25,6 +25,7 @@ export const metadata: Metadata = {
         ],
         type: "website",
     },
+    icons: [{ rel: "icon", url: "/gitBranch.svg" }],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
