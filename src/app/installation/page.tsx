@@ -11,6 +11,12 @@ export default function InstallationPage() {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<"windows" | "linux" | "mac">("windows");
 
+    const renderCommand = (command: string, index: number) => (
+        <div key={index} className="py-0.5">
+            {command}
+        </div>
+    );
+
     return (
         <PageLayout>
             <div className="min-h-screen bg-[#1a1625] text-purple-100">
@@ -94,9 +100,10 @@ export default function InstallationPage() {
                                         </h3>
                                         <p>{t("installation.configDesc")}</p>
                                         <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                            git config --global user.name "Your Name"
-                                            <br />
-                                            git config --global user.email "your.email@example.com"
+                                            {[
+                                                'git config --global user.name "Your Name"',
+                                                'git config --global user.email "your.email@example.com"',
+                                            ].map((cmd, index) => renderCommand(cmd, index))}
                                         </div>
 
                                         <h3 className="text-lg font-medium text-purple-300">
@@ -122,23 +129,22 @@ export default function InstallationPage() {
                                             {t("installation.linux.debian")}
                                         </h3>
                                         <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                            sudo apt update
-                                            <br />
-                                            sudo apt install git
+                                            {renderCommand("sudo apt update", 0)}
+                                            {renderCommand("sudo apt install git", 1)}
                                         </div>
 
                                         <h3 className="text-lg font-medium text-purple-300">
                                             {t("installation.linux.fedora")}
                                         </h3>
                                         <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                            sudo dnf install git
+                                            {renderCommand("sudo dnf install git", 0)}
                                         </div>
 
                                         <h3 className="text-lg font-medium text-purple-300">
                                             {t("installation.linux.arch")}
                                         </h3>
                                         <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                            sudo pacman -S git
+                                            {renderCommand("sudo pacman -S git", 0)}
                                         </div>
 
                                         <div className="flex justify-center">
@@ -158,9 +164,10 @@ export default function InstallationPage() {
                                         </h3>
                                         <p>{t("installation.configDesc")}</p>
                                         <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                            git config --global user.name "Your Name"
-                                            <br />
-                                            git config --global user.email "your.email@example.com"
+                                            {[
+                                                'git config --global user.name "Your Name"',
+                                                'git config --global user.email "your.email@example.com"',
+                                            ].map((cmd, index) => renderCommand(cmd, index))}
                                         </div>
 
                                         <h3 className="text-lg font-medium text-purple-300">
@@ -214,10 +221,11 @@ export default function InstallationPage() {
                                         </h3>
                                         <p>{t("installation.mac.brewDesc")}</p>
                                         <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                            /bin/bash -c "$(curl -fsSL
-                                            https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-                                            <br />
-                                            brew install git
+                                            {renderCommand(
+                                                '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+                                                0,
+                                            )}
+                                            {renderCommand("brew install git", 1)}
                                         </div>
 
                                         <h3 className="text-lg font-medium text-purple-300">
@@ -225,9 +233,11 @@ export default function InstallationPage() {
                                         </h3>
                                         <p>{t("installation.configDesc")}</p>
                                         <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                            git config --global user.name "Your Name"
-                                            <br />
-                                            git config --global user.email "your.email@example.com"
+                                            {renderCommand('git config --global user.name "Your Name"', 0)}
+                                            {renderCommand(
+                                                'git config --global user.email "your.email@example.com"',
+                                                1,
+                                            )}
                                         </div>
 
                                         <h3 className="text-lg font-medium text-purple-300">
@@ -256,14 +266,11 @@ export default function InstallationPage() {
                             </h3>
                             <p>{t("installation.additionalSettings.lineEndingsDesc")}</p>
                             <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                # Windows
-                                <br />
-                                git config --global core.autocrlf true
-                                <br />
-                                <br />
-                                # macOS/Linux
-                                <br />
-                                git config --global core.autocrlf input
+                                {renderCommand("# Windows", 0)}
+                                {renderCommand("git config --global core.autocrlf true", 1)}
+                                {renderCommand("", 2)}
+                                {renderCommand("# macOS/Linux", 3)}
+                                {renderCommand("git config --global core.autocrlf input", 4)}
                             </div>
 
                             <h3 className="text-lg font-medium text-purple-300">
@@ -271,7 +278,7 @@ export default function InstallationPage() {
                             </h3>
                             <p>{t("installation.additionalSettings.defaultBranchDesc")}</p>
                             <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                git config --global init.defaultBranch main
+                                {renderCommand("git config --global init.defaultBranch main", 0)}
                             </div>
 
                             <h3 className="text-lg font-medium text-purple-300">
@@ -279,14 +286,11 @@ export default function InstallationPage() {
                             </h3>
                             <p>{t("installation.additionalSettings.editorDesc")}</p>
                             <div className="overflow-x-auto rounded bg-black/30 p-3 font-mono text-sm text-green-400">
-                                # For VSCode
-                                <br />
-                                git config --global core.editor "code --wait"
-                                <br />
-                                <br />
-                                # For Vim
-                                <br />
-                                git config --global core.editor vim
+                                {renderCommand("# For VSCode", 0)}
+                                {renderCommand('git config --global core.editor "code --wait"', 1)}
+                                {renderCommand("", 2)}
+                                {renderCommand("# For Vim", 3)}
+                                {renderCommand("git config --global core.editor vim", 4)}
                             </div>
                         </CardContent>
                     </Card>

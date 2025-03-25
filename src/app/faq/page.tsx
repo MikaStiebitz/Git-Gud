@@ -25,11 +25,23 @@ import Link from "next/link";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
 import { Button } from "~/components/ui/button";
 
+interface FAQItem {
+    id: string;
+    icon: React.ReactNode;
+    question: string;
+    answer: string;
+}
+
+interface FAQSection {
+    category: string;
+    items: FAQItem[];
+}
+
 export default function FAQPage() {
     const { t } = useLanguage();
 
     // FAQ items with their icons and categories
-    const faqItems = [
+    const faqItems: FAQSection[] = [
         // Basics
         {
             category: "basics",
@@ -141,7 +153,7 @@ export default function FAQPage() {
     ];
 
     // Helper function to render a FAQ section
-    const renderFAQSection = (category, items) => (
+    const renderFAQSection = (category: string, items: FAQItem[]) => (
         <div className="mb-8">
             <h2 className="mb-4 text-xl font-semibold text-white">{t(`faq.categories.${category}`)}</h2>
             <Accordion type="single" collapsible className="space-y-3">
