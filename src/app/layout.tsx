@@ -31,6 +31,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" className={`${GeistSans.variable}`}>
+            <meta name="google-site-verification" content="uBk1r7zKOTAgc6Srm3LfgzG4EaKwr83nhTGqw77BubI" />
             <body className="dark">
                 <Analytics />
                 <LanguageProvider>
