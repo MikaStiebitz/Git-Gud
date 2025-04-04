@@ -25,9 +25,9 @@ export class CommitCommand implements Command {
         // Get the message
         const message =
             typeof args.flags.m === "string"
-                ? args.flags.m
+                ? args.flags.m.trim()
                 : typeof args.flags.message === "string"
-                  ? args.flags.message
+                  ? args.flags.message.trim()
                   : "";
 
         if (!message) {

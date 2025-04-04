@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { useGameContext } from "~/contexts/GameContext";
 import { HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle, ArrowUpIcon } from "lucide-react";
 import { useLanguage } from "~/contexts/LanguageContext";
+import commandRegistry from "../commands";
 
 interface TerminalProps {
     className?: string;
@@ -12,33 +13,6 @@ interface TerminalProps {
     showResetButton?: boolean;
     isPlaygroundMode?: boolean;
 }
-
-const commonGitCommands = [
-    "next",
-    "git init",
-    "git status",
-    "git add",
-    "git commit",
-    "git branch",
-    "git checkout",
-    "git merge",
-    "git pull",
-    "git push",
-    "git clone",
-    "git remote",
-    "git log",
-    "git diff",
-    "git reset",
-    "git revert",
-    "git stash",
-    "git rm",
-    "git mv",
-    "git show",
-    "git rebase",
-    "git switch",
-    "git restore",
-    "git fetch",
-];
 
 export function Terminal({
     className,
@@ -61,6 +35,7 @@ export function Terminal({
 
     const { t } = useLanguage();
 
+    // Terminal state
     const [input, setInput] = useState("");
     const [commandHistory, setCommandHistory] = useState<string[]>([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
@@ -69,6 +44,7 @@ export function Terminal({
     const [commandSuggestion, setCommandSuggestion] = useState<string>("");
     const [showCommandSuggestion, setShowCommandSuggestion] = useState<boolean>(false);
 
+    // References for DOM manipulation
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const outputContainerRef = useRef<HTMLDivElement>(null);
@@ -86,7 +62,7 @@ export function Terminal({
         }
     }, [terminalOutput]);
 
-    // Focus input field on mount
+    // Focus input field on mount (not on mobile devices)
     useEffect(() => {
         if (inputRef.current && !isMobileDevice()) {
             inputRef.current.focus();
@@ -104,34 +80,37 @@ export function Terminal({
         return false;
     };
 
+    // Handle form submission (user presses Enter)
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim()) return;
 
         // Close the autocomplete menu
         setShowAutocomplete(false);
+        setShowCommandSuggestion(false);
 
-        if (input.trim() === "next" && isLevelCompleted) {
-            handleCommand("next", isPlaygroundMode); // Special case for the "next" command
-        } else {
-            // Special handling for nano command
-            if (input.trim().startsWith("nano ")) {
-                const args = input.trim().split(/\s+/);
-                if (args.length > 1) {
-                    const fileName = args[1] ?? "";
-                    // Call handleCommand first to let it handle creating the file if needed
-                    handleCommand(input, isPlaygroundMode);
-                    // Then open the file editor
-                    openFileEditor(fileName, isPlaygroundMode);
+        // Special case handling for nano command
+        if (input.trim().startsWith("nano ")) {
+            const args = input.trim().split(/\s+/);
+            if (args.length > 1) {
+                const fileName = args[1] ?? "";
+                // Call handleCommand first to let it handle creating the file if needed
+                handleCommand(input, isPlaygroundMode);
+                // Then open the file editor
+                openFileEditor(fileName, isPlaygroundMode);
 
-                    // Add to command history
-                    setCommandHistory(prev => [input, ...prev.slice(0, 49)]);
-                    setHistoryIndex(-1);
-                    setInput("");
-                    return;
-                }
+                // Add to command history
+                setCommandHistory(prev => [input, ...prev.slice(0, 49)]);
+                setHistoryIndex(-1);
+                setInput("");
+                return;
             }
+        }
 
+        // Special case for the "next" command when level is completed
+        if (input.trim() === "next" && isLevelCompleted) {
+            handleCommand("next", isPlaygroundMode);
+        } else {
             // Normal command processing
             handleCommand(input, isPlaygroundMode);
         }
@@ -144,19 +123,24 @@ export function Terminal({
         setInput("");
     };
 
+    // Get command suggestion for tab completion
     const getCommandSuggestion = (partialCommand: string): string | undefined => {
         if (!partialCommand || partialCommand.trim() === "") return undefined;
 
         // Normalize input (lowercase, trim spaces)
         const normalizedInput = partialCommand.toLowerCase().trim();
 
-        // Find matching commands that start with the input
-        const matches = commonGitCommands.filter(cmd => cmd.toLowerCase().startsWith(normalizedInput));
+        // Get all tab-completion-enabled commands from registry
+        const completionCommands = commandRegistry.getTabCompletionCommands();
 
-        // Return the first match or null
+        // Find matching commands that start with the input
+        const matches = completionCommands.filter(cmd => cmd.toLowerCase().startsWith(normalizedInput));
+
+        // Return the first match or undefined
         return matches.length > 0 ? matches[0] : undefined;
     };
 
+    // Handle input changes and update command suggestions
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
         setInput(newValue);
@@ -172,61 +156,52 @@ export function Terminal({
 
     // Process Tab-autocomplete for files
     const handleTabAutocomplete = () => {
-        // List of commands that can use file autocomplete
-        const fileCommands = [
-            "nano",
-            "cat",
-            "rm",
-            "cd",
-            "touch",
-            "git add",
-            "git rm",
-            "git checkout",
-            "git restore",
-            "git mv",
-            "git diff",
-            "git show",
-        ];
-
         // Normalize input by removing excess spaces
         const normalizedInput = input.trim().replace(/\s+/g, " ");
 
-        // Check if current command is eligible for file autocomplete
-        let isFileCommand = false;
-        let commandPart = "";
-        let filePart = "";
+        // Extract command and arguments
+        const parts = normalizedInput.split(" ");
+        let commandName = parts[0] ?? "";
 
-        // Process single-word commands and commands with arguments
-        if (normalizedInput.includes(" ")) {
-            // Extract command part and file part
-            const spaceSplit = normalizedInput.split(" ");
-            commandPart = spaceSplit[0] ?? "";
-
-            // Special handling for git commands (two words)
-            if (commandPart === "git" && spaceSplit.length > 1) {
-                commandPart = `git ${spaceSplit[1]}`;
-                filePart = spaceSplit.slice(2).join(" ");
-            } else {
-                filePart = spaceSplit.slice(1).join(" ");
-            }
-
-            // Check if it's in our list of file commands
-            isFileCommand = fileCommands.some(cmd => {
-                // For git commands, we need to check the full "git subcommand"
-                if (cmd.startsWith("git ")) {
-                    return commandPart === cmd;
-                }
-                // For regular commands, just check the first word
-                return spaceSplit[0] === cmd;
-            });
+        // Special handling for Git commands (two-word commands)
+        if (commandName === "git" && parts.length > 1) {
+            commandName = `git ${parts[1]}`;
         }
 
-        if (!isFileCommand) return;
+        // Check if this is a command that supports file completion
+        const supportsFileCompletion = commandRegistry.supportsFileCompletion(commandName);
 
-        // Get the current directory
-        const currentDir = commandProcessor.getCurrentDirectory();
+        // If command suggestion is active but we don't have file completion,
+        // complete the command when Tab is pressed
+        if (showCommandSuggestion && commandSuggestion && !supportsFileCompletion) {
+            setInput(commandSuggestion);
+            setShowCommandSuggestion(false);
+            return;
+        }
+
+        if (!supportsFileCompletion) return;
+
+        // For commands that support file completion, handle file path autocomplete
+        let filePart = "";
+
+        if (parts.length > 1) {
+            // Extract the potential file path part
+            if (
+                commandName === "git add" ||
+                commandName === "git rm" ||
+                commandName === "git checkout" ||
+                commandName === "git restore"
+            ) {
+                // For Git commands with subcommands, use the remaining parts as file path
+                filePart = parts.slice(2).join(" ");
+            } else {
+                // For regular commands, use everything after the command as file path
+                filePart = parts.slice(1).join(" ");
+            }
+        }
 
         // Get files in the current directory
+        const currentDir = commandProcessor.getCurrentDirectory();
         const contents = fileSystem.getDirectoryContents(currentDir);
         if (!contents) return;
 
@@ -235,12 +210,12 @@ export function Terminal({
 
         if (matchingFiles.length === 1) {
             // If there's only one match, complete it directly
-            if (commandPart.startsWith("git ")) {
-                // Format: git command filename
-                setInput(`${commandPart} ${matchingFiles[0]}`);
+            if (commandName.startsWith("git ")) {
+                const commandParts = parts.slice(0, 2); // "git" and the subcommand
+                setInput(`${commandParts.join(" ")} ${matchingFiles[0]}`);
             } else {
                 // Format: command filename
-                setInput(`${commandPart} ${matchingFiles[0]}`);
+                setInput(`${commandName} ${matchingFiles[0]}`);
             }
             setShowAutocomplete(false);
         } else if (matchingFiles.length > 1) {
@@ -269,6 +244,7 @@ export function Terminal({
         }
     };
 
+    // Handle keyboard shortcuts and navigation
     const handleKeyDown = (e: React.KeyboardEvent) => {
         // Handle command history navigation with up/down arrows
         if (e.key === "ArrowUp") {
@@ -290,24 +266,29 @@ export function Terminal({
             }
         } else if (e.key === "Tab") {
             e.preventDefault();
+
             // If we have a command suggestion, use it
             if (showCommandSuggestion && commandSuggestion) {
                 setInput(commandSuggestion);
                 setShowCommandSuggestion(false);
                 return;
             }
+
             // Otherwise, try file autocomplete
             handleTabAutocomplete();
         } else if (e.key === "Escape") {
+            // Escape key closes all popups
             setShowAutocomplete(false);
             setShowCommandSuggestion(false);
         }
     };
 
+    // Handle help button click
     const handleShowHelp = () => {
         handleCommand("help", isPlaygroundMode);
     };
 
+    // Handle reset button click with confirmation
     const handleReset = () => {
         if (window.confirm(t("level.resetConfirm"))) {
             resetCurrentLevel();
@@ -326,7 +307,7 @@ export function Terminal({
         const modifiedCount = Object.values(status).filter(s => s === "modified").length;
         const untrackedCount = Object.values(status).filter(s => s === "untracked").length;
 
-        // Check for unpushed commits - FIX: use the proper getUnpushedCommitCount method
+        // Check for unpushed commits
         const unpushedCommitsCount = gitRepository.getUnpushedCommitCount();
 
         // Format display path
@@ -380,7 +361,7 @@ export function Terminal({
                             </span>
                         )}
 
-                        {/* Unpushed commits indicator - only show if there are actual unpushed commits */}
+                        {/* Unpushed commits indicator */}
                         {unpushedCommitsCount > 0 && (
                             <span className="ml-1 flex items-center text-blue-300">
                                 <ArrowUpIcon className="mr-0.5 h-3 w-3" />
@@ -517,6 +498,7 @@ export function Terminal({
                             : `${t("level.gitTerminal")} - ${currentStage} ${t("level.level")} ${currentLevel}`}
                     </span>
                 </div>
+
                 <div className="flex space-x-1">
                     {showHelpButton && (
                         <Button
@@ -528,6 +510,7 @@ export function Terminal({
                             <HelpCircleIcon className="h-4 w-4" />
                         </Button>
                     )}
+
                     {showResetButton && !isPlaygroundMode && (
                         <Button
                             variant="ghost"
@@ -541,7 +524,7 @@ export function Terminal({
                 </div>
             </div>
 
-            {/* Terminal output area - fixed height with scrolling */}
+            {/* Terminal output area */}
             <ScrollArea
                 className="flex-grow overflow-auto px-4 py-3 font-mono text-sm text-purple-300"
                 ref={scrollAreaRef}>
@@ -551,6 +534,7 @@ export function Terminal({
                             {renderTerminalOutput(line)}
                         </div>
                     ))}
+
                     {isLevelCompleted && !isPlaygroundMode && (
                         <div className="mt-2 rounded bg-green-900/30 p-2 text-center text-white">
                             {t("terminal.levelCompleted")}
@@ -563,11 +547,14 @@ export function Terminal({
             <div className="relative border-t border-purple-800/50">
                 <form onSubmit={handleFormSubmit} className="flex items-center px-3 py-2">
                     <div className="mr-2 hidden sm:block">{renderFancyPrompt()}</div>
+
+                    {/* Command suggestion tooltip */}
                     {showCommandSuggestion && (
                         <div className="absolute left-0 top-0 z-10 mt-[-30px] rounded border border-purple-800 bg-purple-900/70 px-2 py-1 text-xs text-purple-300">
                             Press Tab to complete: <span className="font-mono font-semibold">{commandSuggestion}</span>
                         </div>
                     )}
+
                     <Input
                         ref={inputRef}
                         type="text"
@@ -580,6 +567,7 @@ export function Terminal({
                         spellCheck="false"
                         onFocus={() => inputRef.current?.scrollIntoView({ behavior: "smooth" })}
                     />
+
                     <Button
                         type="submit"
                         size="sm"
@@ -606,3 +594,5 @@ export function Terminal({
         </div>
     );
 }
+
+export default Terminal;
