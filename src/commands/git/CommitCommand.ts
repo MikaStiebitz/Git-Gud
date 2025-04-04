@@ -32,19 +32,22 @@ export class CommitCommand implements Command {
                   ? args.flags.message.trim()
                   : "";
 
-        if (!message) {
-            return ["Please provide a non-empty commit message."];
+        if (message) {
+            // If message is provided, commit directly
+            const commitId = gitRepository.commit(message);
+
+            if (!commitId) {
+                return ["Nothing to commit. Use git add to stage files first."];
+            }
+
+            return [
+                `[${gitRepository.getCurrentBranch()} ${commitId.substring(0, 7)}] ${message}`,
+                "1 file changed, 1 insertion(+)",
+            ];
         }
 
-        const commitId = gitRepository.commit(message);
-
-        if (!commitId) {
-            return ["Nothing to commit. Use git add to stage files first."];
-        }
-
-        return [
-            `[${gitRepository.getCurrentBranch()} ${commitId.substring(0, 7)}] ${message}`,
-            "1 file changed, 1 insertion(+)",
-        ];
+        // If no message is provided, let the dialog be opened by returning without a message
+        // The dialog should only open if we get here (meaning there are staged changes)
+        return [];
     }
 }

@@ -196,6 +196,19 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         }
 
+        // Special case for git commit (with no -m flag)
+        if (command.trim() === "git commit") {
+            // Process the command first to check if there are staged changes
+            const output = commandProcessor.processCommand(command);
+            setTerminalOutput(prev => [...prev, ...output]);
+
+            // Only open commit dialog if there are staged changes (output is empty)
+            if (output.length === 0 || !output[0]?.includes("Nothing to commit")) {
+                openCommitDialog();
+            }
+            return;
+        }
+
         // Process the command and get output
         const output = commandProcessor.processCommand(command);
         setTerminalOutput(prev => [...prev, ...output]);

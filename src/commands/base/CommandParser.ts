@@ -4,7 +4,8 @@ export function parseCommand(commandStr: string): {
     command: string;
     args: CommandArgs;
 } {
-    const parts = commandStr.trim().split(/\s+/);
+    // Split the command respecting quotes
+    const parts = splitCommandRespectingQuotes(commandStr.trim());
     const command = parts[0]?.toLowerCase() ?? "";
 
     if (command === "git" && parts.length > 1) {
@@ -18,6 +19,53 @@ export function parseCommand(commandStr: string): {
         command,
         args: parseArgs(parts.slice(1)),
     };
+}
+
+function splitCommandRespectingQuotes(commandStr: string): string[] {
+    const result: string[] = [];
+    let current = "";
+    let inQuotes = false;
+    let quoteChar = "";
+
+    for (let i = 0; i < commandStr.length; i++) {
+        const char = commandStr[i];
+
+        // Handle quotes (both double and single)
+        if ((char === '"' || char === "'") && (i === 0 || commandStr[i - 1] !== "\\")) {
+            if (!inQuotes) {
+                // Starting a quoted section
+                inQuotes = true;
+                quoteChar = char;
+            } else if (char === quoteChar) {
+                // Ending a quoted section if the quote matches the opening quote
+                inQuotes = false;
+                quoteChar = "";
+            } else {
+                // This is a different quote character inside quotes, treat as regular character
+                current += char;
+            }
+            continue;
+        }
+
+        // Handle spaces - they split arguments when not in quotes
+        if (char === " " && !inQuotes) {
+            if (current) {
+                result.push(current);
+                current = "";
+            }
+            continue;
+        }
+
+        // Regular character
+        current += char;
+    }
+
+    // Add the last part if there is one
+    if (current) {
+        result.push(current);
+    }
+
+    return result;
 }
 
 export function parseArgs(args: string[]): CommandArgs {

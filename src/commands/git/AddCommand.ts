@@ -12,9 +12,7 @@ export class AddCommand implements Command {
     execute(args: CommandArgs, context: CommandContext): string[] {
         const { gitRepository, fileSystem } = context;
 
-        if (!gitRepository.isInitialized()) {
-            return ["Not a git repository. Run 'git init' first."];
-        }
+        if (!gitRepository.isInitialized()) return ["Not a git repository. Run 'git init' first."];
 
         if (args.positionalArgs.length === 0) {
             return ["Nothing specified, nothing added."];
@@ -35,6 +33,13 @@ export class AddCommand implements Command {
 
                 // Normalize path for consistency
                 const normalizedPath = file.startsWith("/") ? file.substring(1) : file;
+
+                // Check if file is already committed and unchanged
+                const status = gitRepository.getStatus()[normalizedPath];
+                if (status === "committed") {
+                    // Skip files that are already committed with no changes
+                    continue;
+                }
 
                 // Add file to staging
                 gitRepository.addFile(normalizedPath);
@@ -58,9 +63,17 @@ export class AddCommand implements Command {
                     continue;
                 }
 
+                // Check if file is already committed and unchanged
+                const normalizedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+                const status = gitRepository.getStatus()[normalizedPath];
+
+                if (status === "committed") {
+                    results.push(`No changes to '${argPath}', already committed.`);
+                    continue;
+                }
+
                 // Mark as untracked if not already tracked
-                const status = gitRepository.getStatus();
-                if (!status[filePath]) {
+                if (!status) {
                     gitRepository.updateFileStatus(filePath, "untracked");
                 }
 
