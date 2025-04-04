@@ -61,7 +61,13 @@ export class GitRepository {
     // Stage a file for commit
     public addFile(path: string): boolean {
         if (!this.initialized) return false;
-        this.status[path] = "staged";
+
+        // Normalize the path by removing leading slash for consistency
+        const normalizedPath = path.startsWith("/") ? path.substring(1) : path;
+
+        // Update the status
+        this.status[normalizedPath] = "staged";
+
         return true;
     }
 
@@ -174,7 +180,9 @@ export class GitRepository {
 
     // Update file status (for when files are modified)
     public updateFileStatus(path: string, status: FileStatus): void {
-        this.status[path] = status;
+        // Normalize path by removing leading slash to avoid duplicates
+        const normalizedPath = path.startsWith("/") ? path.substring(1) : path;
+        this.status[normalizedPath] = status;
     }
 
     // Get status of tracked files

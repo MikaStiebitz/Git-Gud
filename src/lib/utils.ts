@@ -46,10 +46,13 @@ export function getAllFiles(fileSystem: FileSystem, directory: string, prefix = 
  * @returns The resolved absolute path
  */
 export function resolvePath(path: string, currentDirectory: string): string {
+    // Handle absolute paths
     if (path.startsWith("/")) {
-        return path;
+        // Normalize to ensure no double slashes
+        return path.replace(/\/+/g, "/");
     }
 
+    // Handle special cases
     if (path === "..") {
         const parts = currentDirectory.split("/").filter(p => p);
         parts.pop();
@@ -60,5 +63,8 @@ export function resolvePath(path: string, currentDirectory: string): string {
         return currentDirectory;
     }
 
-    return currentDirectory === "/" ? `/${path}` : `${currentDirectory}/${path}`;
+    // Combine paths and normalize
+    const result = currentDirectory === "/" ? `/${path}` : `${currentDirectory}/${path}`;
+    // Replace any sequences of multiple slashes with a single slash
+    return result.replace(/\/+/g, "/");
 }

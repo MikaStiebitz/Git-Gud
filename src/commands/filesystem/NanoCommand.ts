@@ -26,12 +26,13 @@ export class NanoCommand implements Command {
 
             // Mark as untracked if Git is initialized
             if (gitRepository.isInitialized()) {
-                gitRepository.updateFileStatus(filePath, "untracked");
+                // Ensure we use normalized path without leading slash
+                const normalizedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+                gitRepository.updateFileStatus(normalizedPath, "untracked");
             }
         }
 
         // Return a message indicating the file is being opened
-        // The actual file opening is handled by the Terminal component
         return [`Opening file ${file} in editor...`];
     }
 }

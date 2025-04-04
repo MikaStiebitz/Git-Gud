@@ -24,13 +24,22 @@ export class AddCommand implements Command {
         if (args.positionalArgs[0] === ".") {
             // Get all files in the current directory recursively
             const allFiles = getAllFiles(fileSystem, context.currentDirectory);
+            const stagedFiles = [];
 
-            // Mark all files as untracked before adding
-            allFiles.forEach(file => {
-                gitRepository.updateFileStatus(file, "untracked");
-            });
+            // Mark appropriate files as staged
+            for (const file of allFiles) {
+                // Skip .git directory
+                if (file.startsWith("/.git") || file.includes("/.git/")) {
+                    continue;
+                }
 
-            const stagedFiles = gitRepository.addAll(allFiles);
+                // Normalize path for consistency
+                const normalizedPath = file.startsWith("/") ? file.substring(1) : file;
+
+                // Add file to staging
+                gitRepository.addFile(normalizedPath);
+                stagedFiles.push(normalizedPath);
+            }
 
             if (stagedFiles.length === 0) {
                 return ["No changes to add."];

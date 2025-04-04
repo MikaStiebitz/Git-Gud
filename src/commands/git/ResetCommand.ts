@@ -35,8 +35,14 @@ export class ResetCommand implements Command {
         if (target === "HEAD" || target === "HEAD~1") {
             const commits = Object.keys(gitRepository.getCommits());
 
-            if (commits.length === 0) {
+            // Only show error for HEAD~1 with no commits
+            if (commits.length === 0 && target === "HEAD~1") {
                 return [`fatal: ambiguous argument '${target}': unknown revision`];
+            }
+
+            // Allow resetting to HEAD even with no commits
+            if (commits.length === 0 && target === "HEAD") {
+                return ["HEAD is now at initial state"];
             }
 
             // We don't actually modify history, just handle the changes to status

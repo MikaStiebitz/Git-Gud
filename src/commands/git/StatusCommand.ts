@@ -38,18 +38,34 @@ export class StatusCommand implements Command {
         const modified: string[] = [];
         const untracked: string[] = [];
 
+        const processedFiles = new Set<string>();
+
         // Filter out .git directory entries
         Object.entries(updatedStatus).forEach(([file, fileStatus]) => {
-            if (!file.startsWith("/.git") && !file.includes("/.git/")) {
+            // Normalize path consistently - remove leading slash
+            const normalizedFile = file.startsWith("/") ? file.substring(1) : file;
+
+            if (!normalizedFile.startsWith(".git") && !normalizedFile.includes("/.git/")) {
+                // Avoid adding the same file to multiple sections
+                // If a file is both staged and modified, it should only appear in the appropriate section
                 switch (fileStatus) {
                     case "staged":
-                        staged.push(file);
+                        if (!processedFiles.has(normalizedFile)) {
+                            staged.push(normalizedFile);
+                            processedFiles.add(normalizedFile);
+                        }
                         break;
                     case "modified":
-                        modified.push(file);
+                        if (!processedFiles.has(normalizedFile)) {
+                            modified.push(normalizedFile);
+                            processedFiles.add(normalizedFile);
+                        }
                         break;
                     case "untracked":
-                        untracked.push(file);
+                        if (!processedFiles.has(normalizedFile)) {
+                            untracked.push(normalizedFile);
+                            processedFiles.add(normalizedFile);
+                        }
                         break;
                 }
             }

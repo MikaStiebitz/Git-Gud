@@ -22,6 +22,7 @@ export function Terminal({
 }: TerminalProps) {
     const {
         terminalOutput,
+
         handleCommand,
         resetCurrentLevel,
         commandProcessor,
@@ -89,33 +90,38 @@ export function Terminal({
         setShowAutocomplete(false);
         setShowCommandSuggestion(false);
 
-        // Special case handling for nano command
-        if (input.trim().startsWith("nano ")) {
-            const args = input.trim().split(/\s+/);
-            if (args.length > 1) {
-                const fileName = args[1] ?? "";
-                // Call handleCommand first to let it handle creating the file if needed
-                handleCommand(input, isPlaygroundMode);
-                // Then open the file editor
-                openFileEditor(fileName, isPlaygroundMode);
+        // Split input by semicolons to support command chaining
+        const commands = input
+            .split(";")
+            .map(cmd => cmd.trim())
+            .filter(cmd => cmd);
 
-                // Add to command history
-                setCommandHistory(prev => [input, ...prev.slice(0, 49)]);
-                setHistoryIndex(-1);
-                setInput("");
-                return;
+        // Process each command in sequence
+        for (const command of commands) {
+            // Special case handling for nano command
+            if (command.startsWith("nano ")) {
+                const args = command.split(/\s+/);
+                if (args.length > 1) {
+                    const fileName = args[1] ?? "";
+                    // Call handleCommand first to let it handle creating the file if needed
+                    handleCommand(command, isPlaygroundMode);
+                    // Then open the file editor
+                    openFileEditor(fileName, isPlaygroundMode);
+                    continue;
+                }
             }
-        }
 
-        // Special case for the "next" command when level is completed
-        if (input.trim() === "next" && isLevelCompleted) {
-            handleCommand("next", isPlaygroundMode);
-        } else {
+            // Special case for the "next" command when level is completed
+            if (command === "next" && isLevelCompleted) {
+                handleCommand("next", isPlaygroundMode);
+                continue;
+            }
+
             // Normal command processing
-            handleCommand(input, isPlaygroundMode);
+            handleCommand(command, isPlaygroundMode);
         }
 
-        // Add to command history
+        // Add to command history (the full command with semicolons)
         setCommandHistory(prev => [input, ...prev.slice(0, 49)]);
         setHistoryIndex(-1);
 

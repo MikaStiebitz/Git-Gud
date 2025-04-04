@@ -61,6 +61,19 @@ export function parseArgs(args: string[]): CommandArgs {
         // Kurze Flags: -a, -abc
         if (arg.startsWith("-") && arg.length > 1) {
             const flags = arg.substring(1).split("");
+
+            // Special handling for single flags that may take values
+            if (flags.length === 1) {
+                const flag = flags[0] ?? "";
+                const nextArg = i + 1 < args.length ? args[i + 1] : undefined;
+                if (nextArg !== undefined && !nextArg.startsWith("-")) {
+                    result.flags[flag] = nextArg;
+                    i++; // Skip the next part as it's being used as a value
+                    continue;
+                }
+            }
+
+            // Process as boolean flags if no value follows
             for (const flag of flags) {
                 result.flags[flag] = true;
             }

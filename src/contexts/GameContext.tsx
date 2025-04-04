@@ -274,14 +274,25 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Handle file edit (for nano command)
     const handleFileEdit = (path: string, content: string) => {
-        const fullPath = path.startsWith("/") ? path : `${commandProcessor.getCurrentDirectory()}/${path}`;
+        // Normalize the path to handle potential double slashes
+        const normalizedPath = path.replace(/\/+/g, "/");
 
+        // Determine full path if needed
+        const fullPath = normalizedPath.startsWith("/")
+            ? normalizedPath
+            : `${commandProcessor.getCurrentDirectory()}/${normalizedPath}`.replace(/\/+/g, "/");
+
+        // Write the file
         fileSystem.writeFile(fullPath, content);
 
-        // Update Git status for the file
-        gitRepository.updateFileStatus(path, "modified");
+        // Update Git status - use path without leading slash
+        const gitPath = fullPath.startsWith("/") ? fullPath.substring(1) : fullPath;
 
-        setTerminalOutput(prev => [...prev, t("terminal.fileSaved").replace("{path}", path)]);
+        // If the file is staged, it should be shown as both staged and modified
+        gitRepository.updateFileStatus(gitPath, "modified");
+
+        // Only add one message to terminal output
+        setTerminalOutput(prev => [...prev, t("terminal.fileSaved").replace("{path}", normalizedPath)]);
     };
 
     // Reset the current level
