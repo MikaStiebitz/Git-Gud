@@ -99,6 +99,14 @@ npm run dev
 
 Navigate to `http://localhost:3000` to start learning Git!
 
+## 📚 Documentation
+
+For developers and contributors, detailed documentation is available to help you understand the codebase:
+
+- [Commands Implementation](./src/commands/COMMANDS.md) - How Git commands are implemented and how to add new ones
+- [Levels System](./src/levels/LEVELS.md) - How levels and stages work and how to create new levels
+- [Translation System](./src/translations/TRANSLATIONS.md) - How to add or modify translations
+
 ## 🤝 Contributing
 
 We welcome contributions to GitGud! Whether you're fixing bugs, improving the documentation, or adding new features, please follow these steps:
@@ -110,13 +118,15 @@ We welcome contributions to GitGud! Whether you're fixing bugs, improving the do
 5. Push to the branch (`git push origin feature/amazing-feature`)
 6. Open a Pull Request
 
+For more details on the project structure, check the documentation linked above.
+
 ## 📝 Upcoming Improvements
 
-- Enhance git add <filename> functionality to properly track files
-- Improve terminal tab suggestion menu to work with spaces
-- Add more rebasing levels
-- Implement advanced terminal command suggestions
-- Add git push functionality
+- Enhance git add <filename> functionality to properly track files ✅
+- Improve terminal tab suggestion menu to work with spaces ✅
+- Add more rebasing levels ✅
+- Implement advanced terminal command suggestions ✅
+- Add git push functionality ✅
 
 ## ⭐ Support This Project
 
