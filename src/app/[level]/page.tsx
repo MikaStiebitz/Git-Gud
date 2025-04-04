@@ -32,7 +32,7 @@ import { TerminalSkeleton } from "~/components/ui/TerminalSkeleton";
 // Dynamically import Terminal component with SSR disabled
 const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
     ssr: false,
-    loading: () => <TerminalSkeleton />,
+    loading: () => <TerminalSkeleton className="h-[580px]" />,
 });
 
 // File tree node type definition

@@ -53,13 +53,14 @@ export function Terminal({
     // Auto-scroll to bottom when terminal output changes
     useEffect(() => {
         if (scrollAreaRef.current) {
-            // Get the actual scrollable div inside the ScrollArea
-            const scrollableDiv = scrollAreaRef.current.querySelector('div[style*="overflow"]');
-            if (scrollableDiv) {
-                scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+            // We need to find the actual scrollable viewport inside the Radix UI ScrollArea
+            const scrollableViewport = scrollAreaRef.current.querySelector("[data-radix-scroll-area-viewport]");
+            if (scrollableViewport) {
+                // Use requestAnimationFrame to ensure this happens after the render is complete
+                requestAnimationFrame(() => {
+                    scrollableViewport.scrollTop = scrollableViewport.scrollHeight;
+                });
             }
-            // Fallback to the ref itself if needed
-            scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
         }
     }, [terminalOutput]);
 
@@ -531,9 +532,7 @@ export function Terminal({
             </div>
 
             {/* Terminal output area */}
-            <ScrollArea
-                className="flex-grow overflow-auto px-4 py-3 font-mono text-sm text-purple-300"
-                ref={scrollAreaRef}>
+            <ScrollArea className="h-0 min-h-0 flex-1 px-4 py-3 font-mono text-sm text-purple-300" ref={scrollAreaRef}>
                 <div ref={outputContainerRef} className="pb-4">
                     {terminalOutput.map((line, i) => (
                         <div key={i} className="whitespace-pre-wrap break-words">

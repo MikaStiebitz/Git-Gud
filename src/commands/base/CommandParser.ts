@@ -7,7 +7,6 @@ export function parseCommand(commandStr: string): {
     const parts = commandStr.trim().split(/\s+/);
     const command = parts[0]?.toLowerCase() ?? "";
 
-    // Für Git-Befehle, kombiniere "git" und den Subbefehl
     if (command === "git" && parts.length > 1) {
         return {
             command: `git ${parts[1]?.toLowerCase()}`,
@@ -34,7 +33,6 @@ export function parseArgs(args: string[]): CommandArgs {
         // Skip undefined arguments
         if (arg === undefined) continue;
 
-        // Flags mit Werten: --flag=value
         if (arg.startsWith("--") && arg.includes("=")) {
             const [flag, value] = arg.split("=", 2);
             if (flag && value !== undefined) {
@@ -43,22 +41,18 @@ export function parseArgs(args: string[]): CommandArgs {
             continue;
         }
 
-        // Lange Flags: --flag
         if (arg.startsWith("--")) {
             const flag = arg.substring(2);
-
-            // Prüfe, ob der nächste Teil ein Wert ist (kein Flag)
             const nextArg = i + 1 < args.length ? args[i + 1] : undefined;
             if (nextArg !== undefined && !nextArg.startsWith("-")) {
                 result.flags[flag] = nextArg;
-                i++; // Überspringe den nächsten Teil, da er als Wert verwendet wurde
+                i++;
             } else {
                 result.flags[flag] = true;
             }
             continue;
         }
 
-        // Kurze Flags: -a, -abc
         if (arg.startsWith("-") && arg.length > 1) {
             const flags = arg.substring(1).split("");
 
@@ -80,7 +74,6 @@ export function parseArgs(args: string[]): CommandArgs {
             continue;
         }
 
-        // Kein Flag, behandle als positionelles Argument
         result.positionalArgs.push(arg);
     }
 

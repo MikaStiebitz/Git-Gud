@@ -1,7 +1,7 @@
 import type { FileSystem } from "./FileSystem";
 import type { GitRepository } from "./GitRepository";
 import type { StageType, LevelType, FileStructure, GitState, FileChange, MergeConflict } from "~/types";
-import { allStages } from "./LevelCreator";
+import { allStages } from "../level";
 
 export class LevelManager {
     private stages: Record<string, StageType>;
