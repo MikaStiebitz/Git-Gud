@@ -237,10 +237,7 @@ export class GitRepository {
     public addRemote(name: string, url: string): boolean {
         if (!this.initialized) return false;
 
-        if (this.remotes[name]) {
-            return false; // Remote with this name already exists
-        }
-
+        // For learning platform, always add the remote even if it exists
         this.remotes[name] = url;
         return true;
     }

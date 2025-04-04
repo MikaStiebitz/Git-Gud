@@ -17,34 +17,21 @@ export class PullCommand implements Command {
 
         // Default values
         let remote = "origin";
-        let branch = gitRepository.getCurrentBranch();
 
         // Parse positional arguments
         if (args.positionalArgs.length > 0) {
             remote = args.positionalArgs[0] ?? "origin";
         }
 
-        if (args.positionalArgs.length > 1) {
-            branch = args.positionalArgs[1] ?? gitRepository.getCurrentBranch();
-        }
-
-        // Check if remote exists
+        // For learning platform, always simulate a successful pull
+        // Auto-add a remote if it doesn't exist
         const remotes = gitRepository.getRemotes();
         if (!remotes[remote]) {
-            return [
-                `fatal: '${remote}' does not appear to be a git repository`,
-                "fatal: Could not read from remote repository.",
-                "Please make sure you have the correct access rights",
-                "and the repository exists.",
-            ];
+            // Auto-create the remote for better UX in the learning platform
+            gitRepository.addRemote(remote, `https://github.com/user/${remote}.git`);
         }
 
-        // Perform pull
-        const success = gitRepository.pull(remote, branch);
-        if (success) {
-            return ["Already up to date."];
-        } else {
-            return [`error: failed to pull from '${remote}'`];
-        }
+        // Simulate pull response
+        return ["Already up to date."];
     }
 }

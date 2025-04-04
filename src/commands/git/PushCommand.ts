@@ -29,15 +29,12 @@ export class PushCommand implements Command {
             branch = args.positionalArgs[1] ?? gitRepository.getCurrentBranch();
         }
 
-        // Check if remote exists
+        // For learning platform, always simulate a successful push
+        // We'll auto-add a remote if it doesn't exist
         const remotes = gitRepository.getRemotes();
         if (!remotes[remote]) {
-            return [
-                `fatal: '${remote}' does not appear to be a git repository`,
-                "fatal: Could not read from remote repository.",
-                "Please make sure you have the correct access rights",
-                "and the repository exists.",
-            ];
+            // Auto-create the remote for better UX in the learning platform
+            gitRepository.addRemote(remote, `https://github.com/user/${remote}.git`);
         }
 
         // Check if there are unpushed commits before pushing
@@ -46,6 +43,7 @@ export class PushCommand implements Command {
 
         // Perform push
         const success = gitRepository.push(remote, branch);
+
         if (success) {
             if (hasUnpushedCommits) {
                 // Show a more realistic push output when commits are actually pushed
@@ -56,7 +54,7 @@ export class PushCommand implements Command {
                         `Counting objects: 100% (${unpushedCommitCount * 2 + 1}/${unpushedCommitCount * 2 + 1}), done.`,
                         `Writing objects: 100% (${unpushedCommitCount}/${unpushedCommitCount}), 256 bytes | 256.00 KiB/s, done.`,
                         `Total ${unpushedCommitCount} (delta 0), reused 0 (delta 0)`,
-                        `To ${remotes[remote]}`,
+                        `To ${gitRepository.getRemotes()[remote]}`,
                         `   a1b2c3d..e4f5g6h  ${branch} -> ${branch}`,
                     ];
                 } else {
@@ -65,7 +63,7 @@ export class PushCommand implements Command {
                         `Counting objects: 100% (${unpushedCommitCount * 2 + 1}/${unpushedCommitCount * 2 + 1}), done.`,
                         `Writing objects: 100% (${unpushedCommitCount}/${unpushedCommitCount}), 256 bytes | 256.00 KiB/s, done.`,
                         `Total ${unpushedCommitCount} (delta 0), reused 0 (delta 0)`,
-                        `To ${remotes[remote]}`,
+                        `To ${gitRepository.getRemotes()[remote]}`,
                         `   a1b2c3d..e4f5g6h  ${branch} -> ${branch}`,
                     ];
                 }

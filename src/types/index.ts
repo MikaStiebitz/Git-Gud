@@ -115,7 +115,7 @@ export type GitCommand = CommandType & {
 };
 
 // FileStatus enum for better type safety
-export type FileStatus = "untracked" | "modified" | "staged" | "committed" | "deleted";
+export type FileStatus = "untracked" | "modified" | "staged" | "committed" | "deleted" | "staged+modified";
 
 // GitStatus type
 export type GitStatus = Record<string, FileStatus>;
