@@ -1,4 +1,4 @@
-import type { Command, CommandArgs, CommandContext } from "../base/Command";
+import type { Command } from "../base/Command";
 
 export class ClearCommand implements Command {
     name = "clear";
@@ -8,7 +8,7 @@ export class ClearCommand implements Command {
     includeInTabCompletion = true;
     supportsFileCompletion = false;
 
-    execute(args: CommandArgs, context: CommandContext): string[] {
+    execute(): string[] {
         // Return an empty array to clear the terminal
         return [];
     }

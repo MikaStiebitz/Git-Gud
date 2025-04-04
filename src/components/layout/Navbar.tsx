@@ -11,7 +11,6 @@ import {
     Languages,
     Menu,
     X,
-    Github,
     Star,
     Download,
     HelpCircle,

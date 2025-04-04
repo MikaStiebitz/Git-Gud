@@ -1,4 +1,4 @@
-import type { Command, CommandArgs, CommandContext } from "../base/Command";
+import type { Command, CommandArgs } from "../base/Command";
 
 export class GitHelpCommand implements Command {
     name = "git help";
@@ -8,7 +8,7 @@ export class GitHelpCommand implements Command {
     includeInTabCompletion = true;
     supportsFileCompletion = false;
 
-    execute(args: CommandArgs, context: CommandContext): string[] {
+    execute(args: CommandArgs): string[] {
         // If a specific command is requested
         if (args.positionalArgs.length > 0) {
             const command = args.positionalArgs[0] ?? "";

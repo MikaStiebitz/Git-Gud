@@ -63,7 +63,6 @@ export default function LevelPage() {
         handleCommand,
         currentFile,
         openFileEditor,
-        fileSystem,
         syncURLWithCurrentLevel,
         handleLevelFromUrl,
     } = useGameContext();
