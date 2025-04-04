@@ -6,7 +6,6 @@ import { useGameContext } from "~/contexts/GameContext";
 import { HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle, ArrowUpIcon } from "lucide-react";
 import { useLanguage } from "~/contexts/LanguageContext";
 import commandRegistry from "../commands";
-import { CommitDialog } from "~/components/CommitDialog";
 
 interface TerminalProps {
     className?: string;
@@ -414,6 +413,15 @@ export function Terminal({
             );
         }
 
+        // Add folder highlighting for directory listings
+        if (line.trim().endsWith("/") && !line.includes(":")) {
+            return (
+                <div>
+                    <span className="text-blue-400">{line}</span>
+                </div>
+            );
+        }
+
         // Match git status output patterns
         if (line.includes("new file:")) {
             return (
@@ -487,6 +495,18 @@ export function Terminal({
             return (
                 <div>
                     <span className="text-green-400">{line}</span>
+                </div>
+            );
+        }
+
+        // Directory listing - highlight directories with blue
+        // This is for the ls command output
+        const dirRegex = /^(.+)\/$/;
+        const dirMatch = dirRegex.exec(line);
+        if (dirMatch) {
+            return (
+                <div>
+                    <span className="font-medium text-blue-400">{line}</span>
                 </div>
             );
         }

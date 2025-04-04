@@ -430,14 +430,14 @@ export default function LevelPage() {
                                 className={`group relative w-full overflow-hidden rounded-md border ${
                                     showAdvancedOptions
                                         ? "border-purple-600/50 bg-purple-800/30 text-purple-200"
-                                        : "border-purple-800/40 text-purple-400 hover:border-purple-700 hover:bg-purple-900/30 hover:text-purple-200"
+                                        : "border-purple-800/40 text-purple-400 hover:border-purple-700 hover:bg-purple-900/30 hover:text-purple-100"
                                 } transition-all duration-300`}>
                                 <div className="flex items-center justify-center">
                                     <span
                                         className={`mr-2 transform transition-transform ${showAdvancedOptions ? "rotate-180" : ""}`}>
                                         <ChevronDown className="h-4 w-4" />
                                     </span>
-                                    <span>
+                                    <span className="truncate text-sm sm:text-base">
                                         {showAdvancedOptions
                                             ? t("level.hideAdvancedOptions")
                                             : t("level.advancedOptions")}
@@ -462,9 +462,6 @@ export default function LevelPage() {
                                                 <RotateCcw className="mr-2 h-4 w-4 transform transition-transform group-hover:rotate-180" />
                                                 {t("level.resetLevel")}
                                             </span>
-                                            <span className="hidden text-xs text-amber-500 opacity-0 transition-opacity group-hover:inline group-hover:opacity-100">
-                                                {t("level.resetLevelHint") || "Resets your progress in this level"}
-                                            </span>
                                         </div>
                                     </Button>
 
@@ -481,9 +478,6 @@ export default function LevelPage() {
                                             <span className="flex items-center">
                                                 <RotateCcw className="mr-2 h-4 w-4 transform transition-transform group-hover:rotate-180" />
                                                 {t("level.resetAllProgress")}
-                                            </span>
-                                            <span className="hidden text-xs text-red-500 opacity-0 transition-opacity group-hover:inline group-hover:opacity-100">
-                                                {t("level.resetAllProgressHint") || "Erases all your progress"}
                                             </span>
                                         </div>
                                     </Button>

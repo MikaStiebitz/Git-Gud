@@ -62,6 +62,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [currentLevelFile, setCurrentLevelFile] = useState({ name: "", content: "" });
     const [currentPlaygroundFile, setCurrentPlaygroundFile] = useState({ name: "", content: "" });
 
+    const GIT_SIMULATION_WARNING =
+        "⚠️ Note: This is a simplified Git simulation for learning purposes. Some commands may behave differently than in real Git.";
+
     // Combined getter/setter for file editor state
     const isFileEditorOpen = isLevelFileEditorOpen || isPlaygroundFileEditorOpen;
 
@@ -121,7 +124,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fileSystem.writeFile("/src/index.js", 'console.log("Hello, Git!");');
 
         // Reset the terminal output
-        setTerminalOutput([t("terminal.welcome"), t("terminal.playgroundMode")]);
+        setTerminalOutput([t("terminal.welcome"), t("terminal.playgroundMode"), GIT_SIMULATION_WARNING]);
 
         // Reset the command processor's current directory
         commandProcessor.setCurrentDirectory("/");
@@ -139,6 +142,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setTerminalOutput([
             t("terminal.welcome"),
             t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
+            GIT_SIMULATION_WARNING,
         ]);
 
         // Reset the command processor's current directory
@@ -147,6 +151,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Close any open editor when resetting the level
         setIsLevelFileEditorOpen(false);
     };
+
     // Load saved progress on mount
     useEffect(() => {
         const savedProgress = progressManager.getProgress();
