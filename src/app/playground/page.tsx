@@ -16,7 +16,7 @@ import { FileEditor } from "~/components/FileEditor";
 // Dynamically import Terminal component with SSR disabled
 const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
     ssr: false,
-    loading: () => <TerminalSkeleton />,
+    loading: () => <TerminalSkeleton className="h-[580px]" />,
 });
 
 export default function Playground() {
