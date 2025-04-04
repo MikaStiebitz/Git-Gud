@@ -21,6 +21,13 @@ const terminal = {
     "editor.save": "Speichern",
     "editor.escToCancel": "Drücke ESC zum Abbrechen, CTRL+Enter zum Speichern",
     "editor.unsavedChanges": "Du hast ungespeicherte Änderungen. Möchtest du wirklich abbrechen?",
+
+    // Commit Dialog
+    "commit.title": "Änderungen committen",
+    "commit.placeholder": "Gib eine Commit-Nachricht ein, die deine Änderungen beschreibt...",
+    "commit.tip":
+        "Die erste Zeile sollte eine kurze Zusammenfassung sein. Füge eine Leerzeile ein und dann Details, falls nötig.",
+    "commit.button": "Änderungen committen",
 };
 
 export default terminal;

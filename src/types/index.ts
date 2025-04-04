@@ -170,6 +170,7 @@ export interface GameContextProps {
     isFileEditorOpen: boolean;
     isAdvancedMode: boolean;
     currentFile: { name: string; content: string };
+    isCommitDialogOpen: boolean;
 
     // Functions
     handleCommand: (command: string, isPlaygroundMode?: boolean) => void;
@@ -180,9 +181,12 @@ export interface GameContextProps {
     resetTerminalForPlayground: () => void;
     resetTerminalForLevel: () => void;
     openFileEditor: (fileName: string, isPlayground?: boolean) => void;
+    openCommitDialog: () => void;
     setIsFileEditorOpen: (isOpen: boolean) => void;
     toggleAdvancedMode: () => void;
     getEditableFiles: () => Array<{ name: string; path: string }>;
     syncURLWithCurrentLevel: () => void;
     handleLevelFromUrl: (stageId: string, levelId: number) => void;
+    handleCommit: (message: string) => void;
+    closeCommitDialog: () => void;
 }

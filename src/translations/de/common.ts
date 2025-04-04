@@ -5,7 +5,7 @@ const common = {
     "nav.playground": "Playground",
     "nav.startLearning": "Starte Lernen",
     "nav.language": "Sprache",
-    "nav.installation": "Installation",
+    "nav.installation": "Installation von Git",
     "nav.faq": "FAQ",
 
     // Command Categories

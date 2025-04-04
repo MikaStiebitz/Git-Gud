@@ -4,7 +4,7 @@ export class CommitCommand implements Command {
     name = "git commit";
     description = "Record changes to the repository";
     usage = "git commit -m <message>";
-    examples = ['git commit -m "Initial commit"', 'git commit -m "Fix bug in login form"'];
+    examples = ['git commit -m "Initial commit"', 'git commit -m "Fix bug in login form"', "git commit"];
     includeInTabCompletion = true;
     supportsFileCompletion = false;
 
@@ -15,11 +15,13 @@ export class CommitCommand implements Command {
             return ["Not a git repository. Run 'git init' first."];
         }
 
-        // Check for message flag
-        const hasMessageFlag = args.flags.m !== undefined || args.flags.message !== undefined;
+        // Check if there's anything to commit
+        const stagedFiles = Object.entries(gitRepository.getStatus())
+            .filter(([_, status]) => status === "staged")
+            .map(([file]) => file);
 
-        if (!hasMessageFlag) {
-            return ["Please provide a commit message with the -m flag."];
+        if (stagedFiles.length === 0) {
+            return ["Nothing to commit. Use git add to stage files first."];
         }
 
         // Get the message

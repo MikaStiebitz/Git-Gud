@@ -19,6 +19,12 @@ const terminal = {
     "editor.save": "Save",
     "editor.escToCancel": "Press ESC to cancel, CTRL+Enter to save",
     "editor.unsavedChanges": "You have unsaved changes. Do you really want to cancel?",
+
+    // Commit Dialog
+    "commit.title": "Commit Changes",
+    "commit.placeholder": "Enter a commit message describing your changes...",
+    "commit.tip": "First line should be a short summary. Leave a blank line then add details if needed.",
+    "commit.button": "Commit Changes",
 };
 
 export default terminal;

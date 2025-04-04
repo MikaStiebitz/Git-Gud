@@ -28,6 +28,7 @@ import { useLanguage } from "~/contexts/LanguageContext";
 import { StoryDialog } from "~/components/StoryDialog";
 import dynamic from "next/dynamic";
 import { TerminalSkeleton } from "~/components/ui/TerminalSkeleton";
+import { CommitDialog } from "~/components/CommitDialog";
 
 // Dynamically import Terminal component with SSR disabled
 const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
@@ -423,33 +424,68 @@ export default function LevelPage() {
                     <div className="mt-4 flex w-full flex-col gap-4 border-t border-purple-900/30 md:flex-row">
                         <div className="pt-4 md:flex-1">
                             <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
                                 onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
-                                className="w-full text-purple-400 hover:bg-purple-900/30 hover:text-purple-200">
-                                {showAdvancedOptions ? t("level.hideAdvancedOptions") : t("level.advancedOptions")}
+                                className={`group relative w-full overflow-hidden rounded-md border ${
+                                    showAdvancedOptions
+                                        ? "border-purple-600/50 bg-purple-800/30 text-purple-200"
+                                        : "border-purple-800/40 text-purple-400 hover:border-purple-700 hover:bg-purple-900/30 hover:text-purple-200"
+                                } transition-all duration-300`}>
+                                <div className="flex items-center justify-center">
+                                    <span
+                                        className={`mr-2 transform transition-transform ${showAdvancedOptions ? "rotate-180" : ""}`}>
+                                        <ChevronDown className="h-4 w-4" />
+                                    </span>
+                                    <span>
+                                        {showAdvancedOptions
+                                            ? t("level.hideAdvancedOptions")
+                                            : t("level.advancedOptions")}
+                                    </span>
+                                </div>
+
+                                {/* Animated highlight effect */}
+                                <span
+                                    className={`absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-purple-500 to-purple-300 transition-all duration-500 ${showAdvancedOptions ? "w-full" : ""} `}
+                                />
                             </Button>
+
                             {showAdvancedOptions && (
-                                <div className="mt-2 space-y-2">
+                                <div className="mt-2 space-y-2 rounded-md border border-purple-800/30 bg-purple-900/20 p-3">
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="w-full border-amber-800/50 text-amber-400 hover:bg-amber-900/30"
+                                        className="group w-full border-amber-800/50 text-amber-400 hover:bg-amber-900/30"
                                         onClick={resetCurrentLevel}>
-                                        <RotateCcw className="mr-1 h-4 w-4" />
-                                        {t("level.resetLevel")}
+                                        <div className="flex w-full items-center justify-between">
+                                            <span className="flex items-center">
+                                                <RotateCcw className="mr-2 h-4 w-4 transform transition-transform group-hover:rotate-180" />
+                                                {t("level.resetLevel")}
+                                            </span>
+                                            <span className="hidden text-xs text-amber-500 opacity-0 transition-opacity group-hover:inline group-hover:opacity-100">
+                                                {t("level.resetLevelHint") || "Resets your progress in this level"}
+                                            </span>
+                                        </div>
                                     </Button>
+
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="w-full border-red-800/50 text-red-400 hover:bg-red-900/30"
+                                        className="group w-full border-red-800/50 text-red-400 hover:bg-red-900/30"
                                         onClick={() => {
                                             if (window.confirm(t("level.resetConfirm"))) {
                                                 resetAllProgress();
                                             }
                                         }}>
-                                        <RotateCcw className="mr-1 h-4 w-4" />
-                                        {t("level.resetAllProgress")}
+                                        <div className="flex w-full items-center justify-between">
+                                            <span className="flex items-center">
+                                                <RotateCcw className="mr-2 h-4 w-4 transform transition-transform group-hover:rotate-180" />
+                                                {t("level.resetAllProgress")}
+                                            </span>
+                                            <span className="hidden text-xs text-red-500 opacity-0 transition-opacity group-hover:inline group-hover:opacity-100">
+                                                {t("level.resetAllProgressHint") || "Erases all your progress"}
+                                            </span>
+                                        </div>
                                     </Button>
                                 </div>
                             )}
@@ -549,6 +585,8 @@ export default function LevelPage() {
                         fileName={currentFile.name}
                         initialContent={currentFile.content}
                     />
+
+                    <CommitDialog />
                 </div>
             </div>
             {levelData?.story && (

@@ -6,6 +6,7 @@ import { useGameContext } from "~/contexts/GameContext";
 import { HelpCircleIcon, RotateCcw, Send, Github, FileIcon, X, Circle, ArrowUpIcon } from "lucide-react";
 import { useLanguage } from "~/contexts/LanguageContext";
 import commandRegistry from "../commands";
+import { CommitDialog } from "~/components/CommitDialog";
 
 interface TerminalProps {
     className?: string;
@@ -22,7 +23,6 @@ export function Terminal({
 }: TerminalProps) {
     const {
         terminalOutput,
-
         handleCommand,
         resetCurrentLevel,
         commandProcessor,
@@ -32,6 +32,7 @@ export function Terminal({
         currentLevel,
         isLevelCompleted,
         openFileEditor,
+        openCommitDialog,
     } = useGameContext();
 
     const { t } = useLanguage();
@@ -110,6 +111,12 @@ export function Terminal({
                     openFileEditor(fileName, isPlaygroundMode);
                     continue;
                 }
+            }
+
+            if (command === "git commit") {
+                handleCommand(command, isPlaygroundMode);
+                openCommitDialog();
+                continue;
             }
 
             // Special case for the "next" command when level is completed

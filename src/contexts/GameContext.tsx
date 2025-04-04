@@ -40,6 +40,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         t("terminal.welcome"),
         t("terminal.levelStarted").replace("{level}", currentLevel.toString()).replace("{stage}", currentStage),
     ]);
+    const [isCommitDialogOpen, setIsCommitDialogOpen] = useState<boolean>(false);
 
     // Advanced mode state
     const [isAdvancedMode, setIsAdvancedMode] = useState<boolean>(
@@ -70,6 +71,27 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else {
             setIsLevelFileEditorOpen(isOpen);
         }
+    };
+
+    // Open the CommitDialog
+    const openCommitDialog = () => {
+        setIsCommitDialogOpen(true);
+    };
+
+    // Close the CommitDialog
+    const closeCommitDialog = () => {
+        setIsCommitDialogOpen(false);
+    };
+
+    // Handle commit message from dialog
+    const handleCommit = (message: string) => {
+        // Create a properly formatted commit command
+        // Escape quotes in the message to avoid syntax errors
+        const escapedMessage = message.replace(/"/g, '\\"');
+
+        // Execute the commit command
+        const output = commandProcessor.processCommand(`git commit -m "${escapedMessage}"`);
+        setTerminalOutput(prev => [...prev, ...output]);
     };
 
     // Sync URL with current level state
@@ -428,6 +450,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         getEditableFiles,
         syncURLWithCurrentLevel,
         handleLevelFromUrl,
+        isCommitDialogOpen,
+        handleCommit,
+        closeCommitDialog,
+        openCommitDialog,
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
