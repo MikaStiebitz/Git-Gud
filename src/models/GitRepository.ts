@@ -14,6 +14,7 @@ export class GitRepository {
     private remotes: Record<string, string> = {};
     private fileSystem: FileSystem;
     private pushedCommits: Set<string> = new Set<string>();
+    private branchStates: Record<string, Record<string, string>> = {};
 
     constructor(fileSystem: FileSystem) {
         this.fileSystem = fileSystem;
@@ -146,15 +147,54 @@ export class GitRepository {
     public checkout(branch: string, createNew = false): boolean {
         if (!this.initialized) return false;
 
+        // Remove quotes if they exist in the branch name
+        const cleanBranchName = branch.replace(/^["'](.*)["']$/, "$1");
+
         if (createNew) {
-            if (!this.createBranch(branch)) return false;
-        } else if (!this.branches.includes(branch)) {
+            if (!this.createBranch(cleanBranchName)) return false;
+        } else if (!this.branches.includes(cleanBranchName)) {
             return false;
         }
 
-        this.currentBranch = branch;
-        this.HEAD = branch;
+        // Save the current branch's state before switching
+        this.saveBranchState(this.currentBranch);
+
+        // Update current branch
+        this.currentBranch = cleanBranchName;
+        this.HEAD = cleanBranchName;
+
+        // Restore the new branch's state
+        this.restoreBranchState(cleanBranchName);
+
         return true;
+    }
+
+    private saveBranchState(branch: string): void {
+        // Save current file states for this branch
+        const fileState: Record<string, string> = {};
+
+        // Only save committed or staged files
+        Object.entries(this.status).forEach(([file, status]) => {
+            if (status === "committed" || status === "staged") {
+                const content = this.fileSystem.getFileContents(file);
+                if (content !== null) {
+                    fileState[file] = content;
+                }
+            }
+        });
+
+        this.branchStates[branch] = fileState;
+    }
+
+    private restoreBranchState(branch: string): void {
+        const state = this.branchStates[branch];
+        if (!state) return; // No saved state for this branch
+
+        // Restore files to their branch-specific state
+        Object.entries(state).forEach(([file, content]) => {
+            this.fileSystem.writeFile(file, content);
+            this.status[file] = "committed";
+        });
     }
 
     // Merge a branch into the current branch

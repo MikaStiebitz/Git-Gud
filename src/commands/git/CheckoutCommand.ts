@@ -37,4 +37,17 @@ export class CheckoutCommand implements Command {
             return success ? [`Switched to branch '${branch}'`] : [`Branch '${branch}' does not exist.`];
         }
     }
+
+    validate(args: CommandArgs): { isValid: boolean; errorMessage?: string } {
+        // Check if -b flag is present but no branch name is provided
+        if (args.flags.b !== undefined && args.positionalArgs.length === 0) {
+            return {
+                isValid: false,
+                errorMessage: "Please specify a branch name.",
+            };
+        }
+
+        // Otherwise consider the command valid
+        return { isValid: true };
+    }
 }
