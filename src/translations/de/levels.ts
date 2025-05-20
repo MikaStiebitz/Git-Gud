@@ -137,34 +137,35 @@ const level = {
         "Branches sind ein fundamentales Konzept in Git. Sie ermöglichen parallele Entwicklung, Feature-Isolation und experimentelles Arbeiten ohne den Hauptcode zu beeinträchtigen.",
     "branches.level1.story.taskIntroduction": "Zeige dir alle vorhandenen Branches mit git branch an.",
 
-    "branches.level2.name": "Branch erstellen",
-    "branches.level2.description": "Erstelle einen neuen Branch und wechsle zu ihm",
+    "branches.level2.name": "Branch erstellen und wechseln",
+    "branches.level2.description": "Erstelle einen neuen Branch und wechsle zu ihm mit dem modernen git switch Befehl",
     "branches.level2.objective1": "Erstelle einen neuen Branch namens 'feature' und wechsle zu ihm",
-    "branches.level2.hint1": "Verwende den Befehl git checkout -b feature",
-    "branches.level2.hint2": "Dies erstellt einen neuen Branch und wechselt gleichzeitig zu ihm",
-    "branches.level2.requirement1.description": "Erstelle einen neuen Branch und wechsle zu ihm",
-    "branches.level2.requirement1.success": "Hervorragend! Du hast einen neuen Branch erstellt und zu ihm gewechselt.",
-    "branches.level2.story.title": "Neue Feature-Entwicklung",
+    "branches.level2.hint1": "Verwende den Befehl git switch -c feature",
+    "branches.level2.hint2": "Das -c Flag erstellt einen neuen Branch und wechselt in einem Schritt zu ihm",
+    "branches.level2.requirement1.description": "Erstelle einen neuen Branch und wechsle zu ihm mit git switch -c",
+    "branches.level2.requirement1.success":
+        "Hervorragend! Du hast einen neuen Branch erstellt und zu ihm gewechselt mit dem modernen git switch Befehl.",
+    "branches.level2.story.title": "Moderne Branch-Erstellung",
     "branches.level2.story.narrative":
-        '"Perfekt! Jetzt wollen wir ein neues Feature implementieren", sagt Alex. "Dafür erstellen wir einen neuen Branch namens \'feature\', damit unsere Änderungen den Hauptcode nicht beeinflussen."\n\nEr zeigt dir, wie man gleichzeitig einen Branch erstellt und zu ihm wechselt: "Mit \'git checkout -b\' kannst du beides in einem Schritt erledigen."',
+        "\"Perfekt! Jetzt wollen wir ein neues Feature implementieren\", sagt Alex. \"Dafür erstellen wir einen neuen Branch namens 'feature', damit unsere Änderungen den Hauptcode nicht beeinflussen.\"\n\nEr zeigt dir den modernen Ansatz: \"Git hat den 'git switch' Befehl eingeführt, um Branch-Operationen klarer zu machen. Verwende 'git switch -c feature', um den neuen Branch zu erstellen und gleichzeitig zu ihm zu wechseln. Das ist der bevorzugte moderne Weg anstelle des älteren 'git checkout -b'.\"",
     "branches.level2.story.realWorldContext":
-        "In professionellen Entwicklungsteams arbeitet man fast nie direkt im main-Branch. Stattdessen erstellt man Feature-Branches für neue Funktionen, um den Hauptcode stabil zu halten.",
-    "branches.level2.story.taskIntroduction": "Erstelle einen neuen Branch namens 'feature' und wechsle zu ihm.",
+        "In professionellen Entwicklungsteams arbeitet man fast nie direkt im main-Branch. Der git switch Befehl, eingeführt in Git 2.23, bietet eine sauberere, intuitivere Art mit Branches zu arbeiten verglichen mit dem älteren checkout Befehl.",
+    "branches.level2.story.taskIntroduction":
+        "Erstelle einen neuen Branch namens 'feature' und wechsle zu ihm mit git switch -c.",
 
-    "branches.level3.name": "Switch-Befehl",
-    "branches.level3.description": "Verwende den modernen git switch Befehl",
-    "branches.level3.objective1": "Wechsle zwischen Branches mit dem neuen git switch Befehl",
+    "branches.level3.name": "Zwischen Branches wechseln",
+    "branches.level3.description": "Wechsle zwischen bestehenden Branches",
+    "branches.level3.objective1": "Wechsle zwischen Branches mit git switch",
     "branches.level3.hint1": "Verwende den Befehl git switch <branch>",
-    "branches.level3.hint2": "Dies ist eine neuere Alternative zu git checkout für den Wechsel von Branches",
+    "branches.level3.hint2": "Dies wechselt zu einem bestehenden Branch",
     "branches.level3.requirement1.description": "Wechsle zu einem anderen Branch mit git switch",
-    "branches.level3.requirement1.success": "Großartig! Du hast den modernen git switch Befehl verwendet.",
-    "branches.level3.story.title": "Moderne Git-Befehle",
+    "branches.level3.requirement1.success": "Großartig! Du hast zwischen Branches gewechselt mit git switch.",
+    "branches.level3.story.title": "Branch-Navigation",
     "branches.level3.story.narrative":
-        '"Lass mich dir etwas Neues zeigen", sagt Sarah und gesellt sich zu dir an deinen Schreibtisch. "Git gibt es schon eine Weile, und einige seiner Befehle haben sich weiterentwickelt. Zum Beispiel gibt es jetzt einen speziellen Befehl nur für den Wechsel von Branches."\n\nSie erklärt: "Während \'git checkout\' für den Wechsel von Branches funktioniert, hat Git \'git switch\' als intuitivere Alternative speziell für Branch-Operationen eingeführt."',
+        '"Jetzt da du weißt, wie man Branches erstellt, lass uns das Wechseln zwischen ihnen üben", sagt Sarah. "Das ist etwas, was du ständig in der echten Entwicklungsarbeit machen wirst."\n\nSie erklärt: "Du kannst zu jedem bestehenden Branch wechseln mit \'git switch <branch-name>\'. Das ist viel klarer als das alte \'git checkout\', welches verwirrend sein konnte, weil es viele verschiedene Dinge getan hat."',
     "branches.level3.story.realWorldContext":
-        "Git führt gelegentlich neue Befehle ein, um die Benutzererfahrung zu verbessern. Der Befehl git switch wurde in Git 2.23 eingeführt, um Branch-Operationen intuitiver zu gestalten.",
-    "branches.level3.story.taskIntroduction":
-        "Versuche, den git switch Befehl zu verwenden, um zu einem anderen Branch zu wechseln.",
+        "Das Wechseln zwischen Branches ist eine der häufigsten Git-Operationen. Der dedizierte git switch Befehl macht die Absicht klar und reduziert Verwirrung verglichen mit dem Mehrzweck-checkout Befehl.",
+    "branches.level3.story.taskIntroduction": "Übe das Wechseln zu einem anderen Branch mit git switch.",
 
     // Level Content - Merge Stage
     "merge.name": "Branches zusammenführen",

@@ -135,33 +135,35 @@ const levels = {
         "Branches are a fundamental concept in Git. They enable parallel development, feature isolation, and experimental work without affecting the main code.",
     "branches.level1.story.taskIntroduction": "Display all existing branches with git branch.",
 
-    "branches.level2.name": "Create Branch",
-    "branches.level2.description": "Create a new branch and switch to it",
+    "branches.level2.name": "Create and Switch to Branch",
+    "branches.level2.description": "Create a new branch and switch to it using the modern git switch command",
     "branches.level2.objective1": "Create a new branch named 'feature' and switch to it",
-    "branches.level2.hint1": "Use the git checkout -b feature command",
-    "branches.level2.hint2": "This creates a new branch and switches to it at the same time",
-    "branches.level2.requirement1.description": "Create a new branch and switch to it",
-    "branches.level2.requirement1.success": "Excellent! You've created a new branch and switched to it.",
-    "branches.level2.story.title": "New Feature Development",
+    "branches.level2.hint1": "Use the git switch -c feature command",
+    "branches.level2.hint2": "The -c flag creates a new branch and switches to it in one step",
+    "branches.level2.requirement1.description": "Create a new branch and switch to it using git switch -c",
+    "branches.level2.requirement1.success":
+        "Excellent! You've created a new branch and switched to it using the modern git switch command.",
+    "branches.level2.story.title": "Modern Branch Creation",
     "branches.level2.story.narrative":
-        "\"Perfect! Now we want to implement a new feature,\" says Alex. \"For this, we'll create a new branch called 'feature' so our changes don't affect the main code.\"\n\nHe shows you how to create a branch and switch to it in one step: \"With 'git checkout -b' you can do both in one command.\"",
+        "\"Perfect! Now we want to implement a new feature,\" says Alex. \"For this, we'll create a new branch called 'feature' so our changes don't affect the main code.\"\n\nHe shows you the modern approach: \"Git introduced the 'git switch' command to make branch operations clearer. Use 'git switch -c feature' to create and switch to the new branch in one step. This is the preferred modern way instead of the older 'git checkout -b'.\"",
     "branches.level2.story.realWorldContext":
-        "In professional development teams, you almost never work directly on the main branch. Instead, you create feature branches for new functionality to keep the main code stable.",
-    "branches.level2.story.taskIntroduction": "Create a new branch named 'feature' and switch to it.",
+        "In professional development teams, you almost never work directly on the main branch. The git switch command, introduced in Git 2.23, provides a cleaner, more intuitive way to work with branches compared to the older checkout command.",
+    "branches.level2.story.taskIntroduction":
+        "Create a new branch named 'feature' and switch to it using git switch -c.",
 
-    "branches.level3.name": "Switch Command",
-    "branches.level3.description": "Use the modern git switch command",
-    "branches.level3.objective1": "Switch between branches using the new git switch command",
+    "branches.level3.name": "Switch Between Branches",
+    "branches.level3.description": "Switch between existing branches",
+    "branches.level3.objective1": "Switch between branches using git switch",
     "branches.level3.hint1": "Use the git switch <branch> command",
-    "branches.level3.hint2": "This is a newer alternative to git checkout for changing branches",
+    "branches.level3.hint2": "This switches to an existing branch",
     "branches.level3.requirement1.description": "Switch to another branch using git switch",
-    "branches.level3.requirement1.success": "Great job! You've used the modern git switch command.",
-    "branches.level3.story.title": "Modern Git Commands",
+    "branches.level3.requirement1.success": "Great job! You've switched between branches using git switch.",
+    "branches.level3.story.title": "Branch Navigation",
     "branches.level3.story.narrative":
-        '"Let me show you something new," says Sarah, joining you at your desk. "Git has been around for a while, and some of its commands have evolved. For example, there\'s now a specific command just for switching branches."\n\nShe explains: "While \'git checkout\' works for switching branches, Git introduced \'git switch\' as a more intuitive alternative specifically for branch operations."',
+        "\"Now that you know how to create branches, let's practice moving between them,\" says Sarah. \"This is something you'll do constantly in real development work.\"\n\nShe explains: \"You can switch to any existing branch using 'git switch <branch-name>'. This is much clearer than the old 'git checkout' which could be confusing because it did many different things.\"",
     "branches.level3.story.realWorldContext":
-        "Git occasionally introduces new commands to improve user experience. The git switch command was introduced in Git 2.23 to make branch operations more intuitive.",
-    "branches.level3.story.taskIntroduction": "Try using the git switch command to change to another branch.",
+        "Switching between branches is one of the most common Git operations. The dedicated git switch command makes the intent clear and reduces confusion compared to the multipurpose checkout command.",
+    "branches.level3.story.taskIntroduction": "Practice switching to another branch using git switch.",
 
     // Level Content - Merge Stage
     "merge.name": "Merging Branches",
