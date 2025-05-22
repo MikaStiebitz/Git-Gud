@@ -67,6 +67,9 @@ export class CheckoutCommand implements Command {
             // Switch to the new branch
             const checkoutResult = gitRepository.checkout(branchName);
             if (!checkoutResult.success) {
+                if (checkoutResult.warnings) {
+                    return checkoutResult.warnings;
+                }
                 return [`fatal: could not create and switch to branch '${branchName}'`];
             }
 
@@ -111,6 +114,10 @@ export class CheckoutCommand implements Command {
             }
             return result;
         } else {
+            // Handle failure due to uncommitted changes
+            if (checkoutResult.warnings) {
+                return checkoutResult.warnings;
+            }
             return [`error: could not switch to branch '${branchName}'`];
         }
     }

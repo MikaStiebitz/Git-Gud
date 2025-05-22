@@ -32,9 +32,10 @@ export class RmCommand implements Command {
             return [`pathspec '${args.positionalArgs[0]}' did not match any files`];
         }
 
-        // Check if file is tracked by git
+        // Check if file is tracked by git - normalize the path properly
         const status = gitRepository.getStatus();
-        const isTracked = Object.keys(status).includes(filePath);
+        const normalizedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+        const isTracked = Object.keys(status).includes(normalizedPath);
 
         if (!isTracked) {
             return [`error: '${args.positionalArgs[0]}' is not tracked by Git`];
@@ -46,7 +47,7 @@ export class RmCommand implements Command {
         // Update Git status if successful
         if (success) {
             // Mark the file as deleted in Git status before removing it
-            gitRepository.updateFileStatus(filePath, "deleted");
+            gitRepository.updateFileStatus(normalizedPath, "deleted");
 
             // Then stage the deletion if --cached is not used
             const isCachedOption = args.flags.cached !== undefined;
@@ -55,8 +56,8 @@ export class RmCommand implements Command {
                 // Standard git rm - remove from both working directory and index
                 setTimeout(() => {
                     const status = gitRepository.getStatus();
-                    if (filePath in status) {
-                        delete status[filePath];
+                    if (normalizedPath in status) {
+                        delete status[normalizedPath];
                     }
                 }, 10);
                 return [`rm '${args.positionalArgs[0]}'`];

@@ -5,17 +5,26 @@ export class HistoryService {
     private historyIndex = -1;
 
     addToHistory(command: string): void {
-        this.history = [command, ...this.history.slice(0, 49)];
-        this.historyIndex = -1;
+        // Don't add empty commands or duplicates of the last command
+        if (!command.trim() || (this.history.length > 0 && this.history[0] === command)) {
+            this.historyIndex = -1;
+            return;
+        }
+
+        this.history = [command, ...this.history.slice(0, 49)]; // Keep last 50 commands
+        this.historyIndex = -1; // Reset to no selection
     }
 
     navigateUp(): HistoryState {
-        if (this.historyIndex < this.history.length - 1) {
-            const newIndex = this.historyIndex + 1;
+        if (this.history.length === 0) {
             return {
                 commands: this.history,
-                index: newIndex,
+                index: this.historyIndex,
             };
+        }
+
+        if (this.historyIndex < this.history.length - 1) {
+            this.historyIndex += 1;
         }
 
         return {
@@ -26,16 +35,9 @@ export class HistoryService {
 
     navigateDown(): HistoryState {
         if (this.historyIndex > 0) {
-            const newIndex = this.historyIndex - 1;
-            return {
-                commands: this.history,
-                index: newIndex,
-            };
-        } else if (this.historyIndex === 0) {
-            return {
-                commands: this.history,
-                index: -1,
-            };
+            this.historyIndex -= 1;
+        } else {
+            this.historyIndex = -1; // Reset to no selection
         }
 
         return {
@@ -53,6 +55,11 @@ export class HistoryService {
     }
 
     getHistoryCommands(): string[] {
-        return this.history;
+        return [...this.history]; // Return a copy
+    }
+
+    reset(): void {
+        this.history = [];
+        this.historyIndex = -1;
     }
 }

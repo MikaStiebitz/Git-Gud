@@ -13,13 +13,14 @@ export class GitRepository {
     private fileSystem: FileSystem;
     private pushedCommits: Set<string> = new Set<string>();
 
-    // NEW: Branch-specific states
+    // Enhanced branch-specific states
     private branchStates: Record<
         string,
         {
             files: Record<string, string>; // file path -> content
             status: GitStatus; // file statuses for this branch
             commits: string[]; // commit IDs for this branch
+            workingDirectory: Record<string, string>; // working directory files
         }
     > = {};
 
@@ -32,6 +33,7 @@ export class GitRepository {
             files: {},
             status: {},
             commits: [],
+            workingDirectory: {},
         };
     }
 
@@ -45,7 +47,7 @@ export class GitRepository {
         this.stash = [];
         this.pushedCommits = new Set();
         this.branchStates = {
-            main: { files: {}, status: {}, commits: [] },
+            main: { files: {}, status: {}, commits: [], workingDirectory: {} },
         };
     }
 
@@ -131,6 +133,7 @@ export class GitRepository {
             const content = this.fileSystem.getFileContents(file);
             if (content !== null) {
                 currentBranchState.files[file] = content;
+                currentBranchState.workingDirectory[file] = content;
             }
         }
 
@@ -164,6 +167,7 @@ export class GitRepository {
                 files: { ...currentBranchState.files },
                 status: { ...currentBranchState.status },
                 commits: [...currentBranchState.commits],
+                workingDirectory: { ...currentBranchState.workingDirectory },
             };
         } else {
             // Fallback if current branch state doesn't exist
@@ -171,6 +175,7 @@ export class GitRepository {
                 files: {},
                 status: {},
                 commits: [],
+                workingDirectory: {},
             };
         }
 
@@ -189,7 +194,7 @@ export class GitRepository {
         return false;
     }
 
-    // NEW: Enhanced checkout with proper branch switching
+    // Enhanced checkout with proper branch switching and file system isolation
     public checkout(branch: string, createNew = false): { success: boolean; warnings?: string[] } {
         if (!this.initialized) return { success: false };
 
@@ -203,10 +208,29 @@ export class GitRepository {
             return { success: false };
         }
 
-        // Check for uncommitted changes
+        // Check for uncommitted changes that would be lost
         const warnings = this.checkForUncommittedChanges();
+        const hasUncommittedChanges = warnings.length > 0;
 
-        // Save current working tree state
+        // If switching branches and there are uncommitted changes, warn and prevent switch
+        if (cleanBranchName !== this.currentBranch && hasUncommittedChanges) {
+            const hasModified = Object.values(this.status).some(s => s === "modified" || s === "untracked");
+            if (hasModified) {
+                return {
+                    success: false,
+                    warnings: [
+                        "error: Your local changes to the following files would be overwritten by checkout:",
+                        ...Object.keys(this.status)
+                            .filter(file => this.status[file] === "modified" || this.status[file] === "untracked")
+                            .map(file => `\t${file}`),
+                        "Please commit your changes or stash them before you switch branches.",
+                        "Aborting",
+                    ],
+                };
+            }
+        }
+
+        // Save current working tree state before switching
         this.saveWorkingTreeToBranch();
 
         // Switch to new branch
@@ -214,7 +238,7 @@ export class GitRepository {
         this.currentBranch = cleanBranchName;
         this.HEAD = cleanBranchName;
 
-        // Restore working tree for new branch
+        // Restore working tree for new branch (this will update the file system)
         this.restoreWorkingTreeFromBranch();
 
         // Update global status to match new branch
@@ -225,18 +249,24 @@ export class GitRepository {
             this.status = {};
         }
 
-        return { success: true, warnings };
+        return { success: true, warnings: warnings.length > 0 ? warnings : undefined };
     }
 
     private checkForUncommittedChanges(): string[] {
         const warnings: string[] = [];
         const hasModified = Object.values(this.status).some(s => s === "modified");
         const hasStaged = Object.values(this.status).some(s => s === "staged");
+        const hasUntracked = Object.values(this.status).some(s => s === "untracked");
 
-        if (hasModified || hasStaged) {
-            warnings.push("Warning: you have uncommitted changes.");
+        if (hasModified || hasStaged || hasUntracked) {
             if (hasStaged) {
-                warnings.push("Your staged changes will be kept.");
+                warnings.push("Warning: you have staged changes.");
+            }
+            if (hasModified) {
+                warnings.push("Warning: you have modified files.");
+            }
+            if (hasUntracked) {
+                warnings.push("Warning: you have untracked files.");
             }
         }
 
@@ -247,14 +277,15 @@ export class GitRepository {
         const currentBranchState = this.branchStates[this.currentBranch];
         if (!currentBranchState) return;
 
-        // Save all tracked files to current branch state
-        Object.keys(this.status).forEach(file => {
-            const status = this.status[file];
-            if (status === "committed" || status === "staged" || status === "modified") {
-                const content = this.fileSystem.getFileContents(file);
-                if (content !== null) {
-                    currentBranchState.files[file] = content;
-                }
+        // Save all files in working directory (including untracked files)
+        currentBranchState.workingDirectory = {};
+
+        // Get all files from the file system (excluding .git)
+        this.getAllFilesFromFileSystem().forEach(filePath => {
+            const content = this.fileSystem.getFileContents(filePath);
+            if (content !== null) {
+                const normalizedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+                currentBranchState.workingDirectory[normalizedPath] = content;
             }
         });
 
@@ -266,29 +297,52 @@ export class GitRepository {
         const newBranchState = this.branchStates[this.currentBranch];
         if (!newBranchState) return;
 
-        // Clear working tree of tracked files from previous branch
-        const previousBranch = this.getPreviousBranch();
-        const oldBranchState = previousBranch ? this.branchStates[previousBranch] : null;
-
-        if (oldBranchState?.files) {
-            Object.keys(oldBranchState.files).forEach(file => {
-                // Only remove if file doesn't exist in new branch
-                if (!newBranchState.files[file]) {
-                    this.fileSystem.delete(file);
-                }
-            });
-        }
+        // Clear the entire working directory first (except .git)
+        this.clearWorkingDirectory();
 
         // Restore files for new branch
-        Object.entries(newBranchState.files).forEach(([file, content]) => {
-            this.fileSystem.writeFile(file, content);
+        Object.entries(newBranchState.workingDirectory).forEach(([filePath, content]) => {
+            const fullPath = filePath.startsWith("/") ? filePath : `/${filePath}`;
+            this.fileSystem.writeFile(fullPath, content);
         });
     }
 
-    private getPreviousBranch(): string | null {
-        // This is a simplified approach - in real Git, there would be a previous branch tracking
-        const otherBranch = this.branches.find(b => b !== this.currentBranch);
-        return otherBranch ?? null;
+    private getAllFilesFromFileSystem(): string[] {
+        type DirectoryEntry = { type: "file" } | { type: "directory"; children: DirectoryContents };
+        type DirectoryContents = Record<string, DirectoryEntry>;
+
+        const files: string[] = [];
+        const contents = this.fileSystem.getDirectoryContents("/") as DirectoryContents | undefined;
+        if (!contents) return files;
+
+        const traverse = (dirContents: DirectoryContents, currentPath: string) => {
+            Object.entries(dirContents).forEach(([name, item]) => {
+                if (name === ".git") return; // Skip .git directory
+
+                const fullPath = currentPath === "/" ? `/${name}` : `${currentPath}/${name}`;
+
+                if (item.type === "file") {
+                    files.push(fullPath);
+                } else if (item.type === "directory" && item.children) {
+                    traverse(item.children, fullPath);
+                }
+            });
+        };
+
+        traverse(contents, "/");
+        return files;
+    }
+
+    private clearWorkingDirectory(): void {
+        const contents = this.fileSystem.getDirectoryContents("/");
+        if (!contents) return;
+
+        Object.keys(contents).forEach(name => {
+            if (name !== ".git") {
+                // Don't delete .git directory
+                this.fileSystem.delete(`/${name}`);
+            }
+        });
     }
 
     public merge(branch: string): boolean {
@@ -407,6 +461,55 @@ export class GitRepository {
         return true;
     }
 
+    // New method for git reset functionality
+    public resetToCommit(commitId: string, mode: "soft" | "mixed" | "hard"): boolean {
+        if (!this.initialized) return false;
+
+        const currentBranchState = this.branchStates[this.currentBranch];
+        if (!currentBranchState) return false;
+
+        switch (mode) {
+            case "hard":
+                // Reset working directory, staging area, and HEAD
+                this.clearWorkingDirectory();
+                this.status = {};
+                currentBranchState.status = {};
+                currentBranchState.workingDirectory = {};
+
+                // Restore files from the target commit
+                if (this.commits[commitId]) {
+                    const commit = this.commits[commitId];
+                    commit.files.forEach(filePath => {
+                        const content = currentBranchState.files[filePath];
+                        if (content) {
+                            this.fileSystem.writeFile(`/${filePath}`, content);
+                            currentBranchState.workingDirectory[filePath] = content;
+                            this.status[filePath] = "committed";
+                            currentBranchState.status[filePath] = "committed";
+                        }
+                    });
+                }
+                break;
+
+            case "mixed":
+                // Reset staging area and HEAD, keep working directory
+                Object.keys(this.status).forEach(file => {
+                    if (this.status[file] === "staged") {
+                        this.status[file] = "modified";
+                        currentBranchState.status[file] = "modified";
+                    }
+                });
+                break;
+
+            case "soft":
+                // Only reset HEAD, keep staging area and working directory
+                // In this simulation, we don't need to do much for soft reset
+                break;
+        }
+
+        return true;
+    }
+
     private generateCommitId(): string {
         return Math.random().toString(16).substring(2, 10);
     }
@@ -421,7 +524,7 @@ export class GitRepository {
         this.stash = [];
         this.pushedCommits = new Set();
         this.branchStates = {
-            main: { files: {}, status: {}, commits: [] },
+            main: { files: {}, status: {}, commits: [], workingDirectory: {} },
         };
     }
 }

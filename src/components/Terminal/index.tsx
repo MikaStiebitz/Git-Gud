@@ -164,15 +164,17 @@ export function Terminal({
             e.preventDefault();
             const historyState = historyService.navigateUp();
             setHistoryIndex(historyState.index);
-            if (historyState.index >= 0) {
-                setInput(historyState.commands[historyState.index] ?? "");
+            setCommandHistory(historyState.commands);
+            if (historyState.index >= 0 && historyState.commands[historyState.index]) {
+                setInput(historyState.commands[historyState.index]);
             }
         } else if (e.key === "ArrowDown") {
             e.preventDefault();
             const historyState = historyService.navigateDown();
             setHistoryIndex(historyState.index);
-            if (historyState.index >= 0) {
-                setInput(historyState.commands[historyState.index] ?? "");
+            setCommandHistory(historyState.commands);
+            if (historyState.index >= 0 && historyState.commands[historyState.index]) {
+                setInput(historyState.commands[historyState.index]);
             } else {
                 setInput("");
             }

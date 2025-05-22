@@ -5,7 +5,7 @@ export class NextCommand implements Command {
     description = "Move to the next level";
     usage = "next";
     examples = ["next"];
-    includeInTabCompletion = false; // Not shown in tab completion
+    includeInTabCompletion = true; // Not shown in tab completion
     supportsFileCompletion = false;
 
     execute(): string[] {

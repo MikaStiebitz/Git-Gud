@@ -108,8 +108,40 @@ export class RebaseCommand implements Command {
             return { isInteractive: false, isAbort: true };
         }
 
-        // Extract non-flag arguments (upstream and optional branch)
-        const positionalArgs = args.positionalArgs;
+        // Extract positional arguments (non-flag arguments)
+        // We need to filter out flag arguments from the original args array
+        const positionalArgs: string[] = [];
+
+        for (let i = 0; i < args.args.length; i++) {
+            const arg = args.args[i];
+            if (!arg) continue;
+
+            // Skip flags and their values
+            if (arg.startsWith("-")) {
+                // Skip single letter flags like -i
+                if (arg === "-i" || arg === "--interactive" || arg === "--abort") {
+                    continue;
+                }
+                // Skip flag=value format
+                if (arg.includes("=")) {
+                    continue;
+                }
+                // Skip flag with separate value
+                if (!arg.startsWith("--") && arg.length > 2) {
+                    // This might be combined flags like -abc, just skip
+                    continue;
+                }
+                // If it's a flag that takes a value, skip the next argument too
+                const nextArg = args.args[i + 1];
+                if (nextArg && !nextArg.startsWith("-")) {
+                    i++; // Skip the next argument as it's the flag's value
+                }
+                continue;
+            }
+
+            // This is a positional argument
+            positionalArgs.push(arg);
+        }
 
         if (positionalArgs.length === 0) {
             return {
