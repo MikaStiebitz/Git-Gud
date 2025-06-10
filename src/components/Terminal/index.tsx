@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useGameContext } from "~/contexts/GameContext";
 import { useLanguage } from "~/contexts/LanguageContext";
 import { TerminalHeader } from "./models/Header";
@@ -33,25 +33,23 @@ export function Terminal({
 
     const { t } = useLanguage();
 
-    // Initialize OOP service classes
-    const commandService = new CommandService(
-        handleCommand,
-        isPlaygroundMode,
-        isLevelCompleted,
-        openFileEditor,
-        openCommitDialog,
+    // Initialize OOP service classes - use useMemo to maintain instances across renders
+    const commandService = useMemo(
+        () => new CommandService(handleCommand, isPlaygroundMode, isLevelCompleted, openFileEditor, openCommitDialog),
+        [handleCommand, isPlaygroundMode, isLevelCompleted, openFileEditor, openCommitDialog],
     );
 
-    const historyService = new HistoryService();
+    const historyService = useMemo(() => new HistoryService(), []);
 
-    const autocompleteService = new AutocompleteService(commandProcessor, fileSystem);
+    const autocompleteService = useMemo(
+        () => new AutocompleteService(commandProcessor, fileSystem),
+        [commandProcessor, fileSystem],
+    );
 
-    const outputFormatter = new OutputFormatterService(terminalOutput);
+    const outputFormatter = useMemo(() => new OutputFormatterService(terminalOutput), [terminalOutput]);
 
     // Terminal state
     const [input, setInput] = useState("");
-    const [commandHistory, setCommandHistory] = useState<string[]>([]);
-    const [historyIndex, setHistoryIndex] = useState(-1);
     const [fileAutocomplete, setFileAutocomplete] = useState<string[]>([]);
     const [showAutocomplete, setShowAutocomplete] = useState(false);
     const [commandSuggestion, setCommandSuggestion] = useState<string>("");
@@ -65,16 +63,30 @@ export function Terminal({
     // Auto-scroll to bottom when terminal output changes
     useEffect(() => {
         if (scrollAreaRef.current) {
-            // We need to find the actual scrollable viewport inside the Radix UI ScrollArea
-            const scrollableViewport = scrollAreaRef.current.querySelector("[data-radix-scroll-area-viewport]");
-            if (scrollableViewport) {
-                // Use requestAnimationFrame to ensure this happens after the render is complete
+            // For Radix UI ScrollArea, we need to find the viewport element
+            const viewport = scrollAreaRef.current.querySelector("[data-radix-scroll-area-viewport]");
+
+            if (viewport) {
+                // Use requestAnimationFrame to ensure this happens after all DOM updates
                 requestAnimationFrame(() => {
-                    scrollableViewport.scrollTop = scrollableViewport.scrollHeight;
+                    viewport.scrollTop = viewport.scrollHeight;
                 });
             }
         }
     }, [terminalOutput]);
+
+    // Also auto-scroll when form is submitted (command entered)
+    const scrollToBottom = useCallback(() => {
+        if (scrollAreaRef.current) {
+            const viewport = scrollAreaRef.current.querySelector("[data-radix-scroll-area-viewport]");
+            if (viewport) {
+                // Use a small delay to ensure the new content is rendered
+                setTimeout(() => {
+                    viewport.scrollTop = viewport.scrollHeight;
+                }, 10);
+            }
+        }
+    }, []);
 
     // Focus input field on mount (not on mobile devices)
     useEffect(() => {
@@ -108,11 +120,12 @@ export function Terminal({
 
         // Add to command history
         historyService.addToHistory(input);
-        setCommandHistory(historyService.getHistoryCommands());
-        setHistoryIndex(historyService.getCurrentIndex());
 
         // Clear input
         setInput("");
+
+        // Trigger auto-scroll
+        scrollToBottom();
     };
 
     // Handle input changes and update command suggestions
@@ -163,18 +176,14 @@ export function Terminal({
         if (e.key === "ArrowUp") {
             e.preventDefault();
             const historyState = historyService.navigateUp();
-            setHistoryIndex(historyState.index);
-            setCommandHistory(historyState.commands);
             if (historyState.index >= 0 && historyState.commands[historyState.index]) {
-                setInput(historyState.commands[historyState.index]);
+                setInput(historyState.commands[historyState.index] ?? "");
             }
         } else if (e.key === "ArrowDown") {
             e.preventDefault();
             const historyState = historyService.navigateDown();
-            setHistoryIndex(historyState.index);
-            setCommandHistory(historyState.commands);
             if (historyState.index >= 0 && historyState.commands[historyState.index]) {
-                setInput(historyState.commands[historyState.index]);
+                setInput(historyState.commands[historyState.index] ?? "");
             } else {
                 setInput("");
             }
@@ -239,7 +248,7 @@ export function Terminal({
 
     return (
         <div
-            className={`flex flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}>
+            className={`flex h-[580px] flex-col overflow-hidden rounded-md border border-purple-800/50 bg-[#1a1625] shadow-lg ${className}`}>
             <TerminalHeader
                 isPlaygroundMode={isPlaygroundMode}
                 currentStage={currentStage}

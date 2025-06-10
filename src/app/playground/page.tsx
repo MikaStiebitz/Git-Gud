@@ -410,7 +410,7 @@ export default function Playground() {
                         {/* Terminal Side */}
                         <div className={`${terminalCollapsed ? "hidden md:block" : ""}`}>
                             <Terminal
-                                className="h-full rounded-md"
+                                className="h-[580px] rounded-md"
                                 showHelpButton={true}
                                 showResetButton={false}
                                 isPlaygroundMode={true}
