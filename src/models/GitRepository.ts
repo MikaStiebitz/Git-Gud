@@ -144,15 +144,32 @@ export class GitRepository {
     }
 
     public getCommits(): Record<string, { message: string; timestamp: Date; files: string[] }> {
-        return { ...this.commits };
+        const currentBranchState = this.branchStates[this.currentBranch];
+        if (!currentBranchState) return {};
+
+        // Return only commits that belong to the current branch
+        const branchCommits: Record<string, { message: string; timestamp: Date; files: string[] }> = {};
+        currentBranchState.commits.forEach(commitId => {
+            if (this.commits[commitId]) {
+                branchCommits[commitId] = this.commits[commitId];
+            }
+        });
+
+        return branchCommits;
     }
 
     public hasUnpushedCommits(): boolean {
-        return Object.keys(this.commits).some(id => !this.pushedCommits.has(id));
+        const currentBranchState = this.branchStates[this.currentBranch];
+        if (!currentBranchState) return false;
+
+        return currentBranchState.commits.some(id => !this.pushedCommits.has(id));
     }
 
     public getUnpushedCommitCount(): number {
-        return Object.keys(this.commits).filter(id => !this.pushedCommits.has(id)).length;
+        const currentBranchState = this.branchStates[this.currentBranch];
+        if (!currentBranchState) return 0;
+
+        return currentBranchState.commits.filter(id => !this.pushedCommits.has(id)).length;
     }
 
     public createBranch(name: string): boolean {
@@ -234,7 +251,6 @@ export class GitRepository {
         this.saveWorkingTreeToBranch();
 
         // Switch to new branch
-        const oldBranch = this.currentBranch;
         this.currentBranch = cleanBranchName;
         this.HEAD = cleanBranchName;
 
@@ -452,7 +468,10 @@ export class GitRepository {
             return false;
         }
 
-        const unpushedCommits = Object.keys(this.commits).filter(id => !this.pushedCommits.has(id));
+        const currentBranchState = this.branchStates[this.currentBranch];
+        if (!currentBranchState) return false;
+
+        const unpushedCommits = currentBranchState.commits.filter(id => !this.pushedCommits.has(id));
 
         if (unpushedCommits.length === 0) {
             return true;

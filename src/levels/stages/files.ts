@@ -55,7 +55,6 @@ const filesLevel2 = createLevel({
     requirements: [
         createRequirement({
             command: "git commit",
-            requiresArgs: ["-m"],
             description: "files.level2.requirement1.description",
             successMessage: "files.level2.requirement1.success",
         }),
