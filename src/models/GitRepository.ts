@@ -370,6 +370,24 @@ export class GitRepository {
         }
     }
 
+    public isFileTracked(path: string): boolean {
+        const normalizedPath = path.startsWith("/") ? path.substring(1) : path;
+
+        // Check if file exists in current status (any status except "untracked")
+        if (normalizedPath in this.status) {
+            const fileStatus = this.status[normalizedPath];
+            return fileStatus !== "untracked";
+        }
+
+        // Check if file exists in committed files for current branch
+        const currentBranchState = this.branchStates[this.currentBranch];
+        if (currentBranchState && normalizedPath in currentBranchState.files) {
+            return true;
+        }
+
+        return false;
+    }
+
     public getStatus(): GitStatus {
         return { ...this.status };
     }

@@ -33,9 +33,8 @@ export class RmCommand implements Command {
         }
 
         // Check if file is tracked by git - normalize the path properly
-        const status = gitRepository.getStatus();
         const normalizedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
-        const isTracked = Object.keys(status).includes(normalizedPath);
+        const isTracked = gitRepository.isFileTracked(filePath);
 
         if (!isTracked) {
             return [`error: '${args.positionalArgs[0]}' is not tracked by Git`];
