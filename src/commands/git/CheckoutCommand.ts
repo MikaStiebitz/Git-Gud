@@ -1,6 +1,6 @@
-import { GitRepository } from "~/models/GitRepository";
+import type { GitRepository } from "~/models/GitRepository";
 import type { Command, CommandArgs, CommandContext } from "../base/Command";
-import { FileSystem } from "~/models/FileSystem";
+import type { FileSystem } from "~/models/FileSystem";
 
 export class CheckoutCommand implements Command {
     name = "git checkout";
@@ -124,7 +124,7 @@ export class CheckoutCommand implements Command {
 
     private parseCheckoutArgs(
         args: CommandArgs,
-        context: CommandContext,
+        _context: CommandContext,
     ): {
         isCreateBranch: boolean;
         isForceCreateBranch: boolean;

@@ -22,15 +22,15 @@ export interface TerminalOutputProps {
     terminalOutput: string[];
     isLevelCompleted: boolean;
     isPlaygroundMode: boolean;
-    scrollAreaRef: RefObject<HTMLDivElement>;
-    outputContainerRef: RefObject<HTMLDivElement>;
+    scrollAreaRef: RefObject<HTMLDivElement | null>;
+    outputContainerRef: RefObject<HTMLDivElement | null>;
     renderTerminalOutput: (line: string) => ReactNode;
     t: (key: string) => string;
 }
 
 export interface TerminalInputProps {
     input: string;
-    inputRef: RefObject<HTMLInputElement>;
+    inputRef: RefObject<HTMLInputElement | null>;
     handleFormSubmit: (e: React.FormEvent) => void;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleKeyDown: (e: React.KeyboardEvent) => void;

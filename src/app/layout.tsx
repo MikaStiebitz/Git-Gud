@@ -10,6 +10,24 @@ export const metadata: Metadata = {
     description:
         "Learn Git commands and concepts through fun, interactive challenges. Practice Git in a safe environment with visual feedback and structured learning paths.",
     keywords: "git, learn git, git tutorial, git commands, git practice, git visualization, interactive git learning",
+    metadataBase: new URL("https://www.gitmastery.me"),
+    alternates: {
+        canonical: "/",
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+        },
+    },
+    verification: {
+        google: "uBk1r7zKOTAgc6Srm3LfgzG4EaKwr83nhTGqw77BubI",
+    },
     openGraph: {
         title: "GitGud - Master Git Through Play",
         description: "Learn Git commands and concepts through fun, interactive challenges",
@@ -17,13 +35,20 @@ export const metadata: Metadata = {
         siteName: "GitGud",
         images: [
             {
-                url: "https://www.gitmastery.me/home-screen.png",
+                url: "/home-screen.png",
                 width: 1200,
                 height: 630,
                 alt: "GitGud - Learn Git Through Play",
             },
         ],
         type: "website",
+        locale: "en_US",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "GitGud - Master Git Through Play",
+        description: "Learn Git commands and concepts through fun, interactive challenges",
+        images: ["/home-screen.png"],
     },
     icons: [{ rel: "icon", url: "/gitBranch.svg" }],
 };
@@ -31,7 +56,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" className={`${GeistSans.variable}`}>
-            <meta name="google-site-verification" content="uBk1r7zKOTAgc6Srm3LfgzG4EaKwr83nhTGqw77BubI" />
             <body className="dark">
                 <Analytics />
                 <LanguageProvider>
@@ -45,8 +69,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                             "@type": "WebApplication",
                             name: "GitGud - Learn Git Through Play",
                             description: "An interactive Git learning platform with hands-on practice",
+                            url: "https://www.gitmastery.me",
                             applicationCategory: "EducationalApplication",
                             operatingSystem: "Web",
+                            inLanguage: "en",
+                            publisher: {
+                                "@type": "Organization",
+                                name: "GitGud",
+                                url: "https://www.gitmastery.me",
+                            },
                             offers: {
                                 "@type": "Offer",
                                 price: "0",
