@@ -14,6 +14,7 @@ import {
     Star,
     Download,
     HelpCircle,
+    MessageSquare,
 } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -36,6 +37,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
     const isPlaygroundPage = pathname === "/playground";
     const isInstallationPage = pathname === "/installation";
     const isFaqPage = pathname === "/faq";
+    const isFeedbackPage = pathname === "/feedback";
 
     // Toggle language
     const toggleLanguage = () => {
@@ -112,6 +114,9 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                 {/* Show FAQ text on relevant pages */}
                 {isFaqPage && <span className="ml-4 hidden text-purple-300 md:block">{t("nav.faq")}</span>}
 
+                {/* Show feedback text on relevant pages */}
+                {isFeedbackPage && <span className="ml-4 hidden text-purple-300 md:block">Feedback</span>}
+
                 {/* Desktop navigation */}
                 <div className="ml-auto hidden items-center space-x-4 md:flex">
                     {/* GitHub star button - elegant with tooltip */}
@@ -176,6 +181,18 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <HelpCircle className="mr-2 h-4 w-4" />
                                 {t("nav.faq")}
+                            </Button>
+                        </Link>
+                    )}
+
+                    {/* Feedback link */}
+                    {!isFeedbackPage && (
+                        <Link href="/feedback">
+                            <Button
+                                variant="ghost"
+                                className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <MessageSquare className="mr-2 h-4 w-4" />
+                                Feedback
                             </Button>
                         </Link>
                     )}
@@ -285,6 +302,16 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <HelpCircle className="mr-2 h-4 w-4" />
                                 {t("nav.faq")}
+                            </Button>
+                        </Link>
+
+                        {/* Feedback link for mobile */}
+                        <Link href="/feedback" onClick={() => setMobileMenuOpen(false)}>
+                            <Button
+                                variant="ghost"
+                                className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <MessageSquare className="mr-2 h-4 w-4" />
+                                Feedback
                             </Button>
                         </Link>
 
