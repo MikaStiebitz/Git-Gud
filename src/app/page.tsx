@@ -104,13 +104,13 @@ export default function Home() {
     // Get all stages with translated content
     const stages = levelManager.getAllStages(t);
 
-    // Navigation function to fix the level selection issue
+    // Navigation function to use correct URL structure for [level] dynamic route
     const navigateToLevel = (stageId: string, levelId: number) => {
         // Set the progress first - this ensures GameContext has the right data
         progressManager.setCurrentLevel(stageId, levelId);
 
-        // Then navigate - the URL parameters will be processed on the level page
-        router.push(`/level?stage=${stageId}&level=${levelId}`);
+        // Navigate using the correct URL structure for [level] dynamic route
+        router.push(`/${stageId.toLowerCase()}?level=${levelId}`);
     };
 
     // Get stage icon component with animation
@@ -223,7 +223,7 @@ export default function Home() {
 
                     <AnimatedElement delay={600}>
                         <div className="mt-6 flex flex-col justify-center gap-3 sm:mt-10 sm:flex-row sm:gap-4">
-                            <Link href="/level" className="group w-full sm:w-auto">
+                            <Link href="/intro" className="group w-full sm:w-auto">
                                 <Button
                                     size="lg"
                                     className="group relative w-full overflow-hidden bg-gradient-to-r from-purple-600 to-purple-700 text-white transition-all duration-300 hover:from-purple-700 hover:to-purple-800 sm:w-auto">
@@ -555,7 +555,7 @@ export default function Home() {
                             <BookMarked className="mx-auto mb-4 h-12 w-12 text-purple-400" />
                             <h2 className="mb-4 text-2xl font-bold text-white">{t("home.startLearning")}</h2>
                             <p className="mb-6 text-purple-200">{t("home.subtitle")}</p>
-                            <Link href="/level">
+                            <Link href="/intro">
                                 <Button
                                     size="lg"
                                     className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-purple-700 text-white transition-all duration-300 hover:from-purple-700 hover:to-purple-800">
