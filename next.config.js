@@ -23,23 +23,75 @@ const config = {
     // Add headers for better SEO
     async headers() {
         return [
-            {
-                source: "/(.*)",
-                headers: [
-                    {
-                        key: "X-Robots-Tag",
-                        value: "index, follow",
-                    },
-                ],
-            },
+            // Remove global X-Robots-Tag to allow page-specific robots meta tags to work
+            // Individual pages control their own indexing via metadata
         ];
     },
 
     // Ensure proper redirects
     async redirects() {
         return [
-            // Add any necessary redirects here
-            // Example: redirect www to non-www or vice versa
+            // Redirect /level?stage=intro&level=X to /intro?level=X (and similar for other stages)
+            {
+                source: "/level",
+                has: [
+                    { type: "query", key: "stage", value: "intro" },
+                    { type: "query", key: "level", value: "(?<level>\\d+)" },
+                ],
+                destination: "/intro?level=:level",
+                permanent: true,
+            },
+            {
+                source: "/level",
+                has: [
+                    { type: "query", key: "stage", value: "files" },
+                    { type: "query", key: "level", value: "(?<level>\\d+)" },
+                ],
+                destination: "/files?level=:level",
+                permanent: true,
+            },
+            {
+                source: "/level",
+                has: [
+                    { type: "query", key: "stage", value: "branches" },
+                    { type: "query", key: "level", value: "(?<level>\\d+)" },
+                ],
+                destination: "/branches?level=:level",
+                permanent: true,
+            },
+            {
+                source: "/level",
+                has: [
+                    { type: "query", key: "stage", value: "merge" },
+                    { type: "query", key: "level", value: "(?<level>\\d+)" },
+                ],
+                destination: "/merge?level=:level",
+                permanent: true,
+            },
+            {
+                source: "/level",
+                has: [
+                    { type: "query", key: "stage", value: "rebase" },
+                    { type: "query", key: "level", value: "(?<level>\\d+)" },
+                ],
+                destination: "/rebase?level=:level",
+                permanent: true,
+            },
+            {
+                source: "/level",
+                has: [
+                    { type: "query", key: "stage", value: "remote" },
+                    { type: "query", key: "level", value: "(?<level>\\d+)" },
+                ],
+                destination: "/remote?level=:level",
+                permanent: true,
+            },
+            // Redirect /level without parameters to homepage
+            {
+                source: "/level",
+                destination: "/",
+                permanent: true,
+            },
         ];
     },
 };
