@@ -95,6 +95,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Execute the commit command
         const output = commandProcessor.processCommand(`git commit -m "${escapedMessage}"`);
         setTerminalOutput(prev => [...prev, ...output]);
+
+        // Check for level completion after dialog commit (only if not in playground mode)
+        if (typeof window !== "undefined" && !window.location.pathname.includes("/playground")) {
+            const [cmd, ...args] = `git commit -m "${escapedMessage}"`.trim().split(/\s+/);
+            if (cmd && levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args, gitRepository)) {
+                markLevelAsCompleted();
+            }
+        }
     };
 
     // Sync URL with current level state
@@ -201,6 +209,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // Process the command first to check if there are staged changes
             const output = commandProcessor.processCommand(command);
             setTerminalOutput(prev => [...prev, ...output]);
+
+            // Check for level completion regardless of dialog opening
+            if (!isPlaygroundMode) {
+                const [cmd, ...args] = command.trim().split(/\s+/);
+                if (cmd && levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args, gitRepository)) {
+                    markLevelAsCompleted();
+                }
+            }
 
             // Only open commit dialog if there are staged changes (output is empty)
             if (output.length === 0 || !output[0]?.includes("Nothing to commit")) {
