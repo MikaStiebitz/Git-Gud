@@ -178,7 +178,7 @@ const levels = {
     "merge.level1.requirement1.success": "Excellent! You've successfully merged a branch.",
     "merge.level1.story.title": "Code Integration",
     "merge.level1.story.narrative":
-        '"Great! Your feature is complete and tested," says Alex. "Now it\'s time to integrate these changes back into the main code."\n\nHe explains: "First switch to the main branch with \'git checkout main\' and then merge the feature branch with \'git merge feature\'."',
+        '"Great! Your feature is complete and tested," says Alex. "Now it\'s time to integrate these changes back into the main code."\n\nHe explains: "Since you\'re already on the main branch, you can merge the feature branch directly with \'git merge feature\'."',
     "merge.level1.story.realWorldContext":
         "Merging is a critical part of the Git workflow. In larger teams, this is often formalized through pull requests and code reviews.",
     "merge.level1.story.taskIntroduction": "Merge the 'feature' branch into the 'main' branch.",

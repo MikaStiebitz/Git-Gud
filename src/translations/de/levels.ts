@@ -180,7 +180,7 @@ const level = {
     "merge.level1.requirement1.success": "Ausgezeichnet! Du hast erfolgreich einen Branch zusammengeführt.",
     "merge.level1.story.title": "Code-Integration",
     "merge.level1.story.narrative":
-        '"Super! Dein Feature ist fertig und getestet", sagt Alex. "Jetzt ist es Zeit, diese Änderungen zurück in den Hauptcode zu integrieren."\n\nEr erklärt: "Wechsle zuerst zum main-Branch mit \'git checkout main\' und führe dann den feature-Branch mit \'git merge feature\' zusammen."',
+        '"Super! Dein Feature ist fertig und getestet", sagt Alex. "Jetzt ist es Zeit, diese Änderungen zurück in den Hauptcode zu integrieren."\n\nEr erklärt: "Da du bereits auf dem main-Branch bist, kannst du den feature-Branch direkt mit \'git merge feature\' zusammenführen."',
     "merge.level1.story.realWorldContext":
         "Das Zusammenführen (Merging) ist ein kritischer Teil des Git-Workflows. In größeren Teams wird dies oft durch Pull Requests und Code Reviews formalisiert.",
     "merge.level1.story.taskIntroduction": "Führe den 'feature'-Branch in den 'main'-Branch zusammen.",
