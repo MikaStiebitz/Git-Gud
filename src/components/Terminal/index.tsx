@@ -19,20 +19,39 @@ export function Terminal({
     showResetButton = true,
     isPlaygroundMode = false,
     onResetClick,
+    customStage: propsCustomStage,
+    customLevel: propsCustomLevel,
+    welcomeMessage,
+    commandChips,
+    onCommand,
 }: TerminalProps) {
     const {
         terminalOutput,
-        handleCommand,
+        handleCommand: contextHandleCommand,
         resetCurrentLevel,
         commandProcessor,
         fileSystem,
         gitRepository,
-        currentStage,
-        currentLevel,
+        currentStage: contextStage,
+        currentLevel: contextLevel,
         isLevelCompleted,
         openFileEditor,
         openCommitDialog,
     } = useGameContext();
+
+    const currentStage = propsCustomStage || contextStage;
+    const currentLevel = propsCustomLevel || contextLevel;
+
+    const handleCommand = useCallback(
+        (command: string, playground = false) => {
+            if (onCommand) {
+                onCommand(command);
+            } else {
+                contextHandleCommand(command, playground);
+            }
+        },
+        [onCommand, contextHandleCommand],
+    );
 
     const { t } = useLanguage();
 
@@ -296,6 +315,7 @@ export function Terminal({
                     outputContainerRef={outputContainerRef}
                     renderTerminalOutput={line => outputFormatter.renderTerminalOutput(line)}
                     t={t}
+                    welcomeMessage={welcomeMessage}
                 />
 
                 <TerminalInput
@@ -312,6 +332,19 @@ export function Terminal({
                     renderFancyPrompt={renderFancyPrompt}
                     t={t}
                 />
+
+                {commandChips && commandChips.length > 0 && (
+                    <div className="flex flex-wrap gap-2 px-3 py-2 bg-black/40 border-t border-purple-800/30">
+                        {commandChips.map((chip, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setInput(chip === "hint" ? "hint" : chip)}
+                                className="px-2 py-1 rounded bg-purple-900/40 border border-purple-700/50 text-[10px] font-mono text-purple-300 hover:bg-purple-800/60 transition-colors">
+                                {chip}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <TerminalThemeSwitcher isOpen={showThemeDialog} onClose={() => setShowThemeDialog(false)} />

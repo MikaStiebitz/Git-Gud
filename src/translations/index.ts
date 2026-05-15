@@ -30,7 +30,15 @@ import playgroundHi from "./hi/playground";
 import installationHi from "./hi/installation";
 import faqHi from "./hi/faq";
 
-export const translations = {
+import commonTe from "./te/common";
+import levelsTe from "./te/levels";
+import terminalTe from "./te/terminal";
+import homeTe from "./te/home";
+import playgroundTe from "./te/playground";
+import installationTe from "./te/installation";
+import faqTe from "./te/faq";
+
+export const translations: Record<string, Record<string, string>> = {
     en: {
         ...commonEn,
         ...levelsEn,
@@ -66,5 +74,14 @@ export const translations = {
         ...playgroundHi,
         ...installationHi,
         ...faqHi,
+    },
+    te: {
+        ...commonTe,
+        ...levelsTe,
+        ...terminalTe,
+        ...homeTe,
+        ...playgroundTe,
+        ...installationTe,
+        ...faqTe,
     },
 };

@@ -21,6 +21,7 @@ export function createLevel(params: {
     requirementLogic?: "any" | "all";
     story?: StoryContext;
     resetGitRepo?: boolean;
+    commandSuggestions?: string[];
     initialState?: {
         files?: FileStructure[];
         git?: GitState;
@@ -36,6 +37,7 @@ export function createLevel(params: {
         requirementLogic: params.requirementLogic,
         story: params.story,
         resetGitRepo: params.resetGitRepo,
+        commandSuggestions: params.commandSuggestions,
         initialState: params.initialState,
     };
 }

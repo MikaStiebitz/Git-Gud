@@ -7,6 +7,7 @@ const common = {
     "nav.language": "Language",
     "nav.installation": "Installation of Git",
     "nav.faq": "FAQ",
+    "nav.scenarios": "Disaster Lab",
 
     // Command Categories
     "category.basics": "Basics",
@@ -110,6 +111,27 @@ const common = {
     "shop.rarity.rare": "Rare",
     "shop.rarity.epic": "Epic",
     "shop.rarity.legendary": "Legendary",
+
+    // Disaster Lab Scenarios
+    "scenarios.pushedToMain.objective1": "Undo the 3 broken commits and restore main to a clean state",
+    "scenarios.pushedToMain.hint1": "Run `git log --oneline` to see the last few commits and identify the bad ones",
+    "scenarios.pushedToMain.hint2": "Use `git revert HEAD~3..HEAD` to safely undo the last 3 commits without rewriting history",
+    
+    "scenarios.mergeConflict.objective1": "Resolve the conflict in auth.js and complete the merge",
+    "scenarios.mergeConflict.hint1": "Run `git status` to see which files have conflicts",
+    "scenarios.mergeConflict.hint2": "Open auth.js, remove the <<<<<<, ======, and >>>>>> markers, keep the correct code, then `git add auth.js`",
+    
+    "scenarios.deletedBranch.objective1": "Recover the deleted feature/payments branch using reflog",
+    "scenarios.deletedBranch.hint1": "Run `git reflog` to see a history of all recent commits including ones from deleted branches",
+    "scenarios.deletedBranch.hint2": "Use `git checkout -b feature/payments <hash>` with the hash you find in reflog",
+    
+    "scenarios.forcePush.objective1": "Restore your colleague's commits that were wiped by the force push",
+    "scenarios.forcePush.hint1": "Use `git reflog show origin/main` to find the commits that existed before the force push",
+    "scenarios.forcePush.hint2": "Use `git cherry-pick <hash>` to re-apply each of your colleague's lost commits",
+    
+    "scenarios.committedSecrets.objective1": "Purge the .env file from the entire Git history and force push",
+    "scenarios.committedSecrets.hint1": "First add .env to .gitignore so it never gets committed again",
+    "scenarios.committedSecrets.hint2": "Use `git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch .env' HEAD` to rewrite history",
 };
 
 export default common;

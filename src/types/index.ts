@@ -95,6 +95,7 @@ export type LevelType = {
     completedRequirements?: string[];
     completedObjectives?: number[]; // Track which objectives are completed (by objectiveId)
     story?: StoryContext;
+    commandSuggestions?: string[];
     resetGitRepo?: boolean;
     initialState?: LevelInitialState;
 };
@@ -229,6 +230,8 @@ export interface GameContextProps {
     setCurrentDifficulty: (difficulty: DifficultyLevel) => void;
     handleCommit: (message: string) => void;
     closeCommitDialog: () => void;
+    addPoints: (amount: number) => void;
+    addXP: (amount: number) => void;
 
     // Debug functions
     debugGiveMoney: (amount: number) => void;

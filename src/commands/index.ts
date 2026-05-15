@@ -56,6 +56,7 @@ import { LlCommand } from "./filesystem/LlCommand";
 import { HelpCommand } from "./helpers/HelpCommand";
 import { ClearCommand } from "./helpers/ClearCommand";
 import { NextCommand } from "./helpers/NextCommand";
+import { HintCommand } from "./helpers/HintCommand";
 
 // Create a central registry for all commands
 const registry = new CommandRegistry();
@@ -115,6 +116,7 @@ registry.register(new LlCommand());
 registry.register(new HelpCommand());
 registry.register(new ClearCommand());
 registry.register(new NextCommand());
+registry.register(new HintCommand());
 
 // Export the registry for use in other modules
 export default registry;

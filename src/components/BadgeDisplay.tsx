@@ -1,6 +1,6 @@
 "use client";
 
-import { Trophy, Star, Award, Crown, Zap } from "lucide-react";
+import { Trophy, Star, Award, Crown, Zap, ShieldAlert, Flame } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { ClientOnly } from "./ClientOnly";
 
@@ -98,6 +98,34 @@ export function BadgeDisplay({ className = "" }: BadgeDisplayProps) {
 
                         <div className="absolute -top-12 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
                             2X XP Active ({progressManager.getDoubleXpRemainingHours()}h left)
+                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-x-4 border-t-4 border-x-transparent border-t-black/80"></div>
+                        </div>
+                    </div>
+                )}
+
+                {/* First Responder Badge */}
+                {(progress.completedLevels["Scenarios"]?.length ?? 0) >= 1 && (
+                    <div className="group relative">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-600 shadow-lg">
+                            <ShieldAlert className="h-5 w-5 text-white" />
+                        </div>
+
+                        <div className="absolute -top-12 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                            First Responder
+                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-x-4 border-t-4 border-x-transparent border-t-black/80"></div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Disaster Master Badge */}
+                {(progress.completedLevels["Scenarios"]?.length ?? 0) >= 5 && (
+                    <div className="group relative">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-orange-600 to-red-800 shadow-lg border border-orange-400/30">
+                            <Flame className="h-5 w-5 text-white" />
+                        </div>
+
+                        <div className="absolute -top-12 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                            Disaster Master
                             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-x-4 border-t-4 border-x-transparent border-t-black/80"></div>
                         </div>
                     </div>
