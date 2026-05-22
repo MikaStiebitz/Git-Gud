@@ -40,6 +40,9 @@ const config = {
         // Better development experience with server components HMR
         serverComponentsHmrCache: true,
     },
+    
+    // Allow Next.js HMR in dev environment
+    allowedDevOrigins: ['172.16.0.2', 'localhost'],
 };
 
 export default config;

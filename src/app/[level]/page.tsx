@@ -83,6 +83,11 @@ function LevelPageContent() {
     const [urlParamsProcessed, setUrlParamsProcessed] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
 
+    // Reset hints when level changes
+    useEffect(() => {
+        setShowHints(false);
+    }, [currentStage, currentLevel]);
+
     // Helper function to convert flat file list to tree structure
     const getFileTree = (files: Array<{ name: string; path: string }>): FileTreeNode => {
         const root: FileTreeNode = {

@@ -28,6 +28,7 @@ const resetLevel1 = createLevel({
     requirements: [
         {
             id: "reset-soft-last-commit",
+            objectiveId: 1,
             command: "git reset",
             requiresArgs: ["--soft"],
             description: "reset.level1.requirement1.description",
@@ -35,6 +36,7 @@ const resetLevel1 = createLevel({
         },
         {
             id: "reset-soft-to-head",
+            objectiveId: 2,
             command: "git reset",
             requiresArgs: ["--soft"],
             description: "reset.level1.requirement2.description",
@@ -42,6 +44,7 @@ const resetLevel1 = createLevel({
         },
         {
             id: "reset-soft-head-tilde",
+            objectiveId: 3,
             command: "git reset",
             requiresArgs: ["--soft"],
             description: "reset.level1.requirement3.description",
@@ -115,6 +118,7 @@ const resetLevel2 = createLevel({
     requirements: [
         {
             id: "reset-hard-last-commit",
+            objectiveId: 1,
             command: "git reset",
             requiresArgs: ["--hard"],
             description: "reset.level2.requirement1.description",
@@ -122,6 +126,7 @@ const resetLevel2 = createLevel({
         },
         {
             id: "reset-hard-to-head",
+            objectiveId: 2,
             command: "git reset",
             requiresArgs: ["--hard"],
             description: "reset.level2.requirement2.description",
@@ -129,6 +134,7 @@ const resetLevel2 = createLevel({
         },
         {
             id: "reset-hard-head-tilde",
+            objectiveId: 3,
             command: "git reset",
             requiresArgs: ["--hard"],
             description: "reset.level2.requirement3.description",
@@ -206,12 +212,14 @@ const resetLevel3 = createLevel({
     requirements: [
         {
             id: "view-commit-history",
+            objectiveId: 1,
             command: "git log",
             description: "reset.level3.requirement1.description",
             successMessage: "reset.level3.requirement1.success"
         },
         {
             id: "reset-to-specific-commit",
+            objectiveId: 2,
             command: "git reset",
             requiresArgs: ["<hash>"],
             description: "reset.level3.requirement2.description",

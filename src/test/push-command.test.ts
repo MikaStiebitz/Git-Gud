@@ -19,6 +19,8 @@ describe("PushCommand with --set-upstream", () => {
 
         // Setup: init git, create a branch, make a commit
         gitRepository.init();
+        gitRepository.addRemote("origin", "https://github.com/user/repo.git");
+        gitRepository.createBranch("feature/test");
         gitRepository.checkout("feature/test", true);
         fileSystem.writeFile("/test.txt", "test content");
         gitRepository.addFile("/test.txt");

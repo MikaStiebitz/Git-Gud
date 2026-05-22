@@ -30,6 +30,7 @@ const teamworkLevel1 = createLevel({
     requirementLogic: "all",
     requirements: [
         createRequirement({
+            objectiveId: 1,
             command: "git pull",
             alternativeCommands: ["git pull origin main", "git pull origin"],
             description: "teamwork.level1.requirement1.description",
@@ -37,6 +38,7 @@ const teamworkLevel1 = createLevel({
             id: "git-pull-origin",
         }),
         createRequirement({
+            objectiveId: 2,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["-c"],
@@ -45,6 +47,7 @@ const teamworkLevel1 = createLevel({
             id: "git-switch",
         }),
         createRequirement({
+            objectiveId: 3,
             command: "", // No command needed - state-based check
             checkFileChanged: "/team.md",
             description: "teamwork.level1.requirement3.description",
@@ -52,6 +55,7 @@ const teamworkLevel1 = createLevel({
             id: "edit-team-file",
         }),
         createRequirement({
+            objectiveId: 4,
             command: "git add",
             requiresArgs: ["any"],
             description: "teamwork.level1.requirement4.description",
@@ -59,6 +63,7 @@ const teamworkLevel1 = createLevel({
             id: "git-add-teamwork",
         }),
         createRequirement({
+            objectiveId: 5,
             command: "git commit",
             requiresArgs: ["-m"],
             description: "teamwork.level1.requirement5.description",
@@ -66,6 +71,7 @@ const teamworkLevel1 = createLevel({
             id: "git-commit-teamwork",
         }),
         createRequirement({
+            objectiveId: 6,
             command: "git push",
             requiresArgs: ["any"],
             description: "teamwork.level1.requirement6.description",
@@ -251,6 +257,7 @@ const teamworkLevel3 = createLevel({
     requirements: [
         {
             id: "create-review-branch",
+            objectiveId: 1,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["-c"],
@@ -259,18 +266,21 @@ const teamworkLevel3 = createLevel({
         },
         {
             id: "stage-code-for-review",
+            objectiveId: 2,
             command: "git add",
             description: "teamwork.level3.requirement2.description",
             successMessage: "teamwork.level3.requirement2.success"
         },
         {
             id: "commit-for-review",
+            objectiveId: 3,
             command: "git commit",
             description: "teamwork.level3.requirement3.description",
             successMessage: "teamwork.level3.requirement3.success"
         },
         {
             id: "push-for-review",
+            objectiveId: 4,
             command: "git push",
             requiresArgs: ["any"],
             description: "teamwork.level3.requirement4.description",

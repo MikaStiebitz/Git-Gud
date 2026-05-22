@@ -58,6 +58,7 @@ describe("git merge", () => {
         // Switch back to main and add another commit (diverge)
         commandProcessor.processCommand("git switch main");
         fileSystem.writeFile("/file3.txt", "main content");
+        gitRepository.updateFileStatus("file3.txt", "untracked");
         commandProcessor.processCommand("git add .");
         commandProcessor.processCommand("git commit -m 'Add to main'");
 
@@ -98,7 +99,9 @@ describe("git merge", () => {
         // Create feature branch with file2 and modified file1
         commandProcessor.processCommand("git switch -c feature");
         fileSystem.writeFile("/file1.txt", "modified");
+        gitRepository.updateFileStatus("file1.txt", "modified");
         fileSystem.writeFile("/file2.txt", "new file");
+        gitRepository.updateFileStatus("file2.txt", "untracked");
         commandProcessor.processCommand("git add .");
         commandProcessor.processCommand("git commit -m 'Feature changes'");
 
@@ -148,6 +151,7 @@ describe("git merge", () => {
         // Add another commit to main
         commandProcessor.processCommand("git switch main");
         fileSystem.writeFile("/main2.txt", "m2");
+        gitRepository.updateFileStatus("main2.txt", "untracked");
         commandProcessor.processCommand("git add .");
         commandProcessor.processCommand("git commit -m 'Main commit 2'");
 

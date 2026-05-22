@@ -14,8 +14,7 @@ const archaeologyLevel1 = createLevel({
     objectives: [
         "archaeology.level1.objective1",
         "archaeology.level1.objective2",
-        "archaeology.level1.objective3",
-        "archaeology.level1.objective4"
+        "archaeology.level1.objective3"
     ],
     hints: [
         "archaeology.level1.hint1",
@@ -26,6 +25,7 @@ const archaeologyLevel1 = createLevel({
     requirementLogic: "all",
     requirements: [
         createRequirement({
+            objectiveId: 1,
             command: "git blame",
             requiresArgs: ["any"],
             description: "archaeology.level1.requirement1.description",
@@ -33,14 +33,16 @@ const archaeologyLevel1 = createLevel({
             id:"git-blame",
         }),
         createRequirement({
+            objectiveId: 2,
             command: "git log",
             requiresArgs: ["--oneline"],
             description: "archaeology.level1.requirement2.description",
             successMessage: "archaeology.level1.requirement2.success",
             id: "git-log",
-
+ 
         }),
         createRequirement({
+            objectiveId: 3,
             command: "git show",
             requiresArgs: ["any"],
             description: "archaeology.level1.requirement3.description",
@@ -124,7 +126,6 @@ const archaeologyLevel2 = createLevel({
     description: "archaeology.level2.description",
     objectives: [
         "archaeology.level2.objective1",
-        "archaeology.level2.objective2",
         "archaeology.level2.objective3",
         "archaeology.level2.objective4"
     ],
@@ -137,6 +138,7 @@ const archaeologyLevel2 = createLevel({
     requirementLogic: "all",
     requirements: [
         createRequirement({
+            objectiveId: 1,
             command: "git log",
             requiresArgs: ["--grep"],
             description: "archaeology.level2.requirement1.description",
@@ -144,6 +146,7 @@ const archaeologyLevel2 = createLevel({
             id: "git-log-1"
         }),
         createRequirement({
+            objectiveId: 2,
             command: "git log",
             requiresArgs: ["-S"],
             description: "archaeology.level2.requirement2.description",
@@ -152,6 +155,7 @@ const archaeologyLevel2 = createLevel({
 
         }),
         createRequirement({
+            objectiveId: 3,
             command: "git log",
             requiresArgs: ["--author"],
             description: "archaeology.level2.requirement3.description",
@@ -233,8 +237,7 @@ const archaeologyLevel3 = createLevel({
     objectives: [
         "archaeology.level3.objective1",
         "archaeology.level3.objective2",
-        "archaeology.level3.objective3",
-        "archaeology.level3.objective4"
+        "archaeology.level3.objective3"
     ],
     hints: [
         "archaeology.level3.hint1",
@@ -245,12 +248,14 @@ const archaeologyLevel3 = createLevel({
     requirementLogic: "all",
     requirements: [
         createRequirement({
+            objectiveId: 1,
             command: "git reflog",
             description: "archaeology.level3.requirement1.description",
             successMessage: "archaeology.level3.requirement1.success",
             id: "git-reflog"
         }),
         createRequirement({
+            objectiveId: 2,
             command: "git reset",
             requiresArgs: ["--hard"],
             description: "archaeology.level3.requirement2.description",
@@ -258,6 +263,7 @@ const archaeologyLevel3 = createLevel({
             id: "git-reset"
         }),
         createRequirement({
+            objectiveId: 3,
             command: "git branch",
             requiresArgs: ["any"],
             description: "archaeology.level3.requirement3.description",

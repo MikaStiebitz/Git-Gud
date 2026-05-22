@@ -13,7 +13,6 @@ const masteryLevel1 = createLevel({
     description: "mastery.level1.description",
     objectives: [
         "mastery.level1.objective1",
-        "mastery.level1.objective2",
         "mastery.level1.objective3",
         "mastery.level1.objective4"
     ],
@@ -26,6 +25,7 @@ const masteryLevel1 = createLevel({
     requirementLogic: "all",
     requirements: [
         createRequirement({
+            objectiveId: 1,
             command: "git merge",
             requiresArgs: ["any"],
             description: "mastery.level1.requirement1.description",
@@ -33,6 +33,7 @@ const masteryLevel1 = createLevel({
             id: "git-merge-feature"
         }),
         createRequirement({
+            objectiveId: 2,
             command: "git add",
             requiresArgs: ["any"],
             description: "mastery.level1.requirement2.description",
@@ -40,6 +41,7 @@ const masteryLevel1 = createLevel({
             id: "git-add-all",
         }),
         createRequirement({
+            objectiveId: 3,
             command: "git commit",
             requiresArgs: ["-m"],
             description: "mastery.level1.requirement3.description",
@@ -103,10 +105,7 @@ const masteryLevel2 = createLevel({
     name: "mastery.level2.name",
     description: "mastery.level2.description",
     objectives: [
-        "mastery.level2.objective1",
-        "mastery.level2.objective2",
-        "mastery.level2.objective3",
-        "mastery.level2.objective4"
+        "mastery.level2.objective1"
     ],
     hints: [
         "mastery.level2.hint1",
@@ -117,12 +116,14 @@ const masteryLevel2 = createLevel({
     requirementLogic: "all",
     requirements: [
         createRequirement({
+            objectiveId: 1,
             command: "git status",
             description: "mastery.level2.requirement1.description",
             successMessage: "mastery.level2.requirement1.success",
             id: "git-status-hooks",
         }),
         createRequirement({
+            objectiveId: 1,
             command: "git add",
             requiresArgs: ["any"],
             description: "mastery.level2.requirement2.description",
@@ -130,6 +131,7 @@ const masteryLevel2 = createLevel({
             id: "git-add-2",
         }),
         createRequirement({
+            objectiveId: 1,
             command: "git commit",
             requiresArgs: ["-m"],
             description: "mastery.level2.requirement3.description",
@@ -212,6 +214,7 @@ const masteryLevel3 = createLevel({
     requirements: [
         {
             id: "create-emergency-branch",
+            objectiveId: 1,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["-c"],
@@ -219,6 +222,7 @@ const masteryLevel3 = createLevel({
             successMessage: "mastery.level3.requirement1.success"
         },
         createRequirement({
+            objectiveId: 2,
             command: "git cherry-pick",
             requiresArgs: ["any"],
             description: "mastery.level3.requirement2.description",
@@ -226,6 +230,7 @@ const masteryLevel3 = createLevel({
             id: "git-cherry-pick",
         }),
         createRequirement({
+            objectiveId: 3,
             command: "git tag",
             requiresArgs: ["-a"],
             description: "mastery.level3.requirement3.description",
@@ -233,6 +238,7 @@ const masteryLevel3 = createLevel({
             id: "git-tag",
         }),
         createRequirement({
+            objectiveId: 4,
             command: "git push",
             requiresArgs: ["--tags"],
             description: "mastery.level3.requirement4.description",

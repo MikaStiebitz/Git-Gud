@@ -26,12 +26,14 @@ const stashLevel1 = createLevel({
     requirements: [
         {
             id: "stash-save",
+            objectiveId: 1,
             command: "git stash",
             description: "stash.level1.requirement1.description",
             successMessage: "stash.level1.requirement1.success",
         },
         {
             id: "checkout-hotfix",
+            objectiveId: 2,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["hotfix"],
@@ -40,6 +42,7 @@ const stashLevel1 = createLevel({
         },
         {
             id: "checkout-feature",
+            objectiveId: 3,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["feature"],
@@ -48,6 +51,7 @@ const stashLevel1 = createLevel({
         },
         {
             id: "stash-pop",
+            objectiveId: 4,
             command: "git stash",
             requiresArgs: ["pop"],
             description: "stash.level1.requirement4.description",
@@ -126,12 +130,14 @@ const stashLevel2 = createLevel({
     requirements: [
         {
             id: "stash-old-work",
+            objectiveId: 1,
             command: "git stash",
             description: "stash.level2.requirement1.description",
             successMessage: "stash.level2.requirement1.success",
         },
         {
             id: "checkout-main",
+            objectiveId: 2,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["main"],
@@ -140,6 +146,7 @@ const stashLevel2 = createLevel({
         },
         {
             id: "create-new-branch",
+            objectiveId: 3,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             description: "stash.level2.requirement3.description",
@@ -147,6 +154,7 @@ const stashLevel2 = createLevel({
         },
         {
             id: "return-old-task",
+            objectiveId: 4,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["feature/old-task"],
@@ -155,6 +163,7 @@ const stashLevel2 = createLevel({
         },
         {
             id: "stash-pop-work",
+            objectiveId: 5,
             command: "git stash",
             requiresArgs: ["pop"],
             description: "stash.level2.requirement5.description",
@@ -217,6 +226,7 @@ const stashLevel3 = createLevel({
     requirements: [
         {
             id: "stash-list",
+            objectiveId: 1,
             command: "git stash",
             requiresArgs: ["list"],
             description: "stash.level3.requirement1.description",
@@ -224,6 +234,7 @@ const stashLevel3 = createLevel({
         },
         {
             id: "stash-pop",
+            objectiveId: 2,
             command: "git stash",
             requiresArgs: ["pop"],
             description: "stash.level3.requirement2.description",
