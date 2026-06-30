@@ -18,6 +18,7 @@ import {
     HelpCircle,
     Settings,
     Check,
+    Flame,
 } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -66,10 +67,11 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
         { code: "de", name: "German", nativeName: "Deutsch" },
         { code: "fa", name: "Persian", nativeName: "فارسی" },
         { code: "hi", name: "Hindi", nativeName: "हिन्दी" },
+        { code: "te", name: "Telugu", nativeName: "తెలుగు" },
     ];
 
-    const handleLanguageSelect = (langCode: "en" | "de" | "fa" | "hi") => {
-        setLanguage(langCode);
+    const handleLanguageSelect = (langCode: "en" | "de" | "fa" | "hi" | "te") => {
+        setLanguage(langCode as any);
         setLanguageDialogOpen(false);
     };
 
@@ -281,6 +283,15 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                             </Link>
                         )}
 
+                        <Link href="/scenarios">
+                            <Button
+                                variant="ghost"
+                                className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <Flame className="mr-2 h-4 w-4 text-orange-500" />
+                                {t("nav.scenarios")}
+                            </Button>
+                        </Link>
+
                         <Button
                             onClick={navigateToLearning}
                             className="shrink-0 bg-purple-600 text-white hover:bg-purple-700">
@@ -403,6 +414,15 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <BookCopy className="mr-2 h-4 w-4" />
                                 {t("nav.playground")}
+                            </Button>
+                        </Link>
+
+                        <Link href="/scenarios" onClick={() => setMobileMenuOpen(false)}>
+                            <Button
+                                variant="ghost"
+                                className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <Flame className="mr-2 h-4 w-4 text-orange-500" />
+                                {t("nav.scenarios")}
                             </Button>
                         </Link>
 

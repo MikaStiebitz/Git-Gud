@@ -12,6 +12,7 @@ import { teamworkLevels } from "./stages/teamwork";
 import { advancedLevels } from "./stages/advanced";
 import { archaeologyLevels } from "./stages/archaeology";
 import { masteryLevels } from "./stages/mastery";
+import { disasterScenarios } from "./disaster-scenarios";
 
 export const allStages = {
     Intro: createStage({
@@ -104,6 +105,13 @@ export const allStages = {
         description: "mastery.description",
         icon: "👑",
         levels: masteryLevels,
+    }),
+    Scenarios: createStage({
+        id: "scenarios",
+        name: "scenarios.name",
+        description: "scenarios.description",
+        icon: "🔥",
+        levels: Object.fromEntries(disasterScenarios.map(s => [s.id, s])),
     }),
 };
 

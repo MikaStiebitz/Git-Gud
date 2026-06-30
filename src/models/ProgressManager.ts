@@ -132,6 +132,14 @@ export class ProgressManager {
         return this.progress.coins;
     }
 
+    public addScore(amount: number): void {
+        // Apply double XP to score rewards if active
+        const finalAmount = this.isDoubleXpActive() ? amount * 2 : amount;
+        this.progress.score += finalAmount;
+        this.progress.lastSavedAt = new Date().toISOString();
+        this.saveProgress();
+    }
+
     public purchaseItem(itemId: string): boolean {
         if (!this.progress.purchasedItems.includes(itemId)) {
             this.progress.purchasedItems.push(itemId);

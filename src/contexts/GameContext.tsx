@@ -641,6 +641,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, [currentStage, currentLevel, progressManager]);
 
+    const addPoints = (amount: number) => {
+        progressManager.addCoins(amount);
+    };
+
+    const addXP = (amount: number) => {
+        progressManager.addScore(amount);
+    };
+
     const value = {
         fileSystem,
         gitRepository,
@@ -676,6 +684,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         handleCommit,
         closeCommitDialog,
         openCommitDialog,
+        addPoints,
+        addXP,
 
         // Debug functions
         debugGiveMoney,

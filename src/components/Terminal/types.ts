@@ -6,6 +6,11 @@ export interface TerminalProps {
     showResetButton?: boolean;
     isPlaygroundMode?: boolean;
     onResetClick?: () => void;
+    customStage?: string;
+    customLevel?: number;
+    welcomeMessage?: string[];
+    commandChips?: string[];
+    onCommand?: (command: string) => void;
 }
 
 export interface TerminalHeaderProps {
