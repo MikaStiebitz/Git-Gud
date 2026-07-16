@@ -60,10 +60,13 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
     const isArcadePage = normalizedPathname === "/arcade";
     const useCompactResponsiveLayout =
         showLevelInfo || isPlaygroundPage || isInstallationPage || isFaqPage || isArcadePage;
-    const desktopNavClass = useCompactResponsiveLayout ? "xl:flex xl:flex-nowrap" : "lg:flex lg:flex-nowrap";
-    const mobileNavClass = useCompactResponsiveLayout ? "xl:hidden" : "lg:hidden";
-    const badgeDesktopClass = useCompactResponsiveLayout ? "xl:block" : "lg:block";
-    const pageLabelClass = useCompactResponsiveLayout ? "xl:block" : "lg:block";
+    // Bumped one breakpoint tier up (lg->xl / xl->2xl): the Arcade nav item added one more
+    // button to every layout, so the previous breakpoints no longer left enough room and
+    // caused the level-info / page-label text to get squeezed and wrap.
+    const desktopNavClass = useCompactResponsiveLayout ? "2xl:flex 2xl:flex-nowrap" : "xl:flex xl:flex-nowrap";
+    const mobileNavClass = useCompactResponsiveLayout ? "2xl:hidden" : "xl:hidden";
+    const badgeDesktopClass = useCompactResponsiveLayout ? "2xl:block" : "xl:block";
+    const pageLabelClass = useCompactResponsiveLayout ? "2xl:block" : "xl:block";
 
     // Language options
     const languages = [
@@ -187,10 +190,10 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                     {/* Current level info - responsive display */}
                     {showLevelInfo && (
                         <ClientOnly>
-                            <div className="ml-4 hidden text-purple-300 2xl:block">
+                            <div className="ml-4 hidden max-w-[280px] shrink-0 truncate text-purple-300 2xl:block">
                                 {t("level.level")} {currentLevel} - {stageName}
                             </div>
-                            <div className="ml-4 hidden text-purple-300 xl:block 2xl:hidden">
+                            <div className="ml-4 hidden max-w-[160px] shrink-0 truncate text-purple-300 xl:block 2xl:hidden">
                                 L{currentLevel} - {stageName}
                             </div>
                         </ClientOnly>
