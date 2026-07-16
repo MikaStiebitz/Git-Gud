@@ -198,7 +198,7 @@ export class GitRepository {
         return stagedFiles;
     }
 
-    public commit(message: string): string | null {
+    public commit(message: string, allowEmpty = false): string | null {
         if (!this.initialized) return null;
 
         const currentBranchState = this.branchStates[this.currentBranch];
@@ -208,7 +208,9 @@ export class GitRepository {
             .filter(([_, status]) => status === "staged")
             .map(([file]) => file);
 
-        if (stagedFiles.length === 0) return null;
+        // Normally a commit needs staged files; allowEmpty supports branch-marker
+        // commits (git commit --allow-empty), used e.g. when setting up level history.
+        if (stagedFiles.length === 0 && !allowEmpty) return null;
 
         const commitId = this.generateCommitId();
         const lastCommitId = currentBranchState.commits[currentBranchState.commits.length - 1];

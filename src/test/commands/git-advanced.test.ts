@@ -142,6 +142,7 @@ describe('Git Advanced Commands', () => {
 
     it('should restore modified files', () => {
       context.fileSystem.writeFile('/README.md', 'Modified');
+      context.gitRepository.updateFileStatus('README.md', 'modified');
 
       const restoreCmd = new RestoreCommand();
       const output = restoreCmd.execute(
@@ -182,6 +183,7 @@ describe('Git Advanced Commands', () => {
 
     it('should stash changes', () => {
       context.fileSystem.writeFile('/README.md', 'Modified');
+      context.gitRepository.updateFileStatus('README.md', 'modified');
 
       const stashCmd = new StashCommand();
       const output = stashCmd.execute({ args: [], flags: {}, positionalArgs: [] }, context);
@@ -191,6 +193,7 @@ describe('Git Advanced Commands', () => {
 
     it('should list stashes', () => {
       context.fileSystem.writeFile('/README.md', 'Modified');
+      context.gitRepository.updateFileStatus('README.md', 'modified');
       const stashCmd = new StashCommand();
       stashCmd.execute({ args: [], flags: {}, positionalArgs: [] }, context);
 
@@ -204,6 +207,7 @@ describe('Git Advanced Commands', () => {
 
     it('should pop stash', () => {
       context.fileSystem.writeFile('/README.md', 'Modified');
+      context.gitRepository.updateFileStatus('README.md', 'modified');
       const stashCmd = new StashCommand();
       stashCmd.execute({ args: [], flags: {}, positionalArgs: [] }, context);
 
@@ -212,7 +216,9 @@ describe('Git Advanced Commands', () => {
         context
       );
 
-      expect(output[0]).toContain('Dropped refs/stash');
+      // Real `git stash pop` prints the working-tree status first and the
+      // "Dropped refs/stash" line last, so check across all output lines.
+      expect(output.some(line => line.includes('Dropped refs/stash'))).toBe(true);
     });
 
     it('should fail to pop when no stash exists', () => {

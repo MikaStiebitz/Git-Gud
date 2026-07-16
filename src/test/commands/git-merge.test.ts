@@ -98,6 +98,8 @@ describe("git merge", () => {
         // Create feature branch with file2 and modified file1
         commandProcessor.processCommand("git switch -c feature");
         fileSystem.writeFile("/file1.txt", "modified");
+        // Editing a tracked file marks it modified (the editor does this in the app)
+        gitRepository.updateFileStatus("file1.txt", "modified");
         fileSystem.writeFile("/file2.txt", "new file");
         commandProcessor.processCommand("git add .");
         commandProcessor.processCommand("git commit -m 'Feature changes'");

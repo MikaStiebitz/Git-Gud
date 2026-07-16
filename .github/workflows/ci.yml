@@ -39,13 +39,10 @@ jobs:
             - run: npm ci
             - run: npx tsc --noEmit
 
-    # Informational for now: the repository carries a set of failing legacy tests.
-    # This job surfaces the status on every PR without blocking merges; make it
-    # required once the backlog is cleared (tracked as follow-up work).
+    # Required gate: the full unit-test suite must pass.
     test:
-        name: Unit tests (vitest, informational)
+        name: Unit tests (vitest)
         runs-on: ubuntu-latest
-        continue-on-error: true
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
