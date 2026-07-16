@@ -22,6 +22,7 @@ import {
 import { useGameContext } from "~/contexts/GameContext";
 import { useLanguage } from "~/contexts/LanguageContext";
 import { ClientOnly } from "~/components/ClientOnly";
+import { allStages } from "~/levels";
 import { BadgeDisplay } from "~/components/BadgeDisplay";
 import { DebugModal } from "~/components/DebugModal";
 import { env } from "~/env";
@@ -43,6 +44,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
         debugCompleteCurrentLevel,
     } = useGameContext();
     const { language, setLanguage, t } = useLanguage();
+    const stageName = t(allStages[currentStage as keyof typeof allStages]?.name ?? currentStage);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [repoStars, setRepoStars] = useState<number | null>(null);
     const [debugModalOpen, setDebugModalOpen] = useState(false);
@@ -183,10 +185,10 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                     {showLevelInfo && (
                         <ClientOnly>
                             <div className="ml-4 hidden text-purple-300 2xl:block">
-                                Level {currentLevel} - {currentStage}
+                                {t("level.level")} {currentLevel} - {stageName}
                             </div>
                             <div className="ml-4 hidden text-purple-300 xl:block 2xl:hidden">
-                                L{currentLevel} - {currentStage}
+                                L{currentLevel} - {stageName}
                             </div>
                         </ClientOnly>
                     )}
@@ -219,7 +221,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="group flex items-center gap-2 rounded-full border border-purple-700/60 bg-purple-900/30 px-3 py-1.5 text-purple-100 transition-all duration-300 hover:border-purple-500 hover:bg-purple-800/40"
-                            aria-label="Star us on GitHub">
+                            aria-label={t("nav.starOnGithub")}>
                             <Github className="h-4 w-4 text-purple-200 transition-colors duration-300 group-hover:text-white" />
                             <span className="flex items-center gap-1 text-xs font-semibold text-white">
                                 <span>{formattedRepoStars}</span>
@@ -297,7 +299,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1.5 rounded-full border border-purple-700/60 bg-purple-900/30 px-2.5 py-1 text-purple-100 transition-all duration-300 hover:border-purple-500 hover:bg-purple-800/40"
-                            aria-label="Star us on GitHub">
+                            aria-label={t("nav.starOnGithub")}>
                             <Github className="h-4 w-4 text-purple-200" />
                             <span className="flex items-center gap-1 text-xs font-semibold text-white">
                                 <span>{formattedRepoStars}</span>
@@ -320,7 +322,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                         {showLevelInfo && (
                             <ClientOnly>
                                 <div className="mb-2 text-purple-300">
-                                    Level {currentLevel} - {currentStage}
+                                    {t("level.level")} {currentLevel} - {stageName}
                                 </div>
                             </ClientOnly>
                         )}
@@ -480,7 +482,7 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                     <DialogHeader>
                         <DialogTitle className="text-white">{t("nav.language")}</DialogTitle>
                         <DialogDescription className="text-purple-300">
-                            Select your preferred language
+                            {t("nav.selectLanguage")}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="mt-4 space-y-2">

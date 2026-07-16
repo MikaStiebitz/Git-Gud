@@ -139,7 +139,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         closeCommitDialog();
 
         // Check for level completion after dialog commit (only if not in playground mode)
-        if (typeof window !== "undefined" && !window.location.pathname.includes("/playground")) {
+        // Skip the check if the commit did not actually happen (e.g. empty message)
+        const commitFailed = output.some(
+            line => line.toLowerCase().includes("aborting commit") || line.toLowerCase().includes("nothing to commit"),
+        );
+        if (
+            !commitFailed &&
+            typeof window !== "undefined" &&
+            !window.location.pathname.includes("/playground")
+        ) {
             const [cmd, ...args] = splitCommandRespectingQuotes(`git commit -m "${escapedMessage}"`.trim());
             if (cmd && levelManager.checkLevelCompletion(currentStage, currentLevel, cmd, args, gitRepository)) {
                 markLevelAsCompleted();
@@ -320,6 +328,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 lowerLine.includes("error:") ||
                 lowerLine.includes("fatal:") ||
                 lowerLine.includes("failed") ||
+                lowerLine.includes("aborting commit") ||
                 lowerLine.includes("not a git repository") ||
                 lowerLine.includes("nothing specified") ||
                 lowerLine.includes("did not match any files") ||

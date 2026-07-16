@@ -38,7 +38,7 @@ export function ProgressBar({
             <div className={className}>
                 <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center text-base font-medium">
-                        <span>Progress</span>
+                        <span>{t("progress.title")}</span>
                         {currentMilestone && (
                             <div className="ml-2 flex items-center rounded-full border border-purple-700/50 bg-purple-900/30 px-2 py-0.5 text-xs text-purple-300">
                                 {currentMilestone.icon}
