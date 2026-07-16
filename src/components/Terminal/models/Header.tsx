@@ -34,7 +34,7 @@ export function TerminalHeader({
                     size="sm"
                     className="h-6 w-6 p-0 text-purple-300 hover:bg-purple-800/50 hover:text-white"
                     onClick={handleShowThemes}
-                    title="Change Terminal Theme">
+                    title={t("themes.changeTooltip")}>
                     <Palette className="h-4 w-4" />
                 </Button>
 

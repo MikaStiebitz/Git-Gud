@@ -49,6 +49,12 @@ export class CommitCommand implements Command {
                   ? args.flags.message.trim()
                   : "";
 
+        // A -m/--message flag with an empty or whitespace-only value must not create a commit
+        const messageFlagProvided = args.flags.m !== undefined || args.flags.message !== undefined;
+        if (messageFlagProvided && !message) {
+            return ["Aborting commit due to empty commit message."];
+        }
+
         if (message) {
             // If message is provided, commit directly
             const commitId = gitRepository.commit(message);

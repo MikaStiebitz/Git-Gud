@@ -52,8 +52,8 @@ export class RebaseCommand implements Command {
         const currentBranch = gitRepository.getCurrentBranch();
         const branches = gitRepository.getBranches();
 
-        // Validate upstream branch exists
-        if (!branches.includes(upstream)) {
+        // Validate upstream: a branch name, HEAD, HEAD~N, or a (short) commit hash
+        if (!this.resolveUpstream(upstream, gitRepository)) {
             return [`fatal: invalid upstream '${upstream}'`];
         }
 
@@ -64,8 +64,8 @@ export class RebaseCommand implements Command {
             return [`fatal: invalid branch '${branch}'`];
         }
 
-        // Can't rebase onto itself
-        if (upstream === targetBranch) {
+        // Can't rebase a branch onto itself
+        if (branches.includes(upstream) && upstream === targetBranch) {
             return [`fatal: Cannot rebase '${targetBranch}' onto itself.`];
         }
 
@@ -91,6 +91,27 @@ export class RebaseCommand implements Command {
             `Applying: Rebased commits from '${targetBranch}' onto '${upstream}'`,
             `Successfully rebased '${targetBranch}' onto '${upstream}'.`,
         ];
+    }
+
+    // An upstream may be a branch name, HEAD, HEAD~N, or a full/short commit hash
+    private resolveUpstream(upstream: string, gitRepository: CommandContext["gitRepository"]): boolean {
+        if (gitRepository.getBranches().includes(upstream)) {
+            return true;
+        }
+
+        const commits = gitRepository.getCommitHistory();
+
+        if (upstream === "HEAD") {
+            return commits.length > 0;
+        }
+
+        if (upstream.startsWith("HEAD~")) {
+            const num = parseInt(upstream.substring(5));
+            return !isNaN(num) && num > 0 && num < commits.length;
+        }
+
+        // Short or full commit hash (as shown by git log --oneline)
+        return commits.some(id => id.startsWith(upstream));
     }
 
     private parseRebaseArgs(args: CommandArgs): {

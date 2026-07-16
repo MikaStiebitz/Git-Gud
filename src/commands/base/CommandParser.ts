@@ -21,6 +21,50 @@ export function parseCommand(commandStr: string): {
     };
 }
 
+// Split a raw input line into chained commands at unquoted ';' and '&&' separators.
+// Quotes are preserved so each part can be parsed normally afterwards.
+export function splitChainedCommands(input: string): string[] {
+    const parts: string[] = [];
+    let current = "";
+    let inQuotes = false;
+    let quoteChar = "";
+
+    for (let i = 0; i < input.length; i++) {
+        const char = input[i];
+        if (char === undefined) continue;
+
+        if ((char === '"' || char === "'") && input[i - 1] !== "\\") {
+            if (!inQuotes) {
+                inQuotes = true;
+                quoteChar = char;
+            } else if (char === quoteChar) {
+                inQuotes = false;
+                quoteChar = "";
+            }
+            current += char;
+            continue;
+        }
+
+        if (!inQuotes && char === ";") {
+            parts.push(current);
+            current = "";
+            continue;
+        }
+
+        if (!inQuotes && char === "&" && input[i + 1] === "&") {
+            parts.push(current);
+            current = "";
+            i++; // Skip the second '&'
+            continue;
+        }
+
+        current += char;
+    }
+
+    parts.push(current);
+    return parts.map(part => part.trim()).filter(part => part.length > 0);
+}
+
 export function splitCommandRespectingQuotes(commandStr: string): string[] {
     const result: string[] = [];
     let current = "";

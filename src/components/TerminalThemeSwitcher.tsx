@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/u
 import { Card, CardContent } from "~/components/ui/card";
 import { Palette, Lock, Check } from "lucide-react";
 import { useTerminalTheme } from "~/contexts/TerminalThemeContext";
+import { useLanguage } from "~/contexts/LanguageContext";
 
 interface TerminalThemeSwitcherProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ interface TerminalThemeSwitcherProps {
 
 export function TerminalThemeSwitcher({ isOpen, onClose }: TerminalThemeSwitcherProps) {
     const { currentTheme, availableThemes, setTheme, isThemeUnlocked } = useTerminalTheme();
+    const { t } = useLanguage();
 
     const handleThemeSelect = (themeId: string) => {
         if (isThemeUnlocked(themeId)) {
@@ -27,9 +29,9 @@ export function TerminalThemeSwitcher({ isOpen, onClose }: TerminalThemeSwitcher
                 <DialogHeader>
                     <DialogTitle className="flex items-center text-xl text-white">
                         <Palette className="mr-2 h-5 w-5 text-purple-400" />
-                        Terminal Themes
+                        {t("themes.title")}
                     </DialogTitle>
-                    <p className="text-purple-300">Choose your terminal appearance</p>
+                    <p className="text-purple-300">{t("themes.subtitle")}</p>
                 </DialogHeader>
 
                 <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -79,7 +81,7 @@ export function TerminalThemeSwitcher({ isOpen, onClose }: TerminalThemeSwitcher
                                     </div>
 
                                     {!isUnlocked && (
-                                        <p className="mt-2 text-xs text-gray-400">Purchase in shop to unlock</p>
+                                        <p className="mt-2 text-xs text-gray-400">{t("themes.unlockHint")}</p>
                                     )}
                                 </CardContent>
                             </Card>
@@ -92,7 +94,7 @@ export function TerminalThemeSwitcher({ isOpen, onClose }: TerminalThemeSwitcher
                         onClick={onClose}
                         variant="outline"
                         className="border-purple-700 text-purple-300 hover:bg-purple-900/50">
-                        Close
+                        {t("themes.close")}
                     </Button>
                 </div>
             </DialogContent>

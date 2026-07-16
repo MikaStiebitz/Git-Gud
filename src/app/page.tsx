@@ -385,7 +385,7 @@ export default function Home() {
                         <ClientOnly>
                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                                 <div className="rounded-lg border border-purple-800/30 bg-purple-900/20 p-3 text-center sm:p-4">
-                                    <h3 className="text-xs text-purple-400 sm:text-sm">{t("progress.points")}</h3>
+                                    <h3 className="text-xs text-purple-400 sm:text-sm">{t("home.points")}</h3>
                                     <p className="text-xl font-bold text-white sm:text-2xl">{progress.score}</p>
                                 </div>
                                 <div className="rounded-lg border border-purple-800/30 bg-purple-900/20 p-3 text-center sm:p-4">
