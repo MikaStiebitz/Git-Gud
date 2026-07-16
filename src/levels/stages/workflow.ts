@@ -217,6 +217,7 @@ const workflowLevel3 = createLevel({
     requirements: [
         {
             id: "create-release-branch",
+            objectiveId: 1,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["-c"],
@@ -225,12 +226,14 @@ const workflowLevel3 = createLevel({
         },
         {
             id: "stage-release-changes",
+            objectiveId: 2,
             command: "git add",
             description: "workflow.level3.requirement2.description",
             successMessage: "workflow.level3.requirement2.success"
         },
         {
             id: "commit-release",
+            objectiveId: 2,
             command: "git commit",
             requiresArgs: ["any"],
             description: "workflow.level3.requirement3.description",
@@ -238,6 +241,7 @@ const workflowLevel3 = createLevel({
         },
         {
             id: "switch-to-main-for-release",
+            objectiveId: 3,
             command: "git switch",
             alternativeCommands: ["git checkout"],
             requiresArgs: ["main"],
@@ -246,6 +250,7 @@ const workflowLevel3 = createLevel({
         },
         {
             id: "merge-release",
+            objectiveId: 3,
             command: "git merge",
             requiresArgs: ["any"],
             description: "workflow.level3.requirement5.description",
@@ -253,6 +258,7 @@ const workflowLevel3 = createLevel({
         },
         {
             id: "tag-release",
+            objectiveId: 4,
             command: "git tag",
             requiresArgs: ["any"],
             description: "workflow.level3.requirement6.description",

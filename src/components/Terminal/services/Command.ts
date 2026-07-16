@@ -1,4 +1,5 @@
 import commandRegistry from "../../../commands";
+import { splitChainedCommands } from "../../../commands/base/CommandParser";
 
 export class CommandService {
     constructor(
@@ -12,11 +13,9 @@ export class CommandService {
     executeCommand(input: string): void {
         if (!input.trim()) return;
 
-        // Split input by semicolons to support command chaining
-        const commands = input
-            .split(";")
-            .map(cmd => cmd.trim())
-            .filter(cmd => cmd);
+        // Split input at unquoted ';' and '&&' to support command chaining.
+        // Note: '&&' runs sequentially like ';' — the simulator does not stop on failure.
+        const commands = splitChainedCommands(input);
 
         // Process each command in sequence
         for (const command of commands) {

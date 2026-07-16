@@ -36,6 +36,22 @@ const common = {
     "difficulty.cancel": "रद्द करें",
     "difficulty.topicsCovered": "कवर किए गए विषय",
     "difficulty.maxPoints": "अधिकतम अंक",
+    "difficulty.welcomeTitle": "Git Mastery में आपका स्वागत है! 🚀",
+    "difficulty.welcomeDescription":
+        "अपनी Git यात्रा शुरू करने से पहले, आइए आपके लिए सही कठिनाई स्तर चुनें। चिंता न करें - आप इसे कभी भी बदल सकते हैं!",
+    "difficulty.firstTime": "🎉 स्वागत है! पहली बार यहाँ?",
+    "difficulty.beginner.description": "Git की मूल बातें सीखें",
+    "difficulty.advanced.description": "उन्नत Git वर्कफ़्लो में महारत हासिल करें",
+    "difficulty.pro.description": "विशेषज्ञ Git तकनीकें",
+    "nav.selectLanguage": "अपनी पसंदीदा भाषा चुनें",
+    "nav.starOnGithub": "GitHub पर हमें स्टार दें",
+    "progress.title": "प्रगति",
+    "footer.legalNotice": "कानूनी सूचना",
+    "themes.title": "टर्मिनल थीम",
+    "themes.subtitle": "अपने टर्मिनल का रूप चुनें",
+    "themes.unlockHint": "अनलॉक करने के लिए शॉप में खरीदें",
+    "themes.close": "बंद करें",
+    "themes.changeTooltip": "टर्मिनल थीम बदलें",
 
     // Shop System
     "shop.title": "Git शॉप",

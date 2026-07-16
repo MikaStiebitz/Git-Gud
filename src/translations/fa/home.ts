@@ -12,6 +12,7 @@ const home = {
     "home.chooseChallenge": "چالش خود را انتخاب کنید",
     "home.gameFeatures": "ویژگی‌های بازی",
     "home.completed": "تکمیل شده",
+    "home.points": "امتیاز",
     "home.reviewLevel": "مرور سطح",
     "home.startLevel": "شروع سطح",
     "home.locked": "قفل شده",

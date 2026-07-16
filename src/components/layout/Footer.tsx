@@ -8,7 +8,7 @@ interface FooterProps {
 }
 
 export function Footer({ className = "" }: FooterProps) {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     return (
         <footer className={`mt-auto bg-[#1a1625] ${className}`}>
@@ -30,7 +30,7 @@ export function Footer({ className = "" }: FooterProps) {
                         </span>
                         <span className="mx-2 hidden sm:inline">|</span>
                         <Link href="/impressum" className="mt-1 text-purple-300 hover:underline sm:mt-0">
-                            {language === "de" ? "Impressum" : "Legal Notice"}
+                            {t("footer.legalNotice")}
                         </Link>
                     </p>
                 </div>

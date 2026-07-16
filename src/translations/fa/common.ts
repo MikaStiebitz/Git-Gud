@@ -36,6 +36,22 @@ const common = {
     "difficulty.cancel": "لغو",
     "difficulty.topicsCovered": "موضوعات پوشش داده شده",
     "difficulty.maxPoints": "حداکثر امتیاز",
+    "difficulty.welcomeTitle": "به Git Mastery خوش آمدید! 🚀",
+    "difficulty.welcomeDescription":
+        "قبل از شروع سفر Git، بیایید سطح دشواری مناسب شما را انتخاب کنیم. نگران نباشید - می‌توانید هر زمان آن را تغییر دهید!",
+    "difficulty.firstTime": "🎉 خوش آمدید! اولین بار است؟",
+    "difficulty.beginner.description": "اصول Git را بیاموزید",
+    "difficulty.advanced.description": "بر گردش‌کارهای پیشرفته Git مسلط شوید",
+    "difficulty.pro.description": "تکنیک‌های حرفه‌ای Git",
+    "nav.selectLanguage": "زبان مورد نظر خود را انتخاب کنید",
+    "nav.starOnGithub": "در GitHub به ما ستاره بدهید",
+    "progress.title": "پیشرفت",
+    "footer.legalNotice": "اطلاعیه حقوقی",
+    "themes.title": "تم‌های ترمینال",
+    "themes.subtitle": "ظاهر ترمینال خود را انتخاب کنید",
+    "themes.unlockHint": "برای باز کردن از فروشگاه خریداری کنید",
+    "themes.close": "بستن",
+    "themes.changeTooltip": "تغییر تم ترمینال",
 
     // Shop System
     "shop.title": "فروشگاه Git",

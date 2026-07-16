@@ -32,6 +32,7 @@ import { TerminalSkeleton } from "~/components/ui/TerminalSkeleton";
 import { CommitDialog } from "~/components/CommitDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { RotateCcw } from "lucide-react";
+import { getDifficultyConfigForStage } from "~/config/difficulties";
 
 // Dynamically import Terminal component with SSR disabled
 const Terminal = dynamic(() => import("~/components/Terminal").then(mod => ({ default: mod.Terminal })), {
@@ -261,22 +262,8 @@ function LevelPageContent() {
     const levelData: LevelType | null = levelManager.getLevel(currentStage, currentLevel, t);
     const progress = progressManager.getProgress();
 
-    // Get difficulty config for max points
-    const difficultyStages = {
-        beginner: ["Intro", "Files", "Branches", "Remote"],
-        advanced: ["Merge", "Workflow", "TeamWork", "Reset", "Stash"],
-        pro: ["Rebase", "Advanced", "Archaeology", "Mastery"],
-    };
-
-    // Determine current difficulty based on stage
-    let currentDifficultyMaxPoints = 150; // Default
-    if (difficultyStages.beginner.includes(currentStage)) {
-        currentDifficultyMaxPoints = 150;
-    } else if (difficultyStages.advanced.includes(currentStage)) {
-        currentDifficultyMaxPoints = 150;
-    } else if (difficultyStages.pro.includes(currentStage)) {
-        currentDifficultyMaxPoints = 150;
-    }
+    // Max points for the difficulty the current stage belongs to
+    const currentDifficultyMaxPoints = getDifficultyConfigForStage(currentStage)?.maxPoints ?? 150;
 
     // Get double XP info
     const isDoubleXpActive = progressManager.isDoubleXpActive();

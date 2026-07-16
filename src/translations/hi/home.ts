@@ -12,6 +12,7 @@ const home = {
     "home.chooseChallenge": "अपनी चुनौती चुनें",
     "home.gameFeatures": "गेम फीचर्स",
     "home.completed": "पूर्ण",
+    "home.points": "अंक",
     "home.reviewLevel": "स्तर की समीक्षा करें",
     "home.startLevel": "स्तर शुरू करें",
     "home.locked": "लॉक",

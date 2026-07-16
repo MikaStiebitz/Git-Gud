@@ -36,6 +36,22 @@ const common = {
     "difficulty.cancel": "Cancel",
     "difficulty.topicsCovered": "Topics covered",
     "difficulty.maxPoints": "Max Points",
+    "difficulty.welcomeTitle": "Welcome to Git Mastery! 🚀",
+    "difficulty.welcomeDescription":
+        "Before we start your Git journey, let's choose the right difficulty level for you. Don't worry - you can change this anytime!",
+    "difficulty.firstTime": "🎉 Welcome! First time here?",
+    "difficulty.beginner.description": "Learn Git basics",
+    "difficulty.advanced.description": "Master advanced Git workflows",
+    "difficulty.pro.description": "Expert Git techniques",
+    "nav.selectLanguage": "Select your preferred language",
+    "nav.starOnGithub": "Star us on GitHub",
+    "progress.title": "Progress",
+    "footer.legalNotice": "Legal Notice",
+    "themes.title": "Terminal Themes",
+    "themes.subtitle": "Choose your terminal appearance",
+    "themes.unlockHint": "Purchase in shop to unlock",
+    "themes.close": "Close",
+    "themes.changeTooltip": "Change Terminal Theme",
 
     // Shop System
     "shop.title": "Git Shop",
