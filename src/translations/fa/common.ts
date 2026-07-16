@@ -80,6 +80,24 @@ const common = {
     "minigame.mergeMaster.name": "استاد ادغام",
     "minigame.mergeMaster.description": "تعارض‌های ادغام را مانند یک حرفه‌ای حل کنید",
     "minigame.mergeMaster.category": "پیشرفته",
+    "minigame.graphPuzzle.name": "پازل گراف",
+    "minigame.graphPuzzle.description": "دستورات را مرتب کنید تا گراف کامیت هدف ساخته شود",
+    "minigame.graphPuzzle.category": "گراف‌ها",
+    "minigame.graphPuzzle.goal": "هدف",
+    "minigame.graphPuzzle.yourOrder": "ترتیب دستورات شما",
+    "minigame.graphPuzzle.commands": "دستورات موجود",
+    "minigame.graphPuzzle.tapHint": "برای افزودن به ترتیب، روی دستورات پایین ضربه بزنید",
+    "minigame.graphPuzzle.check": "بررسی ترتیب",
+    "minigame.graphPuzzle.correct": "درست! ترتیب عالی بود.",
+    "minigame.graphPuzzle.wrong": "تقریباً — ترتیب را بررسی کنید و دوباره تلاش کنید.",
+    "minigame.finalScore": "امتیاز نهایی",
+    "minigame.claimReward": "دریافت پاداش",
+
+    // Arcade
+    "nav.arcade": "آرکید",
+    "arcade.title": "آرکید Git",
+    "arcade.subtitle": "مینی‌بازی‌های سریع برای تقویت واکنش‌های Git شما. برای فروشگاه سکه کسب کنید.",
+    "arcade.backToArcade": "بازگشت به آرکید",
 
     // Difficulty levels
     "difficulty.easy": "آسان",

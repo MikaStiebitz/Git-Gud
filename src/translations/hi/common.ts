@@ -80,6 +80,24 @@ const common = {
     "minigame.mergeMaster.name": "मर्ज मास्टर",
     "minigame.mergeMaster.description": "एक प्रो की तरह मर्ज कॉन्फ्लिक्ट हल करें",
     "minigame.mergeMaster.category": "उन्नत",
+    "minigame.graphPuzzle.name": "ग्राफ पहेली",
+    "minigame.graphPuzzle.description": "लक्ष्य कमिट ग्राफ बनाने के लिए कमांड को क्रम में लगाएं",
+    "minigame.graphPuzzle.category": "ग्राफ",
+    "minigame.graphPuzzle.goal": "लक्ष्य",
+    "minigame.graphPuzzle.yourOrder": "आपका कमांड क्रम",
+    "minigame.graphPuzzle.commands": "उपलब्ध कमांड",
+    "minigame.graphPuzzle.tapHint": "क्रम में जोड़ने के लिए नीचे कमांड पर टैप करें",
+    "minigame.graphPuzzle.check": "क्रम जांचें",
+    "minigame.graphPuzzle.correct": "सही! बढ़िया क्रम।",
+    "minigame.graphPuzzle.wrong": "लगभग — क्रम जांचें और फिर से प्रयास करें।",
+    "minigame.finalScore": "अंतिम स्कोर",
+    "minigame.claimReward": "इनाम पाएं",
+
+    // Arcade
+    "nav.arcade": "आर्केड",
+    "arcade.title": "Git आर्केड",
+    "arcade.subtitle": "अपने Git रिफ्लेक्स को तेज करने के लिए त्वरित मिनी गेम। शॉप के लिए सिक्के कमाएं।",
+    "arcade.backToArcade": "आर्केड पर वापस",
 
     // Difficulty levels
     "difficulty.easy": "आसान",

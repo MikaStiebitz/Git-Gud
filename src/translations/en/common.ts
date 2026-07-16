@@ -80,6 +80,24 @@ const common = {
     "minigame.mergeMaster.name": "Merge Master",
     "minigame.mergeMaster.description": "Resolve merge conflicts like a pro",
     "minigame.mergeMaster.category": "Advanced",
+    "minigame.graphPuzzle.name": "Graph Puzzle",
+    "minigame.graphPuzzle.description": "Order the commands to build the target commit graph",
+    "minigame.graphPuzzle.category": "Graphs",
+    "minigame.graphPuzzle.goal": "Goal",
+    "minigame.graphPuzzle.yourOrder": "Your command order",
+    "minigame.graphPuzzle.commands": "Available commands",
+    "minigame.graphPuzzle.tapHint": "Tap commands below to add them in order",
+    "minigame.graphPuzzle.check": "Check order",
+    "minigame.graphPuzzle.correct": "Correct! Nicely sequenced.",
+    "minigame.graphPuzzle.wrong": "Not quite — check the order and try again.",
+    "minigame.finalScore": "Final Score",
+    "minigame.claimReward": "Claim Reward",
+
+    // Arcade
+    "nav.arcade": "Arcade",
+    "arcade.title": "Git Arcade",
+    "arcade.subtitle": "Quick minigames to sharpen your Git reflexes. Earn coins for the shop.",
+    "arcade.backToArcade": "Back to Arcade",
 
     // Difficulty levels
     "difficulty.easy": "Easy",

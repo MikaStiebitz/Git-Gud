@@ -1,6 +1,6 @@
 import type { FileSystem } from "./FileSystem";
 import type { GitRepository } from "./GitRepository";
-import type { StageType, LevelType, FileStructure, GitState, FileChange, MergeConflict, DifficultyLevel } from "~/types";
+import type { StageType, LevelType, LevelRequirement, FileStructure, GitState, FileChange, MergeConflict, DifficultyLevel } from "~/types";
 import { allStages } from "../levels";
 import { getAvailableStagesForDifficulty } from "~/config/difficulties";
 
@@ -242,6 +242,59 @@ export class LevelManager {
         return filePath.substring(0, lastSlashIndex) || "/";
     }
 
+    // Evaluate repository-state guards for a requirement.
+    // Returns true if every guard that is defined passes (and true when none are defined),
+    // so it can be AND-combined with command/argument matching.
+    public passesStateGuards(requirement: LevelRequirement, gitRepository: GitRepository): boolean {
+        // Tag must exist (specific name, or "*" for any tag)
+        if (requirement.checkTagExists !== undefined) {
+            const tags = gitRepository.getTags();
+            if (requirement.checkTagExists === "*") {
+                if (tags.size === 0) return false;
+            } else if (!tags.has(requirement.checkTagExists)) {
+                return false;
+            }
+        }
+
+        // A merge commit must exist in the current branch's history
+        if (requirement.checkMergeExists) {
+            const history = new Set(gitRepository.getCommitHistory());
+            const allCommits = gitRepository.getAllCommits();
+            const hasMerge = Object.entries(allCommits).some(
+                ([id, commit]) => history.has(id) && (commit.isMergeCommit || (commit.parents?.length ?? 0) > 1),
+            );
+            if (!hasMerge) return false;
+        }
+
+        // Current branch must have at least N commits
+        if (requirement.checkCommitCountAtLeast !== undefined) {
+            if (gitRepository.getCommitHistory().length < requirement.checkCommitCountAtLeast) {
+                return false;
+            }
+        }
+
+        // Some commit on the current branch must contain this substring
+        if (requirement.checkCommitMessageContains !== undefined) {
+            const needle = requirement.checkCommitMessageContains.toLowerCase();
+            const history = gitRepository.getCommitHistory();
+            const commits = gitRepository.getCommits();
+            const found = history.some(id => commits[id]?.message.toLowerCase().includes(needle));
+            if (!found) return false;
+        }
+
+        return true;
+    }
+
+    // True if this requirement defines any repository-state guard
+    private hasStateGuards(requirement: LevelRequirement): boolean {
+        return (
+            requirement.checkTagExists !== undefined ||
+            requirement.checkMergeExists !== undefined ||
+            requirement.checkCommitCountAtLeast !== undefined ||
+            requirement.checkCommitMessageContains !== undefined
+        );
+    }
+
     // Check if all changed files are staged (for git add level)
     private areAllFilesStaged(gitRepository: GitRepository): boolean {
         const status = gitRepository.getStatus();
@@ -336,6 +389,11 @@ export class LevelManager {
                 if (branches.includes(requirement.checkBranchExists)) {
                     stateCheckPassed = true;
                 }
+            }
+
+            // Repository-state guards (tags, merges, commit counts, commit messages)
+            if (this.hasStateGuards(requirement) && this.passesStateGuards(requirement, gitRepository)) {
+                stateCheckPassed = true;
             }
 
             // If any state check passed, mark requirement as completed
@@ -520,6 +578,12 @@ export class LevelManager {
             for (const requirement of requirementsToCheck) {
                 if (!requirement) continue; // Safety check
 
+                // Repository-state guards must hold for this requirement to count.
+                // A command may match textually, but the guard verifies the actual result.
+                if (this.hasStateGuards(requirement) && !this.passesStateGuards(requirement, gitRepository)) {
+                    continue;
+                }
+
                 // Special case for git add level
                 if (requirement.command === "git add" && gitCommand === "add") {
                     // Check if all files are staged after the command
@@ -677,6 +741,12 @@ export class LevelManager {
 
             for (const requirement of requirementsToCheck) {
                 if (!requirement) continue; // Safety check
+
+                // Repository-state guards must hold for this requirement to count.
+                // A command may match textually, but the guard verifies the actual result.
+                if (this.hasStateGuards(requirement) && !this.passesStateGuards(requirement, gitRepository)) {
+                    continue;
+                }
 
                 if (requirement.command === command) {
                     if (requirement.requiresArgs) {
