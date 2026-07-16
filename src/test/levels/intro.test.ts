@@ -5,6 +5,7 @@ import { LevelManager } from "~/models/LevelManager";
 import { allStages } from "~/levels";
 import type { CommandContext } from "~/commands/base/Command";
 import { InitCommand } from "~/commands/git/InitCommand";
+import { ProgressManager } from "~/models/ProgressManager";
 
 describe("Intro Stage Levels", () => {
     let fileSystem: FileSystem;
@@ -24,6 +25,7 @@ describe("Intro Stage Levels", () => {
             setCurrentDirectory: (path: string) => {
                 context.currentDirectory = path;
             },
+            progressManager: new ProgressManager(),
         };
     });
 

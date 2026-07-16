@@ -113,6 +113,12 @@ export type LevelRequirement = {
     checkFileChanged?: string; // Check if this file has been modified (path like "/team.md")
     checkFileExists?: string; // Check if this file exists
     checkBranchExists?: string; // Check if this branch exists
+    // Repository-state guards (evaluated as an AND-condition after the command/args match).
+    // They verify the actual result of a command instead of trusting the typed string.
+    checkTagExists?: string; // A specific tag name, or "*" for "any tag exists"
+    checkMergeExists?: boolean; // True if a merge commit exists in the current branch's history
+    checkCommitCountAtLeast?: number; // Current branch must have at least N commits
+    checkCommitMessageContains?: string; // Some commit on the current branch contains this substring
 };
 
 export type StoryContext = {

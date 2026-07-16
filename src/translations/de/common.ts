@@ -64,6 +64,24 @@ const common = {
     "minigame.mergeMaster.name": "Merge Meister",
     "minigame.mergeMaster.description": "Löse Merge-Konflikte wie ein Profi",
     "minigame.mergeMaster.category": "Fortgeschritten",
+    "minigame.graphPuzzle.name": "Graph-Puzzle",
+    "minigame.graphPuzzle.description": "Bring die Befehle in die richtige Reihenfolge, um den Ziel-Graphen zu bauen",
+    "minigame.graphPuzzle.category": "Graphen",
+    "minigame.graphPuzzle.goal": "Ziel",
+    "minigame.graphPuzzle.yourOrder": "Deine Befehlsreihenfolge",
+    "minigame.graphPuzzle.commands": "Verfügbare Befehle",
+    "minigame.graphPuzzle.tapHint": "Tippe unten auf Befehle, um sie der Reihe nach hinzuzufügen",
+    "minigame.graphPuzzle.check": "Reihenfolge prüfen",
+    "minigame.graphPuzzle.correct": "Richtig! Sauber sortiert.",
+    "minigame.graphPuzzle.wrong": "Fast — prüfe die Reihenfolge und versuch's nochmal.",
+    "minigame.finalScore": "Endpunktzahl",
+    "minigame.claimReward": "Belohnung abholen",
+
+    // Arcade
+    "nav.arcade": "Arcade",
+    "arcade.title": "Git Arcade",
+    "arcade.subtitle": "Schnelle Minispiele, um deine Git-Reflexe zu schärfen. Verdiene Münzen für den Shop.",
+    "arcade.backToArcade": "Zurück zur Arcade",
 
     // Difficulty levels
     "difficulty.easy": "Einfach",

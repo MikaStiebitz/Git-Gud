@@ -33,6 +33,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: "weekly" as const,
             priority: 0.8,
         },
+        {
+            url: `${baseUrl}/arcade`,
+            lastModified: new Date(),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+        },
         // Impressum is excluded from sitemap (has noindex)
     ];
 

@@ -18,6 +18,7 @@ import {
     HelpCircle,
     Settings,
     Check,
+    Gamepad2,
 } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -54,7 +55,9 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
     const isPlaygroundPage = normalizedPathname === "/playground";
     const isInstallationPage = normalizedPathname === "/installation";
     const isFaqPage = normalizedPathname === "/faq";
-    const useCompactResponsiveLayout = showLevelInfo || isPlaygroundPage || isInstallationPage || isFaqPage;
+    const isArcadePage = normalizedPathname === "/arcade";
+    const useCompactResponsiveLayout =
+        showLevelInfo || isPlaygroundPage || isInstallationPage || isFaqPage || isArcadePage;
     const desktopNavClass = useCompactResponsiveLayout ? "xl:flex xl:flex-nowrap" : "lg:flex lg:flex-nowrap";
     const mobileNavClass = useCompactResponsiveLayout ? "xl:hidden" : "lg:hidden";
     const badgeDesktopClass = useCompactResponsiveLayout ? "xl:block" : "lg:block";
@@ -206,6 +209,11 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                         <span className={`ml-4 hidden text-purple-300 ${pageLabelClass}`}>{t("nav.faq")}</span>
                     )}
 
+                    {/* Show Arcade text on relevant pages */}
+                    {isArcadePage && (
+                        <span className={`ml-4 hidden text-purple-300 ${pageLabelClass}`}>{t("nav.arcade")}</span>
+                    )}
+
                     {/* Badge display - only show on larger screens to avoid overcrowding */}
                     <div className={`ml-4 hidden ${badgeDesktopClass}`}>
                         <BadgeDisplay />
@@ -277,6 +285,17 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                     className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                     <BookCopy className="mr-2 h-4 w-4" />
                                     {t("nav.playground")}
+                                </Button>
+                            </Link>
+                        )}
+
+                        {!isArcadePage && (
+                            <Link href="/arcade">
+                                <Button
+                                    variant="ghost"
+                                    className="text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                    <Gamepad2 className="mr-2 h-4 w-4" />
+                                    {t("nav.arcade")}
                                 </Button>
                             </Link>
                         )}
@@ -403,6 +422,15 @@ export function Navbar({ showLevelInfo = false }: NavbarProps) {
                                 className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
                                 <BookCopy className="mr-2 h-4 w-4" />
                                 {t("nav.playground")}
+                            </Button>
+                        </Link>
+
+                        <Link href="/arcade" onClick={() => setMobileMenuOpen(false)}>
+                            <Button
+                                variant="ghost"
+                                className="flex w-full items-center justify-start text-purple-300 hover:bg-purple-900/50 hover:text-purple-100">
+                                <Gamepad2 className="mr-2 h-4 w-4" />
+                                {t("nav.arcade")}
                             </Button>
                         </Link>
 

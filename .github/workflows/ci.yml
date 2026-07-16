@@ -1,0 +1,56 @@
+name: CI
+
+on:
+    pull_request:
+        branches: [main]
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    # Required gate: the app must compile and statically export.
+    build:
+        name: Build (static export)
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+            - run: npm ci
+            - run: npm run build
+              env:
+                  SKIP_ENV_VALIDATION: "1"
+
+    # Required gate: the whole project (including tests) must typecheck.
+    typecheck:
+        name: Typecheck (tsc)
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+            - run: npm ci
+            - run: npx tsc --noEmit
+
+    # Informational for now: the repository carries a set of failing legacy tests.
+    # This job surfaces the status on every PR without blocking merges; make it
+    # required once the backlog is cleared (tracked as follow-up work).
+    test:
+        name: Unit tests (vitest, informational)
+        runs-on: ubuntu-latest
+        continue-on-error: true
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+            - run: npm ci
+            - run: npx vitest run
