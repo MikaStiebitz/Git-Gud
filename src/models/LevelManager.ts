@@ -101,7 +101,12 @@ export class LevelManager {
 
                 // Create branches if specified
                 if (gitState.branches) {
+                    const existingBranches = gitRepository.getBranches();
                     for (const branch of gitState.branches) {
+                        // Skip branches that already exist (e.g. the default "main" created by init())
+                        if (existingBranches.includes(branch)) {
+                            continue;
+                        }
                         if (!gitRepository.createBranch(branch)) {
                             console.warn(`Failed to create branch: ${branch}`);
                             return false;
@@ -128,8 +133,10 @@ export class LevelManager {
                                 gitRepository.addFile(filePath);
                             }
 
-                            // Commit the changes
-                            const commitId = gitRepository.commit(commit.message);
+                            // Commit the changes. Branch-marker commits legitimately have no
+                            // files (e.g. "Create develop branch"), so allow empty commits here.
+                            const allowEmpty = commit.files.length === 0;
+                            const commitId = gitRepository.commit(commit.message, allowEmpty);
                             if (!commitId) {
                                 console.warn(`Failed to create commit: ${commit.message}`);
                                 return false;
