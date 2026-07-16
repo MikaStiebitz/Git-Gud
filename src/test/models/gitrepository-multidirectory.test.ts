@@ -4,6 +4,7 @@ import { GitRepository } from "~/models/GitRepository";
 import { InitCommand } from "~/commands/git/InitCommand";
 import { StatusCommand } from "~/commands/git/StatusCommand";
 import type { CommandContext } from "~/commands/base/Command";
+import { ProgressManager } from "~/models/ProgressManager";
 
 describe("Git Repository Multi-Directory Support", () => {
     let fileSystem: FileSystem;
@@ -26,6 +27,7 @@ describe("Git Repository Multi-Directory Support", () => {
             setCurrentDirectory: (path: string) => {
                 context.currentDirectory = path;
             },
+            progressManager: new ProgressManager(),
         };
     });
 

@@ -17,8 +17,12 @@ describe("PushCommand with --set-upstream", () => {
         gitRepository = new GitRepository(fileSystem);
         progressManager = new ProgressManager();
 
-        // Setup: init git, create a branch, make a commit
+        // Setup: init git, add the remote, create a branch, make a commit.
+        // checkout(name, true) only verifies an already-created branch (as `git switch -c`
+        // does), so the branch must be created explicitly first.
         gitRepository.init();
+        gitRepository.addRemote("origin", "https://github.com/user/repo.git");
+        gitRepository.createBranch("feature/test");
         gitRepository.checkout("feature/test", true);
         fileSystem.writeFile("/test.txt", "test content");
         gitRepository.addFile("/test.txt");

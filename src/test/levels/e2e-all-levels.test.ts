@@ -23,6 +23,8 @@ import { splitCommandRespectingQuotes } from "~/commands/base/CommandParser";
 type LevelSolution = {
     commands: string[];
     preActions?: (fs: FileSystem, git: GitRepository, cmd: CommandProcessor) => void;
+    postPullAction?: (fs: FileSystem, git: GitRepository, cmd: CommandProcessor) => void;
+    commandsAfterStateCheck?: string[];
     description?: string;
 };
 
