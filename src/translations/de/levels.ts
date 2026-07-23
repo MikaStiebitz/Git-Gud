@@ -22,7 +22,8 @@ const levels = {
     "level.resetConfirm": "Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen?",
     "level.resetOptions": "Reset-Optionen",
     "level.resetDescription": "Wähle aus, was du zurücksetzen möchtest:",
-    "level.resetAllConfirm": "Möchtest du wirklich ALL deinen Fortschritt zurücksetzen? Das kann nicht rückgängig gemacht werden!",
+    "level.resetAllConfirm":
+        "Möchtest du wirklich ALL deinen Fortschritt zurücksetzen? Das kann nicht rückgängig gemacht werden!",
     "level.level": "Level",
     "level.levelCompleted": "Level abgeschlossen!",
     "level.realWorldContext": "Kontext in der echten Welt",
@@ -42,6 +43,21 @@ const levels = {
     "level.deleteFile": "Datei löschen",
     "level.confirmDelete": "Möchten Sie {file} wirklich löschen?",
     "level.hints": "Hinweise",
+    "level.tab.challenge": "Aufgabe",
+    "level.tab.graph": "Git-Graph",
+
+    // Level Visualizer (interaktiver Commit-Graph)
+    "visualizer.emptyTitle": "Deine Git-Geschichte beginnt hier",
+    "visualizer.emptyInitHint": "Initialisiere ein Repository mit `git init` und dein Commit-Graph wächst genau hier.",
+    "visualizer.emptyCommitHint": "Erstelle deinen ersten Commit und sieh zu, wie dein visueller Pfad hier erscheint.",
+    "visualizer.branchFilterHint": "Klicke, um die Historie dieses Branches hervorzuheben",
+    "visualizer.zoomIn": "Hineinzoomen",
+    "visualizer.zoomOut": "Herauszoomen",
+    "visualizer.fit": "Einpassen",
+    "visualizer.mergeCommit": "Merge",
+    "visualizer.close": "Schließen",
+    "visualizer.interactHint":
+        "Tippe auf einen Commit für Details · tippe auf einen Branch, um seinen Pfad hervorzuheben",
 
     // Level Content - Intro Stage
     "intro.name": "Einführung in Git",
@@ -70,7 +86,7 @@ const levels = {
     "intro.level2.requirement1.success": "Perfekt! Du kannst nun den Status deines Repositories sehen.",
     "intro.level2.story.title": "Was ist los in deinem Repo?",
     "intro.level2.story.narrative":
-        "Großartig! Du hast dein erstes Git-Repository erstellt. Das versteckte .git-Verzeichnis enthält nun alle Informationen, die Git braucht.\n\nAlex schaut vorbei: \"Super! Als nächstes solltest du dir anschauen, was in deinem Repository passiert. Mit `git status` kannst du jederzeit den aktuellen Zustand überprüfen.\"",
+        'Großartig! Du hast dein erstes Git-Repository erstellt. Das versteckte .git-Verzeichnis enthält nun alle Informationen, die Git braucht.\n\nAlex schaut vorbei: "Super! Als nächstes solltest du dir anschauen, was in deinem Repository passiert. Mit `git status` kannst du jederzeit den aktuellen Zustand überprüfen."',
     "intro.level2.story.realWorldContext":
         "Entwickler führen `git status` mehrmals täglich aus, um zu sehen, welche Dateien geändert wurden und welche für den nächsten Commit bereit sind.",
     "intro.level2.story.taskIntroduction": "Überprüfe den Status deines Repositories mit `git status`.",
@@ -88,10 +104,11 @@ const levels = {
     "intro.level3.requirement2.success": "Perfekt! Du bist jetzt im geklonten Repository.",
     "intro.level3.story.title": "Einem existierenden Projekt beitreten",
     "intro.level3.story.narrative":
-        "Deine erste Woche bei TechStart läuft großartig! Alex ruft dich mit aufregenden Neuigkeiten.\n\n\"Wir haben ein Team-Projekt, bei dem wir deine Hilfe brauchen\", sagt er. \"Die Codebasis ist bereits auf unserem Git-Server. Du musst sie auf deinen lokalen Rechner klonen, um damit arbeiten zu können.\"\n\nEr erklärt: \"Wenn du einem existierenden Projekt beitrittst, fängst du nicht bei Null an. Stattdessen klonst du das Remote-Repository, was eine vollständige Kopie auf deinem Rechner erstellt - inklusive des gesamten Codes, der Historie und aller Branches.\"\n\n\"Stell es dir vor wie ein Buch aus der Bibliothek auszuleihen, nur dass du auch noch alle Bibliotheksaufzeichnungen dazu bekommst! Verwende `git clone <repository-url>` um loszulegen.\"\n\n\"Sobald geklont, kannst du mit `cd <ordner-name>` in den Projekt-Ordner wechseln und sofort mit der Arbeit beginnen. Die gesamte Projekthistorie und alle Änderungen stehen dir zur Verfügung.\"",
+        'Deine erste Woche bei TechStart läuft großartig! Alex ruft dich mit aufregenden Neuigkeiten.\n\n"Wir haben ein Team-Projekt, bei dem wir deine Hilfe brauchen", sagt er. "Die Codebasis ist bereits auf unserem Git-Server. Du musst sie auf deinen lokalen Rechner klonen, um damit arbeiten zu können."\n\nEr erklärt: "Wenn du einem existierenden Projekt beitrittst, fängst du nicht bei Null an. Stattdessen klonst du das Remote-Repository, was eine vollständige Kopie auf deinem Rechner erstellt - inklusive des gesamten Codes, der Historie und aller Branches."\n\n"Stell es dir vor wie ein Buch aus der Bibliothek auszuleihen, nur dass du auch noch alle Bibliotheksaufzeichnungen dazu bekommst! Verwende `git clone <repository-url>` um loszulegen."\n\n"Sobald geklont, kannst du mit `cd <ordner-name>` in den Projekt-Ordner wechseln und sofort mit der Arbeit beginnen. Die gesamte Projekthistorie und alle Änderungen stehen dir zur Verfügung."',
     "intro.level3.story.realWorldContext":
         "Das Klonen ist die Art und Weise, wie Entwickler existierenden Projekten beitreten. Ob beim Beitragen zu Open Source oder beim Eintritt in ein neues Team, git clone ist typischerweise der erste Befehl, den du ausführst.",
-    "intro.level3.story.taskIntroduction": "Klone ein Repository und navigiere hinein, um mit der Arbeit am Projekt zu beginnen.",
+    "intro.level3.story.taskIntroduction":
+        "Klone ein Repository und navigiere hinein, um mit der Arbeit am Projekt zu beginnen.",
 
     // Level Content - Files Stage
     "files.name": "Dateioperationen",
@@ -200,7 +217,8 @@ const levels = {
         '"Es ist wichtig, auch git checkout zu kennen", erklärt Alex. "Obwohl git switch der moderne Weg ist, wirst du checkout in älteren Projekten, Tutorials und Dokumentationen oft sehen."\n\nEr fügt hinzu: "checkout kann viele Dinge tun - Branches wechseln, Dateien wiederherstellen, und mehr. Das ist der Grund, warum Git die Befehle switch und restore eingeführt hat - um die Absichten klarer zu machen."',
     "branches.level4.story.realWorldContext":
         "git checkout war jahrelang DER Befehl für Branch-Operationen. Viele Entwickler und Tools verwenden ihn noch. Beide zu kennen macht dich flexibler im Umgang mit verschiedenen Projekten und Teams.",
-    "branches.level4.story.taskIntroduction": "Wechsle zu einem anderen Branch mit dem klassischen git checkout Befehl.",
+    "branches.level4.story.taskIntroduction":
+        "Wechsle zu einem anderen Branch mit dem klassischen git checkout Befehl.",
 
     "branches.level5.name": "Branch erstellen mit Switch",
     "branches.level5.description": "Erstelle und wechsle zu einem neuen Branch in einem Schritt",
@@ -208,11 +226,10 @@ const levels = {
     "branches.level5.hint1": "Verwende den Befehl `git switch -c <neuer-branch-name>`",
     "branches.level5.hint2": "Das -c Flag sagt switch, einen neuen Branch zu erstellen",
     "branches.level5.requirement1.description": "Erstelle und wechsle zu einem neuen Branch mit git switch -c",
-    "branches.level5.requirement1.success":
-        "Perfekt! Du beherrschst jetzt beide Methoden zum Erstellen von Branches.",
+    "branches.level5.requirement1.success": "Perfekt! Du beherrschst jetzt beide Methoden zum Erstellen von Branches.",
     "branches.level5.story.title": "Schnelles Branch-Erstellen",
     "branches.level5.story.narrative":
-        '"Ein weiterer praktischer Trick", sagt Sarah. "Du kannst mit \'git switch -c\' einen neuen Branch erstellen und gleichzeitig zu ihm wechseln."\n\nSie erklärt: "Das ist der moderne Weg in Git. Das -c Flag steht für \'create\' und macht genau dasselbe wie das ältere \'git checkout -b\', ist aber klarer und intuitiver."',
+        "\"Ein weiterer praktischer Trick\", sagt Sarah. \"Du kannst mit 'git switch -c' einen neuen Branch erstellen und gleichzeitig zu ihm wechseln.\"\n\nSie erklärt: \"Das ist der moderne Weg in Git. Das -c Flag steht für 'create' und macht genau dasselbe wie das ältere 'git checkout -b', ist aber klarer und intuitiver.\"",
     "branches.level5.story.realWorldContext":
         "Das switch -c Pattern ist die moderne, empfohlene Methode zum Erstellen und Wechseln von Branches. Es wurde in Git 2.23 eingeführt, um die Branch-Operationen von anderen checkout-Funktionen zu trennen und intuitiver zu machen.",
     "branches.level5.story.taskIntroduction":
@@ -289,7 +306,7 @@ const levels = {
     "stash.level1.requirement4.success": "✅ Ausgezeichnet! Deine Änderungen sind wiederhergestellt!",
     "stash.level1.story.title": "Notfall-Unterbrechung",
     "stash.level1.story.narrative":
-        "Du bist voll konzentriert an einem neuen Feature. Dein Code ist halb fertig, die Tests sind kaputt, und plötzlich... Slack explodiert! 💥\n\n\"DRINGEND: Production ist down! Brauchen SOFORT einen Hotfix!\" 🚨\n\nDu kannst dieses Chaos nicht committen, aber du kannst es auch nicht einfach liegen lassen. Was tust du?\n\n**Enter git stash** - dein Notfall-Speicher-Button! 🎯\n\nStell es dir vor wie die Pause-Taste bei einem Videospiel. Deine Arbeit wird an einem speziellen Ort gespeichert, dein Workspace wird sauber, und du kannst die Aufgabe wechseln. Wenn du zurückkommst, drückst du einfach Resume (git stash pop) und machst genau da weiter, wo du aufgehört hast!",
+        'Du bist voll konzentriert an einem neuen Feature. Dein Code ist halb fertig, die Tests sind kaputt, und plötzlich... Slack explodiert! 💥\n\n"DRINGEND: Production ist down! Brauchen SOFORT einen Hotfix!" 🚨\n\nDu kannst dieses Chaos nicht committen, aber du kannst es auch nicht einfach liegen lassen. Was tust du?\n\n**Enter git stash** - dein Notfall-Speicher-Button! 🎯\n\nStell es dir vor wie die Pause-Taste bei einem Videospiel. Deine Arbeit wird an einem speziellen Ort gespeichert, dein Workspace wird sauber, und du kannst die Aufgabe wechseln. Wenn du zurückkommst, drückst du einfach Resume (git stash pop) und machst genau da weiter, wo du aufgehört hast!',
     "stash.level1.story.realWorldContext":
         "In der echten Entwicklung passieren ständig Unterbrechungen. Product Manager brauchen 'schnelle Änderungen', Bugs erscheinen in Production, und Teammates brauchen dringende Code-Reviews. Git stash ist dein Überlebens-Tool für Context-Switching ohne deinen Flow zu verlieren.",
     "stash.level1.story.taskIntroduction":
@@ -304,7 +321,8 @@ const levels = {
     "stash.level2.objective5": "Stelle deine gestashte Arbeit wieder her",
     "stash.level2.hint1": "Starte mit dem Stashen: git stash",
     "stash.level2.hint2": "Wechsle zu main: git switch main (oder git checkout main)",
-    "stash.level2.hint3": "Erstelle neuen Branch: git switch -c feature/new-task (oder git checkout -b feature/new-task)",
+    "stash.level2.hint3":
+        "Erstelle neuen Branch: git switch -c feature/new-task (oder git checkout -b feature/new-task)",
     "stash.level2.hint4": "Gehe zurück zum alten Task: git switch feature/old-task",
     "stash.level2.hint5": "Stelle Arbeit wieder her: git stash pop",
     "stash.level2.requirement1.description": "Stashe deine unfertige Arbeit",
@@ -340,7 +358,7 @@ const levels = {
     "stash.level3.story.narrative":
         '"Moment, wo habe ich die Änderungen nochmal gestasht?", fragst du dich.\n\n"Verwende `git stash list`", sagt Lisa. "Das zeigt dir alle gespeicherten Stashes. Mit `git stash pop` holst du den neuesten zurück und entfernst ihn aus dem Stash."\n\nSie erklärt weiter: "Es gibt auch `git stash apply` - das wendet den Stash an, aber lässt ihn im Stash. Nützlich wenn du die gleichen Änderungen mehrmals brauchst!"',
     "stash.level3.story.realWorldContext":
-        "**Stash Management Commands**\n\n`git stash list` - Zeigt alle Stashes\n\n`git stash pop` - Wendet Stash an und löscht ihn\n\n`git stash apply` - Wendet Stash an, behält ihn\n\n`git stash drop` - Löscht einen Stash\n\n`git stash clear` - Löscht alle Stashes\n\n**Pro Tip**: Du kannst Stashes Namen geben mit `git stash push -m \"WIP: Feature X\"` - das macht die Liste übersichtlicher!",
+        '**Stash Management Commands**\n\n`git stash list` - Zeigt alle Stashes\n\n`git stash pop` - Wendet Stash an und löscht ihn\n\n`git stash apply` - Wendet Stash an, behält ihn\n\n`git stash drop` - Löscht einen Stash\n\n`git stash clear` - Löscht alle Stashes\n\n**Pro Tip**: Du kannst Stashes Namen geben mit `git stash push -m "WIP: Feature X"` - das macht die Liste übersichtlicher!',
     "stash.level3.story.taskIntroduction": "Liste deine Stashes auf und hole den neuesten zurück.",
 
     // Remote Stage
@@ -413,8 +431,7 @@ const levels = {
     "reset.level1.hint5": "Dateien bleiben nach --soft reset gestaged - perfekt zum Fixen von Commit-Nachrichten!",
     "reset.level1.hint6": "Verwende git status um zu sehen was nach dem Reset gestaged ist",
     "reset.level1.requirement1.description": "Mache den letzten Commit mit --soft rückgängig",
-    "reset.level1.requirement1.success":
-        "✅ Gut! Der Commit ist weg aber Dateien sind noch gestaged!",
+    "reset.level1.requirement1.success": "✅ Gut! Der Commit ist weg aber Dateien sind noch gestaged!",
     "reset.level1.requirement2.description": "Setze auf HEAD zurück um das Konzept zu verstehen",
     "reset.level1.requirement2.success": "✅ Perfekt! Reset auf HEAD bedeutet 'bleib wo du bist' - keine Änderungen!",
     "reset.level1.requirement3.description": "Setze auf einen früheren Commit zurück mit HEAD~n",
@@ -440,7 +457,8 @@ const levels = {
     "reset.level2.hint6": "Nach --hard sind Änderungen WEG - keine Staging-Area, kein Working Directory",
     "reset.level2.hint7": "In Notfällen: git reflog kann helfen verlorene Commits wiederherzustellen",
     "reset.level2.requirement1.description": "Verwerfe den letzten Commit komplett mit --hard",
-    "reset.level2.requirement1.success": "✅ Commit und Änderungen komplett gelöscht! Zurück zu einem sauberen Zustand.",
+    "reset.level2.requirement1.success":
+        "✅ Commit und Änderungen komplett gelöscht! Zurück zu einem sauberen Zustand.",
     "reset.level2.requirement2.description": "Setze auf HEAD zurück (keine Änderung)",
     "reset.level2.requirement2.success": "✅ Richtig! --hard HEAD ändert nichts - du bist bereits dort.",
     "reset.level2.requirement3.description": "Spring mehrere Commits zurück mit HEAD~n",
@@ -467,13 +485,15 @@ const levels = {
     "reset.level3.requirement1.description": "Reset zu einem älteren Commit",
     "reset.level3.requirement1.success": "Perfekt! Du kannst jetzt zu jedem Punkt in der History zurückkehren.",
     "reset.level3.requirement2.description": "Finde und reset zum 'good version' Commit",
-    "reset.level3.requirement2.success": "✅ Exzellent! Du hast den guten Commit gefunden und alle schlechten Commits entfernt!",
+    "reset.level3.requirement2.success":
+        "✅ Exzellent! Du hast den guten Commit gefunden und alle schlechten Commits entfernt!",
     "reset.level3.story.title": "Zeitreise in Git",
     "reset.level3.story.narrative":
         '"Manchmal musst du mehrere Commits zurückgehen", erklärt Sarah. "Du kannst HEAD~2 für zwei Commits zurück verwenden, HEAD~3 für drei, und so weiter. Oder du kannst den spezifischen Commit-Hash verwenden."\n\nSie zeigt dir: "git log zeigt dir alle Commits mit ihren Hashes. Du kannst dann git reset <hash> verwenden, um zu diesem exakten Punkt zurückzugehen."',
     "reset.level3.story.realWorldContext":
         "Die Fähigkeit, zu jedem Punkt in der History zurückzukehren, ist eine von Gits mächtigsten Features. Es gibt dir Sicherheit beim Experimentieren - du kannst immer zurück.",
-    "reset.level3.story.taskIntroduction": "Verwende git reset, um zu einem früheren Commit in der History zurückzugehen.",
+    "reset.level3.story.taskIntroduction":
+        "Verwende git reset, um zu einem früheren Commit in der History zurückzugehen.",
 
     // Rebase Stage
     "rebase.name": "Rebasing",
@@ -484,7 +504,8 @@ const levels = {
     "rebase.level1.description": "Wende Commits von einem Branch auf einen anderen an",
     "rebase.level1.objective1": "Rebase den aktuellen Branch auf einen anderen Branch",
     "rebase.level1.hint1": "Du bist auf dem feature Branch - rebase ihn auf main mit: git rebase main",
-    "rebase.level1.hint2": "Dies schreibt die Historie um, indem deine Commits auf mains neueste Commits angewendet werden",
+    "rebase.level1.hint2":
+        "Dies schreibt die Historie um, indem deine Commits auf mains neueste Commits angewendet werden",
     "rebase.level1.hint3": "Verwende 'git log --oneline' um die Commit-Historie nach dem Rebase zu sehen",
     "rebase.level1.requirement1.description": "Rebase auf einen anderen Branch",
     "rebase.level1.requirement1.success": "Großartig! Du hast den Branch erfolgreich rebasiert.",
@@ -567,10 +588,11 @@ const levels = {
     "advanced.level1.requirement3.success": "Ausgezeichnet! Deine Tags sind jetzt für das Team verfügbar.",
     "advanced.level1.story.title": "Meilensteine markieren",
     "advanced.level1.story.narrative":
-        "\"Wir werden gleich Version 1.0 in Produktion deployen\", verkündet dein Team Lead. \"Bevor wir das tun, müssen wir diesen Commit taggen. Tags sind wie Lesezeichen in deiner Git-Historie - sie markieren wichtige Punkte wie Releases.\"\n\nSie fährt fort: \"Anders als Branches, die sich mit neuen Commits bewegen, bleiben Tags fix. Das bedeutet, wir können immer zurück zu genau dem Stand gehen, den wir in v1.0 ausgeliefert haben, selbst Jahre später.\"\n\n\"In professionellen Teams bekommt jedes Produktions-Release einen Tag. Das ist essenziell für Debugging, Rollbacks und Changelogs.\"",
+        '"Wir werden gleich Version 1.0 in Produktion deployen", verkündet dein Team Lead. "Bevor wir das tun, müssen wir diesen Commit taggen. Tags sind wie Lesezeichen in deiner Git-Historie - sie markieren wichtige Punkte wie Releases."\n\nSie fährt fort: "Anders als Branches, die sich mit neuen Commits bewegen, bleiben Tags fix. Das bedeutet, wir können immer zurück zu genau dem Stand gehen, den wir in v1.0 ausgeliefert haben, selbst Jahre später."\n\n"In professionellen Teams bekommt jedes Produktions-Release einen Tag. Das ist essenziell für Debugging, Rollbacks und Changelogs."',
     "advanced.level1.story.realWorldContext":
         "Tags sind Industriestandard für das Markieren von Releases. Sie ermöglichen semantische Versionierung (v1.0.0), machen Rollbacks sicher und helfen Teams, über spezifische Versionen zu kommunizieren.",
-    "advanced.level1.story.taskIntroduction": "Erstelle einen annotierten Tag um dieses Release zu markieren: git tag -a v1.0.1 -m 'Bug fix release'",
+    "advanced.level1.story.taskIntroduction":
+        "Erstelle einen annotierten Tag um dieses Release zu markieren: git tag -a v1.0.1 -m 'Bug fix release'",
 
     // Advanced Level 2: Git Log Advanced
     "advanced.level2.name": "Fortgeschrittene Commit-Historie",
@@ -590,7 +612,7 @@ const levels = {
     "advanced.level2.requirement3.success": "Ausgezeichnet! Du kannst jetzt durch Commit-Nachrichten suchen.",
     "advanced.level2.story.title": "Historie erkunden",
     "advanced.level2.story.narrative":
-        "\"Ein Bug wurde irgendwo in den letzten 50 Commits eingeführt\", seufzt dein Kollege. \"Wie finde ich ihn?\"\n\nDein Senior Developer lächelt: \"Git log ist dein Detektiv-Werkzeug. Das Standard-Format zeigt alles, aber das ist überwältigend. Lass mich dir die Power-Tools zeigen.\"\n\n\"git log --oneline zeigt jeden Commit in einer Zeile - perfekt zum Scannen. Füge --graph hinzu, um die Branch-Struktur zu sehen. Verwende --grep, um Commit-Nachrichten zu durchsuchen. Diese Skills verwandeln dich von einem Git-Nutzer in einen Git-Detektiv.\"",
+        '"Ein Bug wurde irgendwo in den letzten 50 Commits eingeführt", seufzt dein Kollege. "Wie finde ich ihn?"\n\nDein Senior Developer lächelt: "Git log ist dein Detektiv-Werkzeug. Das Standard-Format zeigt alles, aber das ist überwältigend. Lass mich dir die Power-Tools zeigen."\n\n"git log --oneline zeigt jeden Commit in einer Zeile - perfekt zum Scannen. Füge --graph hinzu, um die Branch-Struktur zu sehen. Verwende --grep, um Commit-Nachrichten zu durchsuchen. Diese Skills verwandeln dich von einem Git-Nutzer in einen Git-Detektiv."',
     "advanced.level2.story.realWorldContext":
         "Git log zu meistern ist essenziell für Debugging, Code-Archäologie und das Verstehen der Projekt-Evolution. Professionelle Entwickler nutzen diese Flags täglich.",
     "advanced.level2.story.taskIntroduction": "Erkunde die Commit-Historie mit: git log --oneline",
@@ -606,7 +628,7 @@ const levels = {
     "advanced.level3.requirement1.success": "Großartig! Du hast die Commit-Details und Dateiänderungen inspiziert.",
     "advanced.level3.story.title": "Commit-Forensik",
     "advanced.level3.story.narrative":
-        "\"Dieser Commit hat etwas kaputt gemacht, aber ich kann nicht erkennen, was sich geändert hat\", sagt dein Teamkollege.\n\n\"Verwende git show!\", antwortest du selbstbewusst. \"Es zeigt dir alles über einen Commit: die Nachricht, wer ihn gemacht hat, wann, und am wichtigsten - die tatsächlichen Code-Änderungen.\"\n\n\"Es ist wie eine Lupe für Commits. Essenziell für Code-Reviews, Debugging und das Verstehen dessen, was Kollegen geändert haben.\"",
+        '"Dieser Commit hat etwas kaputt gemacht, aber ich kann nicht erkennen, was sich geändert hat", sagt dein Teamkollege.\n\n"Verwende git show!", antwortest du selbstbewusst. "Es zeigt dir alles über einen Commit: die Nachricht, wer ihn gemacht hat, wann, und am wichtigsten - die tatsächlichen Code-Änderungen."\n\n"Es ist wie eine Lupe für Commits. Essenziell für Code-Reviews, Debugging und das Verstehen dessen, was Kollegen geändert haben."',
     "advanced.level3.story.realWorldContext":
         "git show ist ein fundamentales Werkzeug für Code-Review und Debugging. Es wird ständig in Pull Requests und bei der Untersuchung von Problemen verwendet.",
     "advanced.level3.story.taskIntroduction": "Inspiziere den letzten Commit mit: git show",
@@ -621,7 +643,8 @@ const levels = {
 
     // Archaeology Stage Levels
     "archaeology.level1.name": "Git Blame - Code-Archäologie",
-    "archaeology.level1.description": "Untersuche Code-Historie um Änderungen zu verstehen und den Ursprung von Bugs zu finden",
+    "archaeology.level1.description":
+        "Untersuche Code-Historie um Änderungen zu verstehen und den Ursprung von Bugs zu finden",
     "archaeology.level1.objective1": "Finde heraus wer bestimmte Zeilen geschrieben hat",
     "archaeology.level1.objective2": "Verfolge die Historie eines Bugs",
     "archaeology.level1.objective3": "Verstehe den Kontext von Code-Änderungen",
@@ -637,9 +660,12 @@ const levels = {
     "archaeology.level1.requirement3.description": "Untersuche die Details eines spezifischen Commits",
     "archaeology.level1.requirement3.success": "Commit-Details analysiert!",
     "archaeology.level1.story.title": "Der Fall des mysteriösen Bugs",
-    "archaeology.level1.story.narrative": "Ein kritischer Bug im Validierungscode betrifft 23% der europäischen Kunden. Der Code wurde von 4 verschiedenen Entwicklern über 18 Monate geschrieben. Dein Senior-Entwickler erklärt: 'Willkommen bei der Code-Archäologie! Git ist nicht nur Versionskontrolle - es ist deine Zeitmaschine. Jede Zeile hat eine Geschichte.' Nutze git blame, git log und git show um den Bug zu untersuchen und zu verstehen warum der Code so geschrieben wurde.",
-    "archaeology.level1.story.realWorldContext": "Code-Archäologie-Fähigkeiten sind essenziell für die Wartung großer, langlebiger Codebasen mit mehreren Mitwirkenden.",
-    "archaeology.level1.story.taskIntroduction": "Lerne Code-Historie zu untersuchen und die Quelle von Bugs mithilfe von Git-Forensik-Tools aufzuspüren.",
+    "archaeology.level1.story.narrative":
+        "Ein kritischer Bug im Validierungscode betrifft 23% der europäischen Kunden. Der Code wurde von 4 verschiedenen Entwicklern über 18 Monate geschrieben. Dein Senior-Entwickler erklärt: 'Willkommen bei der Code-Archäologie! Git ist nicht nur Versionskontrolle - es ist deine Zeitmaschine. Jede Zeile hat eine Geschichte.' Nutze git blame, git log und git show um den Bug zu untersuchen und zu verstehen warum der Code so geschrieben wurde.",
+    "archaeology.level1.story.realWorldContext":
+        "Code-Archäologie-Fähigkeiten sind essenziell für die Wartung großer, langlebiger Codebasen mit mehreren Mitwirkenden.",
+    "archaeology.level1.story.taskIntroduction":
+        "Lerne Code-Historie zu untersuchen und die Quelle von Bugs mithilfe von Git-Forensik-Tools aufzuspüren.",
 
     "archaeology.level2.name": "Commit-Forensik mit Git Log",
     "archaeology.level2.description": "Beherrsche fortgeschrittene Techniken zur Untersuchung komplexer Code-Historie",
@@ -658,12 +684,16 @@ const levels = {
     "archaeology.level2.requirement3.description": "Finde alle Commits von Sarah um ihre Beiträge zu verstehen",
     "archaeology.level2.requirement3.success": "Sarahs Beitrags-Historie analysiert!",
     "archaeology.level2.story.title": "Der Security-Audit-Pfad",
-    "archaeology.level2.story.narrative": "Deine Firma erhielt ein Security-Audit. Die Auditoren wollen eine vollständige Historie aller sicherheitsrelevanten Änderungen: Authentifizierung, Passwort-Handling, Verschlüsselung. Die Codebase hat 2.847 Commits über 3 Jahre. Dein Security-Lead erklärt Gits Such-Fähigkeiten: --grep für Nachrichten, -S für Code-Inhalt, --author für Mitwirkende. Erstelle einen umfassenden Audit-Trail mit fortgeschrittenen git log Techniken.",
-    "archaeology.level2.story.realWorldContext": "Fortgeschrittene Git-Log-Techniken sind essenziell für Security-Audits, Code-Reviews und das Verstehen komplexer Projekt-Historien.",
-    "archaeology.level2.story.taskIntroduction": "Beherrsche fortgeschrittene Git-Log-Techniken für umfassende Code-Historie-Untersuchung und forensische Analyse.",
+    "archaeology.level2.story.narrative":
+        "Deine Firma erhielt ein Security-Audit. Die Auditoren wollen eine vollständige Historie aller sicherheitsrelevanten Änderungen: Authentifizierung, Passwort-Handling, Verschlüsselung. Die Codebase hat 2.847 Commits über 3 Jahre. Dein Security-Lead erklärt Gits Such-Fähigkeiten: --grep für Nachrichten, -S für Code-Inhalt, --author für Mitwirkende. Erstelle einen umfassenden Audit-Trail mit fortgeschrittenen git log Techniken.",
+    "archaeology.level2.story.realWorldContext":
+        "Fortgeschrittene Git-Log-Techniken sind essenziell für Security-Audits, Code-Reviews und das Verstehen komplexer Projekt-Historien.",
+    "archaeology.level2.story.taskIntroduction":
+        "Beherrsche fortgeschrittene Git-Log-Techniken für umfassende Code-Historie-Untersuchung und forensische Analyse.",
 
     "archaeology.level3.name": "Git Reflog - Die Zeitmaschine",
-    "archaeology.level3.description": "Verwende Git reflog um verlorene Commits wiederherzustellen und Repository-Zustandsänderungen zu verstehen",
+    "archaeology.level3.description":
+        "Verwende Git reflog um verlorene Commits wiederherzustellen und Repository-Zustandsänderungen zu verstehen",
     "archaeology.level3.objective1": "Verstehe was reflog verfolgt",
     "archaeology.level3.objective2": "Stelle versehentlich gelöschte Commits wieder her",
     "archaeology.level3.objective3": "Finde verlorene Branch-Referenzen",
@@ -679,16 +709,20 @@ const levels = {
     "archaeology.level3.requirement3.description": "Erstelle einen Recovery-Branch von einem reflog-Eintrag",
     "archaeology.level3.requirement3.success": "Recovery-Branch erstellt!",
     "archaeology.level3.story.title": "Die große Git-Katastrophen-Wiederherstellung",
-    "archaeology.level3.story.narrative": "Es ist Freitag 16:30 Uhr. Dein Teamkollege Jake gerät in Panik: 'Ich habe versehentlich git reset --hard ausgeführt und zwei Wochen Arbeit verloren! Das Authentifizierungssystem, UI-Komponenten, Tests - alles weg!' Aber du erinnerst dich: Git vergisst nie. Git reflog verfolgt jeden Commit, Branch-Wechsel, Merge und Reset. Selbst 'gelöschte' Commits existieren im reflog für 90 Tage. Deine Mission: Untersuche das reflog, finde die verlorenen Commits und stelle Jakes Arbeit wieder her. Zeit der Held zu sein!",
-    "archaeology.level3.story.realWorldContext": "Git reflog ist ein mächtiges Wiederherstellungs-Tool das Entwickler vor katastrophalen Datenverlusten retten kann.",
-    "archaeology.level3.story.taskIntroduction": "Beherrsche Git reflog um der Held zu werden der 'verlorene' Arbeit wiederherstellen und den Tag retten kann.",
+    "archaeology.level3.story.narrative":
+        "Es ist Freitag 16:30 Uhr. Dein Teamkollege Jake gerät in Panik: 'Ich habe versehentlich git reset --hard ausgeführt und zwei Wochen Arbeit verloren! Das Authentifizierungssystem, UI-Komponenten, Tests - alles weg!' Aber du erinnerst dich: Git vergisst nie. Git reflog verfolgt jeden Commit, Branch-Wechsel, Merge und Reset. Selbst 'gelöschte' Commits existieren im reflog für 90 Tage. Deine Mission: Untersuche das reflog, finde die verlorenen Commits und stelle Jakes Arbeit wieder her. Zeit der Held zu sein!",
+    "archaeology.level3.story.realWorldContext":
+        "Git reflog ist ein mächtiges Wiederherstellungs-Tool das Entwickler vor katastrophalen Datenverlusten retten kann.",
+    "archaeology.level3.story.taskIntroduction":
+        "Beherrsche Git reflog um der Held zu werden der 'verlorene' Arbeit wiederherstellen und den Tag retten kann.",
 
     // Workflow Stage
     "workflow.name": "Git Workflows",
     "workflow.description": "Lerne professionelle Git-Workflows für Teamarbeit",
 
     "workflow.level1.name": "Feature Branch Workflow",
-    "workflow.level1.description": "Lerne den branchenüblichen Feature-Branch-Workflow, der von Teams weltweit verwendet wird",
+    "workflow.level1.description":
+        "Lerne den branchenüblichen Feature-Branch-Workflow, der von Teams weltweit verwendet wird",
     "workflow.level1.objective1": "Erstelle einen Feature-Branch von main",
     "workflow.level1.objective2": "Mache Commits mit beschreibenden Nachrichten",
     "workflow.level1.objective3": "Push deinen Feature-Branch zum Remote",
@@ -714,8 +748,7 @@ const levels = {
     "workflow.level1.requirement6.description": "Merge deinen Feature-Branch in main",
     "workflow.level1.requirement6.success": "Feature erfolgreich gemergt! So integrieren echte Teams neue Features.",
     "workflow.level1.story.title": "Die Feature-Fabrik",
-    "workflow.level1.story.narrative":
-        `Du bist Entwickler bei TechCorp und das Team folgt strikten Git-Workflows. Deine Managerin Sarah hat dir gerade ein neues Feature zugewiesen: die Implementierung der Benutzer-Authentifizierung.
+    "workflow.level1.story.narrative": `Du bist Entwickler bei TechCorp und das Team folgt strikten Git-Workflows. Deine Managerin Sarah hat dir gerade ein neues Feature zugewiesen: die Implementierung der Benutzer-Authentifizierung.
 
 "Denk dran," sagt Sarah, "wir committen nie direkt auf main. Verwende immer Feature-Branches und stelle sicher, dass deine Commits eine Geschichte erzählen."
 
@@ -779,8 +812,7 @@ In diesem Level simulieren wir den Workflow indem du pushst und direkt mergst, u
     "workflow.level2.requirement5.description": "Merge den Hotfix in main",
     "workflow.level2.requirement5.success": "Hotfix erfolgreich gemergt!",
     "workflow.level2.story.title": "Code Rot: Produktions-Notfall",
-    "workflow.level2.story.narrative":
-        `🚨 DRINGEND: Produktion ist down! 🚨
+    "workflow.level2.story.narrative": `🚨 DRINGEND: Produktion ist down! 🚨
 
 Um 2:47 Uhr morgens vibriert dein Telefon mit Alarmen. Das Zahlungssystem fällt aus und Kunden können keine Käufe abschließen. Der Bug-Tracker zeigt eine kritische Sicherheitslücke, die im letzten Release eingeführt wurde.
 
@@ -823,8 +855,7 @@ Zeit ist Geld. Lass uns das fixen!`,
     "workflow.level3.requirement6.description": "Tagge das Release mit Versionsnummer (z.B. 'v2.0.0')",
     "workflow.level3.requirement6.success": "Release getaggt! Version 2.0.0 ist jetzt live in Produktion!",
     "workflow.level3.story.title": "Der Release-Manager",
-    "workflow.level3.story.narrative":
-        `Glückwunsch! Du wurdest zum Release-Manager bei GitFlow Inc. befördert, einem Unternehmen das alle zwei Wochen wie ein Uhrwerk Software ausliefert.
+    "workflow.level3.story.narrative": `Glückwunsch! Du wurdest zum Release-Manager bei GitFlow Inc. befördert, einem Unternehmen das alle zwei Wochen wie ein Uhrwerk Software ausliefert.
 
 Deine Aufgabe ist es, das Release der Version 2.0 zu orchestrieren, welches beinhaltet:
 - Drei neue Features von verschiedenen Teams
@@ -890,10 +921,10 @@ Das ist Git-Management auf Enterprise-Level. Willkommen in der großen Liga!`,
     "teamwork.level1.requirement5.description": "Committe deine Änderungen mit einer klaren Nachricht",
     "teamwork.level1.requirement5.success": "Änderungen committed!",
     "teamwork.level1.requirement6.description": "Push deinen Feature-Branch zum Remote",
-    "teamwork.level1.requirement6.success": "Feature-Branch zum Remote gepusht! Dein Team kann deine Arbeit jetzt sehen.",
+    "teamwork.level1.requirement6.success":
+        "Feature-Branch zum Remote gepusht! Dein Team kann deine Arbeit jetzt sehen.",
     "teamwork.level1.story.title": "Dein erster Tag im Team",
-    "teamwork.level1.story.narrative":
-        `Es ist dein erster Tag bei DevTeam Pro, einem schnell wachsenden Startup. Du sitzt neben María, deiner Team-Leiterin.
+    "teamwork.level1.story.narrative": `Es ist dein erster Tag bei DevTeam Pro, einem schnell wachsenden Startup. Du sitzt neben María, deiner Team-Leiterin.
 
 "Willkommen im Team!" sagt sie enthusiastisch. "Wir arbeiten alle am gleichen Codebase. Hier ist, wie wir zusammenarbeiten:"
 
@@ -948,8 +979,7 @@ Das ist Git-Management auf Enterprise-Level. Willkommen in der großen Liga!`,
     "teamwork.level2.requirement5.description": "Committe die Merge-Resolution",
     "teamwork.level2.requirement5.success": "Merge-Konflikt gelöst!",
     "teamwork.level2.story.title": "Die Konflikt-Zone",
-    "teamwork.level2.story.narrative":
-        `Du arbeitest an einem Feature während dein Teamkollege Jake am gleichen File arbeitet. Ihr habt beide dieselbe Funktion modifiziert!
+    "teamwork.level2.story.narrative": `Du arbeitest an einem Feature während dein Teamkollege Jake am gleichen File arbeitet. Ihr habt beide dieselbe Funktion modifiziert!
 
 Als du versuchst deinen Code zu mergen, siehst du:
 
@@ -1003,7 +1033,8 @@ Zeit das zu fixen und weiterzumachen!`,
     "teamwork.level3.hint4": "In echten Projekten würdest du GitHub/GitLab für PRs verwenden",
     "teamwork.level3.hint5": "Push zum Remote: git push origin feature/password-reset",
     "teamwork.level3.hint6": "Alternative mit Kurzform: git push -u origin feature/password-reset",
-    "teamwork.level3.hint7": "Hinweis: Verwende den Branch-Namen den du erstellt hast (nicht 'feature/password-reset' falls du einen anderen Namen gewählt hast)",
+    "teamwork.level3.hint7":
+        "Hinweis: Verwende den Branch-Namen den du erstellt hast (nicht 'feature/password-reset' falls du einen anderen Namen gewählt hast)",
     "teamwork.level3.requirement1.description": "Erstelle einen Feature-Branch",
     "teamwork.level3.requirement1.success": "Feature-Branch erstellt!",
     "teamwork.level3.requirement2.description": "Mache und committe Änderungen",
@@ -1013,10 +1044,10 @@ Zeit das zu fixen und weiterzumachen!`,
     "teamwork.level3.requirement4.description": "Wechsle zu main Branch",
     "teamwork.level3.requirement4.success": "Zu main gewechselt!",
     "teamwork.level3.requirement5.description": "Merge deinen Feature-Branch nach 'Review'",
-    "teamwork.level3.requirement5.success": "Code gereviewed und gemergt! So liefern professionelle Teams qualitativ hochwertigen Code.",
+    "teamwork.level3.requirement5.success":
+        "Code gereviewed und gemergt! So liefern professionelle Teams qualitativ hochwertigen Code.",
     "teamwork.level3.story.title": "Der Code-Review",
-    "teamwork.level3.story.narrative":
-        `Du hast gerade ein wichtiges Feature fertiggestellt: ein neues Dashboard für deine App. Zeit es durch Code-Review zu bekommen!
+    "teamwork.level3.story.narrative": `Du hast gerade ein wichtiges Feature fertiggestellt: ein neues Dashboard für deine App. Zeit es durch Code-Review zu bekommen!
 
 **Der Pull-Request-Prozess:**
 
@@ -1110,8 +1141,7 @@ Zeit zu mergen!`,
     "mastery.level2.requirement3.description": "Teste Hook-Automatisierung mit Commits",
     "mastery.level2.requirement3.success": "Hook-basierte Automatisierung gemeistert!",
     "mastery.level2.story.title": "Der Automatisierungs-Architekt",
-    "mastery.level2.story.narrative":
-        `Du bist jetzt Senior Developer bei AutomationFirst Inc. und dein Team verschwendet Stunden mit dem Fixen von Problemen die automatisch hätten gefangen werden können.
+    "mastery.level2.story.narrative": `Du bist jetzt Senior Developer bei AutomationFirst Inc. und dein Team verschwendet Stunden mit dem Fixen von Problemen die automatisch hätten gefangen werden können.
 
 **Das Problem:**
 - Entwickler committen Code mit Linting-Fehlern
@@ -1199,7 +1229,8 @@ Zeit zu automatisieren!`,
         "Verstehe Git Hooks und wie sie Workflows automatisieren und Code-Qualität erzwingen.",
 
     "mastery.level3.name": "Die ultimative Git-Herausforderung",
-    "mastery.level3.description": "Kombiniere alles was du gelernt hast in einer komplexen, praxisnahen Herausforderung",
+    "mastery.level3.description":
+        "Kombiniere alles was du gelernt hast in einer komplexen, praxisnahen Herausforderung",
     "mastery.level3.objective1": "Multi-Branch-Feature-Entwicklung bewältigen",
     "mastery.level3.objective2": "Merge-Konflikte lösen",
     "mastery.level3.objective3": "Saubere Historie mit Rebase aufrechterhalten",
@@ -1219,8 +1250,7 @@ Zeit zu automatisieren!`,
     "mastery.level3.requirement4.description": "Synchronisiere erfolgreich mit Remote",
     "mastery.level3.requirement4.success": "Remote-Koordination gemeistert! Du bist jetzt ein Git-Meister!",
     "mastery.level3.story.title": "Die ultimative Git-Challenge: Projekt-Launch-Tag",
-    "mastery.level3.story.narrative":
-        `🚀 **Heute ist Launch-Tag für dein Startup!** 🚀
+    "mastery.level3.story.narrative": `🚀 **Heute ist Launch-Tag für dein Startup!** 🚀
 
 Du bist Lead Developer bei QuickShip, einem vielversprechenden Startup. In 8 Stunden launched ihr die App. Aber es gibt Chaos:
 
@@ -1339,6 +1369,325 @@ Viel Erfolg, Git-Meister! 🚀`,
     "mastery.level3.story.taskIntroduction":
         "Beweise deine Git-Meisterschaft indem du einen komplexen, praxisnahen Projekt-Launch mit mehreren Features, Hotfixes, Konflikten und Release-Management bewältigst.",
 
+    // Intro Level 4
+    "intro.level4.name": "Änderungen inspizieren",
+    "intro.level4.description": "Sieh genau, was sich in deinen Dateien geändert hat",
+    "intro.level4.objective1": "Finde heraus, welche Dateien geändert wurden",
+    "intro.level4.objective2": "Untersuche die genauen Änderungen Zeile für Zeile",
+    "intro.level4.hint1": "Verwende `git status`, um zu sehen, welche Dateien geändert wurden",
+    "intro.level4.hint2": "Verwende `git diff`, um die genauen Änderungen in diesen Dateien zu sehen",
+    "intro.level4.hint3": "Mit `git diff <datei>` kannst du auch eine einzelne Datei untersuchen",
+    "intro.level4.requirement1.description": "Prüfe, welche Dateien geändert wurden",
+    "intro.level4.requirement1.success": "Gut! `git status` zeigt, dass src/config.js geändert wurde.",
+    "intro.level4.requirement2.description": "Zeige die genauen Änderungen mit git diff",
+    "intro.level4.requirement2.success":
+        "Ausgezeichnet! Jetzt siehst du genau, welche Zeilen sich geändert haben, bevor irgendetwas committet wird.",
+    "intro.level4.story.title": "Die mysteriöse Änderung",
+    "intro.level4.story.narrative":
+        'Montagmorgen bei TechStart. Alex kommt mit besorgtem Blick an deinen Schreibtisch.\n\n"Bevor sie am Freitag gegangen ist, hat Sarah etwas an der Website-Konfiguration geändert - aber jetzt ist sie im Urlaub und wir releasen heute. Ich muss genau wissen, was sie geändert hat."\n\nEr erklärt: "`git status` sagt dir nur, WELCHE Dateien sich geändert haben. Um zu sehen, WAS sich darin geändert hat, nutzen wir `git diff`. Der Befehl vergleicht deine Arbeitsdateien mit dem letzten Commit und zeigt jede hinzugefügte und entfernte Zeile."\n\n"Prüfe zuerst den Status des Repositories und untersuche die Änderung dann mit `git diff`. Zeilen mit + wurden hinzugefügt, Zeilen mit - wurden entfernt."',
+    "intro.level4.story.realWorldContext":
+        "Entwickler führen `git diff` viele Male am Tag aus - besonders direkt vor dem Committen. Wer seine eigenen Änderungen zuerst überprüft, entdeckt Debug-Flags, vergessenen Testcode und Secrets, bevor sie in der Projekt-Historie landen.",
+    "intro.level4.story.taskIntroduction":
+        "Finde mit `git status` die geänderte Datei und sieh dir dann mit `git diff` genau an, was sich geändert hat.",
+
+    // Files Level 4
+    "files.level4.name": "Dateien umbenennen",
+    "files.level4.description": "Benenne eine Datei mit Git um und erhalte ihre Historie",
+    "files.level4.objective1": "Benenne src/app-config.js mit git mv in src/config.js um",
+    "files.level4.objective2": "Committe die Umbenennung mit einer aussagekräftigen Nachricht",
+    "files.level4.hint1": "Verwende den Befehl `git mv <alter-Name> <neuer-Name>`",
+    "files.level4.hint2": "`git mv` benennt die Datei um und staged die Änderung in einem Schritt",
+    "files.level4.hint3": "Schließe mit `git commit -m 'Deine Nachricht'` ab, um die Umbenennung festzuhalten",
+    "files.level4.requirement1.description": "Benenne die Datei mit git mv um",
+    "files.level4.requirement1.success":
+        "Sehr gut! Git hat die Datei umbenannt und die Änderung bereits für dich gestaged.",
+    "files.level4.requirement2.description": "Committe die Umbenennung mit einer Nachricht",
+    "files.level4.requirement2.success": "Perfekt! Die Umbenennung ist jetzt Teil der Projekthistorie.",
+    "files.level4.story.title": "Ordnung im Code",
+    "files.level4.story.narrative":
+        '"Eine Sache noch vor dem Code-Review", sagt Alex und zeigt auf deinen Dateibaum. "Wir haben uns im Team auf kurze, einheitliche Dateinamen geeinigt. app-config.js soll einfach config.js heißen."\n\nEr ergänzt: "Benenne sie aber nicht einfach im Datei-Explorer um! Nutze stattdessen `git mv` - das benennt die Datei um und staged die Änderung in einem einzigen Schritt, sodass Git die Historie der Datei behält."',
+    "files.level4.story.realWorldContext":
+        "Dateien werden ständig umbenannt, wenn Projekte wachsen und sich Namenskonventionen weiterentwickeln. Mit `git mv` hält Git die Umbenennung sauber fest, statt nur eine Löschung und eine völlig neue Datei zu sehen.",
+    "files.level4.story.taskIntroduction":
+        "Benenne src/app-config.js mit `git mv` in src/config.js um und committe die Änderung anschließend.",
+
+    // Branches Level 6
+    "branches.level6.name": "Branch-Aufräumarbeiten",
+    "branches.level6.description": "Lösche gemergte und verworfene Branches, um dein Repository aufgeräumt zu halten",
+    "branches.level6.objective1": "Lösche den gemergten Branch feature/search-filters",
+    "branches.level6.objective2": "Lösche den verworfenen Branch experiment/new-ui mit Force",
+    "branches.level6.hint1": "Führe `git branch` aus, um zu sehen, welche Branches noch existieren",
+    "branches.level6.hint2":
+        "Verwende `git branch -d feature/search-filters` - das kleine -d löscht nur Branches, die vollständig gemergt sind",
+    "branches.level6.hint3":
+        "Ungemergte Branches lehnt Git mit -d ab. Verwende `git branch -D experiment/new-ui`, um das Löschen zu erzwingen",
+    "branches.level6.requirement1.description": "Lösche den gemergten Branch feature/search-filters mit git branch -d",
+    "branches.level6.requirement1.success":
+        "Gut gemacht! Git hat das Löschen erlaubt, weil alles aus feature/search-filters bereits in main ist.",
+    "branches.level6.requirement2.description": "Lösche den verworfenen Branch experiment/new-ui mit git branch -D",
+    "branches.level6.requirement2.success":
+        "Perfekt! Mit -D hast du das ungemergte Experiment verworfen - deine Branch-Liste ist wieder sauber.",
+    "branches.level6.story.title": "Frühjahrsputz im Repository",
+    "branches.level6.story.narrative":
+        '"Unsere Branch-Liste wird langsam unübersichtlich", sagt Alex und scrollt durchs Repository. "Die Suchfilter aus feature/search-filters wurden schon vor Wochen in main gemergt, und experiment/new-ui war ein Prototyp, gegen den wir uns entschieden haben."\n\nEr erklärt: "Verwende `git branch -d` für den gemergten Branch - das kleine -d ist sicher, weil Git prüft, dass nichts verloren geht. Beim Experiment wird Git sich weigern, denn seine Commits wurden nie gemergt. Dafür gibt es das große -D: Es löscht den Branch auch mit ungemergter Arbeit - benutze es also nur, wenn du sicher bist."',
+    "branches.level6.story.realWorldContext":
+        "In echten Projekten sammeln sich mit der Zeit Dutzende verwaiste Branches an. Gemergte Branches regelmäßig zu löschen hält das Repository übersichtlich. Das kleine -d ist der sichere Standard, weil Git ungemergte Commits schützt, während -D Arbeit bewusst verwirft - die Commits lassen sich oft noch über das Reflog retten, aber darauf solltest du dich nie verlassen.",
+    "branches.level6.story.taskIntroduction":
+        "Lösche zuerst den gemergten Branch feature/search-filters mit `git branch -d` und erzwinge danach das Löschen des verworfenen Branches experiment/new-ui mit `git branch -D`.",
+
+    // Merge Level 4
+    "merge.level4.name": "Merge-Konflikte lösen",
+    "merge.level4.description": "Löse einen Merge-Konflikt von Hand und schließe den Merge ab",
+    "merge.level4.objective1": "Prüfe mit git status, welche Datei im Konflikt steht",
+    "merge.level4.objective2": "Bearbeite src/api.js, entferne die Konfliktmarker und stage die gelöste Datei",
+    "merge.level4.objective3": "Schließe den Merge mit einem Commit ab",
+    "merge.level4.hint1": "Starte mit `git status`, um zu sehen, welche Dateien im Konflikt stehen",
+    "merge.level4.hint2":
+        "Öffne `src/api.js` und entferne die Konfliktmarker (`<<<<<<<`, `=======`, `>>>>>>>`) — behalte den Code, den das Team braucht, und stage die Datei danach mit `git add .`",
+    "merge.level4.hint3": "Schließe den Merge mit `git commit -m 'Resolve merge conflict'` ab",
+    "merge.level4.requirement1.description": "Untersuche den Konflikt mit git status",
+    "merge.level4.requirement1.success":
+        "Gut! Jetzt weißt du genau, welche Datei deine Aufmerksamkeit braucht: src/api.js.",
+    "merge.level4.requirement2.description": "Stage die gelöste Datei",
+    "merge.level4.requirement2.success": "Super! Die gelöste Datei ist gestagt — kein Konfliktmarker mehr übrig.",
+    "merge.level4.requirement3.description": "Committe, um den Merge abzuschließen",
+    "merge.level4.requirement3.success": "Stark! Du hast deinen ersten Merge-Konflikt wie ein Profi gelöst.",
+    "merge.level4.story.title": "Kein Zurückweichen mehr",
+    "merge.level4.story.narrative":
+        '"Erinnerst du dich an den Merge, den wir abgebrochen haben?", fragt Sarah mit einem Lächeln. "Der Rate-Limiter muss heute live gehen — diesmal lösen wir den Konflikt, statt auszuweichen."\n\nSie zeigt auf deinen Bildschirm: "Git hat den Konflikt direkt in der Datei markiert. Alles zwischen <<<<<<< HEAD und ======= ist unsere Version aus main, alles darunter bis >>>>>>> kommt aus feature/rate-limit. Deine Aufgabe: Bearbeite die Datei, behalte, was wir brauchen, und lösche die Marker. Danach `git add` und `git commit` — so schließt man einen Merge ab."',
+    "merge.level4.story.realWorldContext":
+        "Konflikte zu lösen gehört in Teams zum Alltag. Die Schritte sind immer gleich: 1) Konfliktdatei öffnen, 2) entscheiden, welcher Code überlebt (oft eine Kombination aus beidem), 3) Marker entfernen, 4) Datei stagen und committen. Moderne Editoren heben die Marker für dich hervor, aber darunter steckt genau dieser Workflow.",
+    "merge.level4.story.taskIntroduction":
+        "Ein Merge von feature/rate-limit nach main ist mit einem Konflikt in src/api.js stehen geblieben. Prüfe den Status, löse den Konflikt in der Datei, stage sie und schließe den Merge mit einem Commit ab.",
+
+    // Rebase Level 5
+    "rebase.level5.name": "Rebasen ohne Branch-Wechsel",
+    "rebase.level5.description":
+        "Lerne die Zwei-Argumente-Form von git rebase kennen, um einen Branch zu rebasen, ohne ihn vorher auszuchecken",
+    "rebase.level5.objective1":
+        "Rebase den Branch feature/payment-api mit der Zwei-Argumente-Form von git rebase auf main",
+    "rebase.level5.hint1":
+        "Du kannst zwei Argumente übergeben: `git rebase <upstream> <branch>` — Git checkt `<branch>` aus und rebased ihn in einem Schritt auf `<upstream>`",
+    "rebase.level5.hint2": "Versuche `git rebase main feature/payment-api` — du musst vorher nicht den Branch wechseln",
+    "rebase.level5.requirement1.description": "Rebase feature/payment-api mit der Zwei-Argumente-Form auf main",
+    "rebase.level5.requirement1.success":
+        "Stark! Du hast feature/payment-api mit einem einzigen Befehl auf main rebased — ganz ohne Branch-Wechsel.",
+    "rebase.level5.story.title": "Ein Befehl, zwei Argumente",
+    "rebase.level5.story.narrative":
+        '"Heute Abend shippen wir das Payments-Release", sagt Alex mit Blick auf das Board. "Du bist gerade auf main und prüfst das Release — und der Branch feature/payment-api hinkt schon wieder hinterher."\n\nEr grinst: "Hier ist ein Trick, den viele übersehen: git rebase akzeptiert ein zweites Argument. Statt zuerst den Branch zu wechseln, sagst du Git direkt im Befehl, welcher Branch rebased werden soll — Git checkt ihn aus und spielt ihn in einem Rutsch auf main neu ein."',
+    "rebase.level5.story.realWorldContext":
+        "Die Zwei-Argumente-Form git rebase <upstream> <branch> ist im Alltag eine praktische Abkürzung: Sie checkt <branch> aus und rebased ihn in einem einzigen Schritt auf <upstream>. Das spart einen zusätzlichen Checkout und hält stressige Release-Tage im Fluss.",
+    "rebase.level5.story.taskIntroduction":
+        "Du bist auf main. Rebase feature/payment-api mit einem einzigen Befehl auf main: git rebase main feature/payment-api",
+
+    // Remote Level 4
+    "remote.level4.name": "Upstream-Tracking mit -u",
+    "remote.level4.description": "Setze einmal ein Upstream und pushe danach ganz ohne Argumente",
+    "remote.level4.objective1": "Veröffentliche den login-form Branch mit Upstream-Tracking",
+    "remote.level4.objective2": "Committe die verbesserten Fehlermeldungen",
+    "remote.level4.objective3": "Pushe erneut — diesmal ganz ohne Argumente",
+    "remote.level4.hint1":
+        "Veröffentliche zuerst den Branch: `git push -u origin login-form`. Das `-u` Flag verknüpft deinen lokalen Branch mit dem Remote-Branch.",
+    "remote.level4.hint2":
+        "Stage und committe dann den Feinschliff: `git add .` gefolgt von `git commit -m 'Polish login error messages'`",
+    "remote.level4.hint3":
+        "Da das Upstream gesetzt ist, reicht jetzt ein einfaches `git push` — ohne Remote und ohne Branch-Namen.",
+    "remote.level4.requirement1.description":
+        "Veröffentliche den login-form Branch mit `git push -u origin login-form`",
+    "remote.level4.requirement1.success":
+        "Branch veröffentlicht! Git merkt sich jetzt, dass login-form origin/login-form trackt.",
+    "remote.level4.requirement2.description": "Committe die verbesserten Fehlermeldungen in src/login.js",
+    "remote.level4.requirement2.success":
+        "Super! Dein Feinschliff ist lokal committet — nur noch einen Schritt vom Team entfernt.",
+    "remote.level4.requirement3.description": "Pushe deinen neuen Commit mit einem einfachen `git push`",
+    "remote.level4.requirement3.success":
+        "Perfekt! Ein einfaches `git push` hat gereicht — das ist die Stärke von Upstream-Tracking.",
+    "remote.level4.story.title": "Einmal setzen, für immer pushen",
+    "remote.level4.story.narrative":
+        '"Das Login-Formular sieht fantastisch aus!", sagt Alex und rollt mit seinem Stuhl an deinen Schreibtisch bei TechStart. "Veröffentliche deinen `login-form` Branch, damit das Team mit dem Review starten kann. Und tu dir selbst einen Gefallen: Pushe ihn mit `-u`. Dieses Flag setzt das Upstream — Git merkt sich, zu welchem Remote-Branch dein lokaler Branch gehört."\n\nEr grinst: "In `src/login.js` sehe ich noch eine uncommittete Verbesserung — die freundlicheren Fehlermeldungen. Veröffentliche zuerst den Branch, committe dann den Feinschliff und pushe erneut. Achte genau hin: Beim zweiten Mal reicht ein einfaches `git push`. Kein Remote, kein Branch-Name — Git weiß schon, wohin es geht."',
+    "remote.level4.story.realWorldContext":
+        "Der allererste Push eines neuen Branches ist fast immer `git push -u origin <branch>`. Sobald das Upstream gesetzt ist, funktionieren `git push` und `git pull` ohne Argumente, und `git status` kann dir sagen, wie viele Commits du dem Remote voraus oder hinterher bist. Ohne Upstream stoppt dich Git mit dem berühmten Fehler: 'The current branch has no upstream branch.'",
+    "remote.level4.story.taskIntroduction":
+        "Veröffentliche den Branch mit `git push -u origin login-form`, committe dann die verbesserten Fehlermeldungen und pushe sie mit einem einfachen `git push`.",
+
+    // Workflow Level 4
+    "workflow.level4.name": "Der perfekte Commit: Amend",
+    "workflow.level4.description":
+        "Repariere deinen letzten Commit mit git commit --amend, bevor jemand den Fehler bemerkt",
+    "workflow.level4.objective1": "Stage die vergessene Konfigurationsdatei",
+    "workflow.level4.objective2": "Ergänze deinen letzten Commit mit der Datei und korrigiere die Nachricht",
+    "workflow.level4.objective3": "Pushe den korrigierten Commit zum Remote",
+    "workflow.level4.hint1":
+        "Führe `git status` aus — die aktualisierte /src/config.js wurde nie gestaged, dein Fix-Commit ist also unvollständig.",
+    "workflow.level4.hint2": "Stage die fehlende Datei mit `git add src/config.js` (oder `git add .`).",
+    "workflow.level4.hint3":
+        "Nutze `git commit --amend -m 'Fix login timeout'`, um die gestagte Datei in deinen letzten Commit aufzunehmen UND den Tippfehler in der Nachricht zu korrigieren.",
+    "workflow.level4.hint4":
+        "Amend ist hier sicher, weil der Commit noch nie gepusht wurde. Schließe mit `git push origin main` ab. Ändere niemals Commits, die bereits gepusht sind!",
+    "workflow.level4.requirement1.description": "Stage die vergessene Konfigurationsdatei",
+    "workflow.level4.requirement1.success":
+        "Datei gestaged! Jetzt kann sie in den vorherigen Commit aufgenommen werden.",
+    "workflow.level4.requirement2.description": "Ergänze den letzten Commit mit 'git commit --amend'",
+    "workflow.level4.requirement2.success":
+        "Commit ergänzt! Ein Bug, ein sauberer Commit — inklusive Konfigurationsdatei und fehlerfreier Nachricht.",
+    "workflow.level4.requirement3.description": "Pushe den korrigierten Commit mit 'git push origin main'",
+    "workflow.level4.requirement3.success":
+        "Gepusht! Niemand wird je von dem Tippfehler erfahren — deine History sieht aus, als hättest du alles beim ersten Mal richtig gemacht.",
+    "workflow.level4.story.title": "Der fast perfekte Commit",
+    "workflow.level4.story.narrative":
+        'Es ist Freitag, 16:55 Uhr bei TechStart. Du hast gerade den Fix für den Login-Timeout-Bug committet und greifst schon nach deiner Jacke, als Teamlead Alex mit dem Stuhl an deinen Schreibtisch rollt.\n\n"Moment — schau dir deinen letzten Commit an," sagt Alex und zeigt auf den Bildschirm.\n\n`git log` zeigt deine Commit-Nachricht: **"Fix login timout"**. Autsch, ein Tippfehler. Und `git status` offenbart etwas Schlimmeres: `src/config.js` — die Datei, die den Session-Timeout tatsächlich auf 30 Minuten erhöht — wurde nie gestaged. Dein "Fix"-Commit enthält nur die halbe Lösung.\n\n"Keine Panik," grinst Alex. "Du hast noch nicht gepusht. Das heißt, wir können den letzten Commit umschreiben, als wäre der Fehler nie passiert."\n\n**Was macht `git commit --amend`?**\nEs ERSETZT deinen letzten Commit durch eine korrigierte Version:\n- Alles, was aktuell gestaged ist, wird in den Commit aufgenommen\n- Mit `-m` kannst du eine ganz neue Commit-Nachricht schreiben\n- Der alte Commit wird verworfen — die History bleibt sauber\n\n**Der Rettungsplan:**\n1. Stage die vergessene Datei: `git add src/config.js`\n2. Schreibe den Commit um: `git commit --amend -m "Fix login timeout"`\n3. Liefere aus: `git push origin main`\n\n**Die goldene Regel:** Ändere nur Commits, die NOCH NICHT gepusht wurden. Amend schreibt die History um — wenn Teamkollegen den alten Commit bereits gepullt haben, verursachst du Chaos in jedem Klon. Lokal und ungepusht? Dann nur zu.',
+    "workflow.level4.story.realWorldContext":
+        "Eine Datei zu vergessen oder einen Tippfehler in der Commit-Nachricht zu machen, passiert jedem Entwickler — jede Woche. `git commit --amend` ist das Alltagswerkzeug für eine saubere History: eine logische Änderung, ein polierter Commit. Professionelle Teams folgen einer eisernen Regel: Ändere niemals einen Commit, der bereits gepusht wurde, denn das Umschreiben geteilter History zerstört die Repositories deiner Teamkollegen.",
+    "workflow.level4.story.taskIntroduction":
+        "Rette deinen letzten Commit: Stage die vergessene Konfigurationsdatei, ergänze den Commit mit korrigierter Nachricht und pushe eine History, die so sauber ist, dass niemand je etwas merken wird.",
+
+    // Reset Level 4
+    "reset.level4.name": "Sicheres Rückgängigmachen mit Revert",
+    "reset.level4.description": "Mache einen öffentlichen Commit rückgängig, ohne die Historie umzuschreiben",
+    "reset.level4.objective1": "Untersuche die Historie, um den fehlerhaften Commit zu finden",
+    "reset.level4.objective2": "Mache den letzten Commit sicher mit revert rückgängig",
+    "reset.level4.hint1": "Nutze `git log --oneline` für eine kompakte Historie",
+    "reset.level4.hint2": "`git revert HEAD` erstellt einen neuen Commit, der den letzten aufhebt",
+    "reset.level4.hint3":
+        "Anders als `git reset` schreibt revert niemals Historie um, die Teammitglieder bereits gepullt haben",
+    "reset.level4.requirement1.description": "Zeige die kompakte Commit-Historie",
+    "reset.level4.requirement1.success": "Da ist er — 'Quick fix without review' ist der fehlerhafte Commit ganz oben.",
+    "reset.level4.requirement2.description": "Mache den letzten Commit rückgängig",
+    "reset.level4.requirement2.success":
+        "Perfekt! Ein neuer Revert-Commit hebt die Änderung auf — die Historie bleibt intakt.",
+    "reset.level4.story.title": "Der Fix, der die Rückerstattungen zerstörte",
+    "reset.level4.story.narrative":
+        "Alarmstufe Rot! Jemand hat einen 'Quick Fix' ohne Review direkt auf main gepusht — und er zerstört den Rückerstattungs-Flow.\n\nAlex eilt herbei: \"Wir können hier kein `git reset` verwenden. Der Commit ist bereits öffentlich und das ganze Team hat ihn gepullt. Wenn wir jetzt die Historie umschreiben, geht bei allen das Repository kaputt.\n\nGenau dafür gibt es `git revert`: Es erstellt einen NEUEN Commit, der den fehlerhaften aufhebt. Die Historie bleibt intakt und alle bleiben synchron.\"",
+    "reset.level4.story.realWorldContext":
+        "Auf gemeinsamen Branches nutzen professionelle Teams fast immer revert statt reset. Öffentliche Historie umzuschreiben verursacht Chaos bei allen, die sie bereits gepullt haben.",
+    "reset.level4.story.taskIntroduction":
+        "Prüfe die Historie mit `git log --oneline` und mache dann den fehlerhaften Commit mit `git revert HEAD` rückgängig.",
+
+    // Stash Level 4
+    "stash.level4.name": "Behalte dein Backup: Stash Apply",
+    "stash.level4.description": "Wende gestashte Arbeit an und behalte den Stash als Backup",
+    "stash.level4.objective1": "Stashe dein riskantes Experiment",
+    "stash.level4.objective2": "Hole die Arbeit mit apply zurück (Stash bleibt erhalten)",
+    "stash.level4.objective3": "Committe das Experiment, sobald du ihm vertraust",
+    "stash.level4.hint1": "`git stash` sichert deine Änderungen und hinterlässt einen sauberen Arbeitsbereich",
+    "stash.level4.hint2":
+        "`git stash apply` stellt die Änderungen wieder her, behält aber eine Kopie im Stash — anders als `git stash pop`",
+    "stash.level4.hint3": 'Nach dem Stagen mit `git add` committest du mit `git commit -m "Nachricht"`',
+    "stash.level4.requirement1.description": "Stashe deine aktuellen Änderungen",
+    "stash.level4.requirement1.success": "Experiment sicher verstaut — dein Arbeitsbereich ist sauber.",
+    "stash.level4.requirement2.description": "Wende den Stash an, ohne ihn zu löschen",
+    "stash.level4.requirement2.success": "Arbeit wiederhergestellt — und der Stash enthält weiterhin dein Backup!",
+    "stash.level4.requirement3.description": "Committe das Experiment",
+    "stash.level4.requirement3.success":
+        "Committet! Das Stash-Backup hat dich davor bewahrt, die riskante Arbeit zu verlieren.",
+    "stash.level4.story.title": "Das riskante Experiment",
+    "stash.level4.story.narrative":
+        'Du experimentierst mit Fuzzy-Suche — vielversprechend, aber riskant.\n\nAlex schlägt vor: "Bevor du weitermachst, stashe es. Und hier ein Profi-Trick: Nutze `git stash apply` statt `pop`, wenn du es zurückholst. Apply stellt deine Änderungen wieder her, BEHÄLT aber die Kopie im Stash. Wenn dein nächster Schritt schiefgeht, ist dein Backup noch da."',
+    "stash.level4.story.realWorldContext":
+        "Entwickler nutzen `apply` statt `pop`, wenn sie ein Sicherheitsnetz wollen: Der Stash-Eintrag bleibt als Backup bestehen, bis sie ihn explizit löschen.",
+    "stash.level4.story.taskIntroduction":
+        "Stashe das Experiment, hole es mit `git stash apply` zurück und committe es dann.",
+
+    // Teamwork Level 4
+    "teamwork.level4.name": "Review vor dem Ausliefern",
+    "teamwork.level4.description": "Prüfe deine eigenen Änderungen mit git diff, bevor du committest",
+    "teamwork.level4.objective1": "Prüfe deine ungestagten Änderungen",
+    "teamwork.level4.objective2": "Stage die geprüften Änderungen",
+    "teamwork.level4.objective3": "Kontrolliere, was gleich committet wird",
+    "teamwork.level4.objective4": "Committe die geprüften Änderungen",
+    "teamwork.level4.hint1": "`git diff` zeigt Änderungen im Arbeitsverzeichnis, die noch nicht gestagt sind",
+    "teamwork.level4.hint2": "`git diff --staged` zeigt genau, was in den nächsten Commit wandert",
+    "teamwork.level4.hint3": "Erst prüfen, dann `git add`, nochmal mit `--staged` prüfen, dann committen",
+    "teamwork.level4.requirement1.description": "Zeige deine ungestagten Änderungen",
+    "teamwork.level4.requirement1.success": "Gute Angewohnheit! Du hast den Diff geprüft, bevor du etwas gestagt hast.",
+    "teamwork.level4.requirement2.description": "Stage die Änderungen",
+    "teamwork.level4.requirement2.success": "Änderungen gestagt — bereit für den letzten Check.",
+    "teamwork.level4.requirement3.description": "Zeige die gestagten Änderungen",
+    "teamwork.level4.requirement3.success": "Genau das landet im Commit. Keine Überraschungen.",
+    "teamwork.level4.requirement4.description": "Committe die geprüften Änderungen",
+    "teamwork.level4.requirement4.success": "Mit Vertrauen ausgeliefert — zweimal geprüft, einmal committet!",
+    "teamwork.level4.story.title": "Die Selbst-Review-Gewohnheit",
+    "teamwork.level4.story.narrative":
+        'Deine Kollegin Sarah hat sich gerade blamiert: Sie hat versehentlich eine Debug-Zeile committet und der Reviewer hat es im Pull Request entdeckt. Peinlich.\n\nAlex teilt die goldene Regel des Teams: "Prüfe deinen EIGENEN Diff, bevor ihn jemand anderes sieht. `git diff` zeigt, was du geändert hast, und nach dem Stagen zeigt `git diff --staged` genau, was in den Commit wandert. Zwei schnelle Checks, die Debug-Zeilen, Tippfehler und vergessene Dateien abfangen."',
+    "teamwork.level4.story.realWorldContext":
+        "Den eigenen Diff vor dem Committen zu prüfen ist eine der wirkungsvollsten Gewohnheiten in professionellen Teams — Fehler werden abgefangen, bevor sie überhaupt ins Code-Review gelangen.",
+    "teamwork.level4.story.taskIntroduction":
+        "Prüfe mit `git diff`, stage mit `git add`, verifiziere mit `git diff --staged` und committe dann.",
+
+    // Advanced Level 4
+    "advanced.level4.name": "Fehlerjagd mit Bisect",
+    "advanced.level4.description": "Finde den Commit, der die App zerstört hat, per binärer Suche",
+    "advanced.level4.objective1": "Starte eine Bisect-Sitzung",
+    "advanced.level4.objective2": "Markiere die kaputte und die funktionierende Version",
+    "advanced.level4.objective3": "Beende die Bisect-Sitzung",
+    "advanced.level4.hint1": "`git bisect start` beginnt die binäre Suche durch deine Historie",
+    "advanced.level4.hint2":
+        "Markiere den aktuellen kaputten Stand mit `git bisect bad`, dann einen funktionierenden Commit mit `git bisect good`",
+    "advanced.level4.hint3": "Wenn du fertig bist, bringt dich `git bisect reset` zum Ausgangspunkt zurück",
+    "advanced.level4.requirement1.description": "Starte das Bisecting",
+    "advanced.level4.requirement1.success": "Bisect-Sitzung gestartet — Git ist bereit, den Übeltäter einzukreisen.",
+    "advanced.level4.requirement2.description": "Markiere den aktuellen Commit als fehlerhaft",
+    "advanced.level4.requirement2.success": "Aktuelle Version als kaputt markiert.",
+    "advanced.level4.requirement3.description": "Markiere einen funktionierenden Commit als gut",
+    "advanced.level4.requirement3.success":
+        "Git kennt jetzt den Gut/Schlecht-Bereich und kann dazwischen binär suchen!",
+    "advanced.level4.requirement4.description": "Beende die Bisect-Sitzung",
+    "advanced.level4.requirement4.success": "Sitzung beendet — du hast den Übeltäter in logarithmischer Zeit gefunden!",
+    "advanced.level4.story.title": "Die Nadel im Heuhaufen",
+    "advanced.level4.story.narrative":
+        'Die Suche ist in Produktion kaputt — aber letzte Woche funktionierte sie noch, und dazwischen liegen Dutzende Commits.\n\nAlex grinst: "Jeden Commit von Hand zu prüfen würde Stunden dauern. `git bisect` macht eine binäre Suche: Nenne ihm einen kaputten und einen funktionierenden Commit, und es checkt wiederholt die Mitte aus, bis es den exakten Commit findet, der alles zerstört hat. Zwanzig Commits? Nur etwa fünf Prüfungen."',
+    "advanced.level4.story.realWorldContext":
+        "git bisect ist der schnellste Weg, Regressionen in großen Historien zu finden. Bei 1000 Commits braucht die binäre Suche nur ~10 Schritte bis zum Übeltäter.",
+    "advanced.level4.story.taskIntroduction":
+        "Starte mit `git bisect start`, markiere Versionen mit `bad` und `good` und beende mit `git bisect reset`.",
+
+    // Archaeology Level 4
+    "archaeology.level4.name": "Arbeitsverzeichnis-Rettung",
+    "archaeology.level4.description": "Mache versehentliche Änderungen mit git restore rückgängig",
+    "archaeology.level4.objective1": "Entferne die versehentlich gestagte Config-Änderung aus der Staging-Area",
+    "archaeology.level4.objective2": "Verwirf die verstümmelten Änderungen in der Notizdatei",
+    "archaeology.level4.hint1":
+        "`git restore --staged config.js` nimmt eine Datei aus der Staging-Area, ohne ihre Änderungen zu verlieren",
+    "archaeology.level4.hint2":
+        "`git restore notes.md` verwirft Änderungen im Arbeitsverzeichnis und stellt die committete Version wieder her",
+    "archaeology.level4.hint3": "Prüfe jederzeit mit `git status`, was gestagt und was geändert ist",
+    "archaeology.level4.requirement1.description": "Entferne die Config-Datei aus der Staging-Area",
+    "archaeology.level4.requirement1.success": "Die lokale URL ist raus aus der Staging-Area — Krise abgewendet.",
+    "archaeology.level4.requirement2.description": "Stelle die Notizdatei auf den committeten Stand zurück",
+    "archaeology.level4.requirement2.success":
+        "Das Meisterwerk der Katze ist weg — deine Notizen sind zurück auf dem committeten Stand.",
+    "archaeology.level4.story.title": "Der Tastatur-Katzen-Vorfall",
+    "archaeology.level4.story.narrative":
+        'Doppeltes Unglück: Erst hast du versehentlich eine Config-Änderung gestagt, die die App auf localhost zeigen lässt — das darf auf KEINEN Fall committet werden. Dann ist deine Katze über die Tastatur gelaufen und hat deine Sprint-Notizen verstümmelt.\n\nAlex lacht: "Passiert jedem. `git restore --staged` holt eine Datei aus der Staging-Area zurück, und `git restore` ohne Flag verwirft Änderungen im Arbeitsverzeichnis und stellt die letzte committete Version wieder her. Zwei verschiedene Rettungen, ein Befehl."',
+    "archaeology.level4.story.realWorldContext":
+        "git restore ist der moderne, sicherere Ersatz für die alten Rezepte 'git checkout -- datei' und 'git reset HEAD datei' zum Unstagen und Verwerfen von Änderungen.",
+    "archaeology.level4.story.taskIntroduction":
+        "Entferne config.js mit `git restore --staged config.js` aus der Staging-Area und verwirf dann die Änderungen an notes.md mit `git restore notes.md`.",
+
+    // Mastery Level 4
+    "mastery.level4.name": "Das perfekte Release",
+    "mastery.level4.description": "Korrigiere den letzten Commit mit --amend und tagge das Release",
+    "mastery.level4.objective1": "Stage die vergessenen Release Notes",
+    "mastery.level4.objective2": "Ergänze sie per Amend im Release-Commit",
+    "mastery.level4.objective3": "Tagge das fertige Release",
+    "mastery.level4.hint1": "Stage die vergessene Datei mit `git add .`",
+    "mastery.level4.hint2": '`git commit --amend -m "Nachricht"` fügt gestagte Änderungen dem vorherigen Commit hinzu',
+    "mastery.level4.hint3": 'Erstelle einen annotierten Tag mit `git tag -a v3.0.0 -m "Release 3.0.0"`',
+    "mastery.level4.requirement1.description": "Stage die Release Notes",
+    "mastery.level4.requirement1.success": "Release Notes gestagt — bereit für den Release-Commit.",
+    "mastery.level4.requirement2.description": "Ergänze den vorherigen Commit",
+    "mastery.level4.requirement2.success":
+        "Der Release-Commit enthält jetzt die Notes — als hättest du sie nie vergessen.",
+    "mastery.level4.requirement3.description": "Erstelle einen annotierten Release-Tag",
+    "mastery.level4.requirement3.success":
+        "v3.0.0 getaggt — ein Release wie aus dem Bilderbuch. Du hast Git wahrhaft gemeistert!",
+    "mastery.level4.story.title": "Ein Commit, sie alle zu binden",
+    "mastery.level4.story.narrative":
+        "Release-Tag! Du hast 'Prepare release v3.0.0' committet — und entdeckst dann die Release-Notes-Datei: ungestagt und vergessen. Ein zweiter 'Ups, Notes vergessen'-Commit würde in der Historie schlampig aussehen.\n\nAlex nickt anerkennend: \"Solange der Commit noch nicht gepusht ist, nutze `git commit --amend`. Es fügt deine gestagten Änderungen dem vorherigen Commit hinzu, als wären sie immer da gewesen. Dann kröne das Ganze mit einem annotierten Tag.\"",
+    "mastery.level4.story.realWorldContext":
+        "Ungepushte Commits zu amenden hält die Historie sauber und bewusst gestaltet. Zusammen mit annotierten Tags schneiden Profis so ordentliche, gut dokumentierte Releases.",
+    "mastery.level4.story.taskIntroduction":
+        "Stage die Notes mit `git add .`, ergänze sie mit `git commit --amend` und tagge mit `git tag -a`.",
 };
 
 export default levels;

@@ -58,7 +58,7 @@ const filesLevel2 = createLevel({
             command: "git commit",
             description: "files.level2.requirement1.description",
             successMessage: "files.level2.requirement1.success",
-            id: "git-commit"
+            id: "git-commit",
         }),
     ],
     story: createStory({
@@ -130,8 +130,63 @@ const filesLevel3 = createLevel({
     }),
 });
 
+const filesLevel4 = createLevel({
+    id: 4,
+    name: "files.level4.name",
+    description: "files.level4.description",
+    objectives: ["files.level4.objective1", "files.level4.objective2"],
+    hints: ["files.level4.hint1", "files.level4.hint2", "files.level4.hint3"],
+    requirementLogic: "all",
+    requirements: [
+        createRequirement({
+            command: "git mv",
+            requiresArgs: ["any"],
+            description: "files.level4.requirement1.description",
+            successMessage: "files.level4.requirement1.success",
+            id: "git-mv-rename",
+        }),
+        createRequirement({
+            command: "git commit",
+            requiresArgs: ["-m"],
+            description: "files.level4.requirement2.description",
+            successMessage: "files.level4.requirement2.success",
+            id: "commit-rename",
+        }),
+    ],
+    story: createStory({
+        title: "files.level4.story.title",
+        narrative: "files.level4.story.narrative",
+        realWorldContext: "files.level4.story.realWorldContext",
+        taskIntroduction: "files.level4.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure("/README.md", "# Git Project\n\nThis is a README file for our Git project."),
+            createFileStructure("/src/index.js", 'console.log("Hello, world!");'),
+            createFileStructure(
+                "/src/app-config.js",
+                'const config = {\n  appName: "TechStart",\n  version: "1.0.0",\n};\n\nmodule.exports = config;',
+            ),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            // All files are already committed
+            commits: [
+                {
+                    message: "Initial commit",
+                    files: ["/README.md", "/src/index.js", "/src/app-config.js"],
+                },
+            ],
+            // The file we want to rename
+            fileChanges: [{ path: "/src/app-config.js", status: "committed" }],
+        }),
+    }),
+});
+
 export const filesLevels = {
     1: filesLevel1,
     2: filesLevel2,
     3: filesLevel3,
+    4: filesLevel4,
 };

@@ -1,3 +1,9 @@
+<div align="center">
+  <a href="https://gitmastery.me">
+    <img src="./public/readme-banner.webp" alt="GitMastery — Master Git through play" width="100%" />
+  </a>
+</div>
+
 # GitMastery: Master Git Through Play
 
 <div align="center">
@@ -50,15 +56,18 @@ Whether you're a complete beginner or looking to level up your Git skills, GitMa
 ## ✨ Features
 
 ### 🎓 Core Learning Experience
+
 - **🖥️ Interactive Terminal**: Practice Git commands in a realistic simulated environment
 - **🎯 Structured Learning Path**: Progress through carefully designed levels of increasing complexity
+- **🌳 Interactive Commit Graph**: Every level includes a live, animated visualization of your repository — watch commits, branches and merges appear as you type, tap nodes for details, and highlight any branch's history
 - **📊 Visual Git Status**: See your repository status visually update as you work
 - **🎮 Playground Mode**: Freely experiment with Git commands without level requirements
 - **📝 Command Cheat Sheet**: Quick reference for Git commands with explanations
 - **📈 Progress Tracking**: Track your learning journey with a visual progress system
-- **🌍 Multi-language Support**: Available in both English and German
+- **🌍 Multi-language Support**: Available in English, German, Persian and Hindi
 
 ### 🎮 Gamification & Rewards
+
 - **🏪 In-Game Shop**: Earn points and purchase customization items and power-ups
 - **🎨 Terminal Themes**: Unlock beautiful terminal themes including Matrix, Golden, and Dark themes
 - **🐱 Git Mascot Pet**: Purchase an animated mascot that cheers you on during challenging levels
@@ -73,15 +82,19 @@ Whether you're a complete beginner or looking to level up your Git skills, GitMa
 GitMastery is built with modern web technologies to provide the best learning experience:
 
 ### Frontend Framework
-- **Next.js 15** - React framework with server-side rendering, App Router, and performance optimizations
+
+- **Next.js 16** - React framework with server-side rendering, App Router, and performance optimizations
 - **TypeScript** - Type-safe development with enhanced IDE support and error catching
 - **Tailwind CSS** - Utility-first CSS framework for rapid, responsive design
 
 ### UI & UX
+
+- **GSAP** - Production-grade animation engine powering the landing page and the interactive commit-graph visualizer
 - **Lucide React** - Customizable SVG icon library
 - **shadcn/ui** - Re-usable component system built on Radix UI and Tailwind CSS
 
 ### Game Engine & State Management
+
 - **Custom Git Simulation** - Full Git repository simulation in the browser
 - **React Context API** - Global state management for game progress, themes, and user data
 - **LocalStorage** - Client-side persistence for progress, purchases, and preferences
@@ -148,6 +161,18 @@ If you find GitMastery helpful in your Git learning journey, please consider:
 - **Contributing** to make it even better
 
 Your support helps this educational tool reach more developers!
+
+## 📈 Star History
+
+<div align="center">
+  <a href="https://star-history.com/#MikaStiebitz/Git-Mastery&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=MikaStiebitz/Git-Mastery&type=Date&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=MikaStiebitz/Git-Mastery&type=Date" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=MikaStiebitz/Git-Mastery&type=Date" width="600" />
+    </picture>
+  </a>
+</div>
 
 ## 📜 License
 

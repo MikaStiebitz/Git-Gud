@@ -197,8 +197,96 @@ const mergeLevel3 = createLevel({
     }),
 });
 
+const mergeLevel4 = createLevel({
+    id: 4,
+    name: "merge.level4.name",
+    description: "merge.level4.description",
+    objectives: ["merge.level4.objective1", "merge.level4.objective2", "merge.level4.objective3"],
+    hints: ["merge.level4.hint1", "merge.level4.hint2", "merge.level4.hint3"],
+    requirementLogic: "all",
+    requirements: [
+        createRequirement({
+            command: "git status",
+            description: "merge.level4.requirement1.description",
+            successMessage: "merge.level4.requirement1.success",
+            id: "check-conflict-status",
+        }),
+        createRequirement({
+            command: "git add",
+            requiresArgs: ["any"],
+            description: "merge.level4.requirement2.description",
+            successMessage: "merge.level4.requirement2.success",
+            id: "stage-resolved-file",
+        }),
+        createRequirement({
+            command: "git commit",
+            requiresArgs: ["-m"],
+            description: "merge.level4.requirement3.description",
+            successMessage: "merge.level4.requirement3.success",
+            id: "commit-merge-resolution",
+        }),
+    ],
+    story: createStory({
+        title: "merge.level4.story.title",
+        narrative: "merge.level4.story.narrative",
+        realWorldContext: "merge.level4.story.realWorldContext",
+        taskIntroduction: "merge.level4.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure(
+                "/README.md",
+                "# Merge Conflict Project\n\nA project for learning how to resolve merge conflicts.",
+            ),
+            createFileStructure("/src/main.js", 'console.log("Main branch");'),
+            // This file will be different in both branches
+            createFileStructure(
+                "/src/api.js",
+                "// API request handler\nconst TIMEOUT_MS = 3000;\n\nfunction handleRequest(req) {\n  return respond(req);\n}\n\nmodule.exports = { handleRequest };",
+            ),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            branches: ["main", "feature/rate-limit"],
+            commits: [
+                // Initial commit on main
+                {
+                    message: "Initial commit",
+                    files: ["/README.md", "/src/main.js", "/src/api.js"],
+                },
+                // Change to api.js on the feature branch
+                {
+                    message: "Add rate limiting to API",
+                    files: ["/src/api.js"],
+                    branch: "feature/rate-limit",
+                },
+                // Change to api.js on the main branch
+                {
+                    message: "Increase API timeout for slow clients",
+                    files: ["/src/api.js"],
+                    branch: "main",
+                },
+            ],
+            // Simulate a merge that stopped with a conflict
+            mergeConflicts: [
+                {
+                    file: "/src/api.js",
+                    content: createMergeConflictContent(
+                        "// API request handler\nconst TIMEOUT_MS = 8000;\n\nfunction handleRequest(req) {\n  return respond(req);\n}\n\nmodule.exports = { handleRequest };",
+                        "// API request handler\nconst RATE_LIMIT = 100;\nconst TIMEOUT_MS = 3000;\n\nfunction handleRequest(req) {\n  if (isRateLimited(req)) {\n    return reject(req);\n  }\n  return respond(req);\n}\n\nmodule.exports = { handleRequest };",
+                    ),
+                    branch1: "main",
+                    branch2: "feature/rate-limit",
+                },
+            ],
+        }),
+    }),
+});
+
 export const mergeLevels = {
     1: mergeLevel1,
     2: mergeLevel2,
     3: mergeLevel3,
+    4: mergeLevel4,
 };

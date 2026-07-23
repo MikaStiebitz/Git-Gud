@@ -17,7 +17,7 @@ const teamworkLevel1 = createLevel({
         "teamwork.level1.objective3",
         "teamwork.level1.objective4",
         "teamwork.level1.objective5",
-        "teamwork.level1.objective6"
+        "teamwork.level1.objective6",
     ],
     hints: [
         "teamwork.level1.hint1",
@@ -25,7 +25,7 @@ const teamworkLevel1 = createLevel({
         "teamwork.level1.hint3",
         "teamwork.level1.hint4",
         "teamwork.level1.hint5",
-        "teamwork.level1.hint6"
+        "teamwork.level1.hint6",
     ],
     requirementLogic: "all",
     requirements: [
@@ -71,19 +71,25 @@ const teamworkLevel1 = createLevel({
             description: "teamwork.level1.requirement6.description",
             successMessage: "teamwork.level1.requirement6.success",
             id: "git-push-teamwork",
-        })
+        }),
     ],
     story: createStory({
         title: "teamwork.level1.story.title",
         narrative: "teamwork.level1.story.narrative",
         realWorldContext: "teamwork.level1.story.realWorldContext",
-        taskIntroduction: "teamwork.level1.story.taskIntroduction"
+        taskIntroduction: "teamwork.level1.story.taskIntroduction",
     }),
     initialState: createInitialState({
         files: [
-            createFileStructure("/team.md", "# Development Team\n\n## Team Members\n- Alex Chen - Team Lead\n- Sarah Miller - Senior Developer\n- Mike Johnson - Frontend Developer\n\n## Add your profile here!"),
-            createFileStructure("/src/components/TeamPage.jsx", "// Team page component\nexport function TeamPage() {\n  return <div>Team profiles coming soon...</div>;\n}"),
-            createFileStructure("/README.md", "# InnovateCorp Project\n\nA collaborative development environment.")
+            createFileStructure(
+                "/team.md",
+                "# Development Team\n\n## Team Members\n- Alex Chen - Team Lead\n- Sarah Miller - Senior Developer\n- Mike Johnson - Frontend Developer\n\n## Add your profile here!",
+            ),
+            createFileStructure(
+                "/src/components/TeamPage.jsx",
+                "// Team page component\nexport function TeamPage() {\n  return <div>Team profiles coming soon...</div>;\n}",
+            ),
+            createFileStructure("/README.md", "# InnovateCorp Project\n\nA collaborative development environment."),
         ],
         git: createGitState({
             initialized: true,
@@ -92,8 +98,8 @@ const teamworkLevel1 = createLevel({
             commits: [
                 {
                     message: "Initial team structure setup",
-                    files: ["/team.md", "/src/components/TeamPage.jsx", "/README.md"]
-                }
+                    files: ["/team.md", "/src/components/TeamPage.jsx", "/README.md"],
+                },
             ],
             remoteCommits: [
                 {
@@ -103,14 +109,15 @@ const teamworkLevel1 = createLevel({
                             id: "remote001",
                             message: "Update team guidelines",
                             files: {
-                                "/team.md": "# Development Team\n\n## Team Members\n- Alex Chen - Team Lead\n- Sarah Miller - Senior Developer\n- Mike Johnson - Frontend Developer\n\n## Guidelines\nPlease add your name below!\n\n## Add your profile here!"
-                            }
-                        }
-                    ]
-                }
-            ]
-        })
-    })
+                                "/team.md":
+                                    "# Development Team\n\n## Team Members\n- Alex Chen - Team Lead\n- Sarah Miller - Senior Developer\n- Mike Johnson - Frontend Developer\n\n## Guidelines\nPlease add your name below!\n\n## Add your profile here!",
+                            },
+                        },
+                    ],
+                },
+            ],
+        }),
+    }),
 });
 
 const teamworkLevel2 = createLevel({
@@ -121,7 +128,7 @@ const teamworkLevel2 = createLevel({
         "teamwork.level2.objective1",
         "teamwork.level2.objective2",
         "teamwork.level2.objective3",
-        "teamwork.level2.objective4"
+        "teamwork.level2.objective4",
     ],
     hints: [
         "teamwork.level2.hint1",
@@ -131,7 +138,7 @@ const teamworkLevel2 = createLevel({
         "teamwork.level2.hint5",
         "teamwork.level2.hint6",
         "teamwork.level2.hint7",
-        "teamwork.level2.hint8"
+        "teamwork.level2.hint8",
     ],
     requirementLogic: "all",
     requirements: [
@@ -140,21 +147,21 @@ const teamworkLevel2 = createLevel({
             objectiveId: 1, // Objective 1: Stage and commit your local changes
             command: "git add",
             description: "teamwork.level2.requirement1.description",
-            successMessage: "teamwork.level2.requirement1.success"
+            successMessage: "teamwork.level2.requirement1.success",
         },
         {
             id: "commit-initial-changes",
             objectiveId: 1, // Objective 1: Stage and commit your local changes (both add AND commit needed)
             command: "git commit",
             description: "teamwork.level2.requirement2.description",
-            successMessage: "teamwork.level2.requirement2.success"
+            successMessage: "teamwork.level2.requirement2.success",
         },
         {
             id: "pull-remote-changes",
             objectiveId: 2, // Objective 2: Pull remote changes (triggers conflict)
             command: "git pull",
             description: "teamwork.level2.requirement3.description",
-            successMessage: "teamwork.level2.requirement3.success"
+            successMessage: "teamwork.level2.requirement3.success",
         },
         {
             id: "resolve-conflict-markers",
@@ -162,34 +169,40 @@ const teamworkLevel2 = createLevel({
             command: "", // State-based check
             checkFileChanged: "/src/auth/login.js",
             description: "teamwork.level2.requirement4.description",
-            successMessage: "teamwork.level2.requirement4.success"
+            successMessage: "teamwork.level2.requirement4.success",
         },
         {
             id: "stage-resolved-conflict",
             objectiveId: 4, // Objective 4: Stage and commit the merged solution
             command: "git add",
             description: "teamwork.level2.requirement5.description",
-            successMessage: "teamwork.level2.requirement5.success"
+            successMessage: "teamwork.level2.requirement5.success",
         },
         {
             id: "commit-merge-resolution",
             objectiveId: 4, // Objective 4: Stage and commit the merged solution (both add AND commit needed)
             command: "git commit",
             description: "teamwork.level2.requirement5.description",
-            successMessage: "teamwork.level2.requirement5.success"
-        }
+            successMessage: "teamwork.level2.requirement5.success",
+        },
     ],
     story: createStory({
         title: "teamwork.level2.story.title",
         narrative: "teamwork.level2.story.narrative",
         realWorldContext: "teamwork.level2.story.realWorldContext",
-        taskIntroduction: "teamwork.level2.story.taskIntroduction"
+        taskIntroduction: "teamwork.level2.story.taskIntroduction",
     }),
     initialState: createInitialState({
         files: [
             // Original committed version (basic validation)
-            createFileStructure("/src/auth/login.js", "// Authentication module\nfunction validateLogin(username, password) {\n  // Basic validation\n  return username.length >= 3 && password.length >= 6;\n}"),
-            createFileStructure("/src/auth/signup.js", "// User registration\nfunction createUser(userData) {\n  return database.users.create(userData);\n}")
+            createFileStructure(
+                "/src/auth/login.js",
+                "// Authentication module\nfunction validateLogin(username, password) {\n  // Basic validation\n  return username.length >= 3 && password.length >= 6;\n}",
+            ),
+            createFileStructure(
+                "/src/auth/signup.js",
+                "// User registration\nfunction createUser(userData) {\n  return database.users.create(userData);\n}",
+            ),
         ],
         git: createGitState({
             initialized: true,
@@ -198,8 +211,8 @@ const teamworkLevel2 = createLevel({
             commits: [
                 {
                     message: "Add authentication foundation",
-                    files: ["/src/auth/login.js", "/src/auth/signup.js"]
-                }
+                    files: ["/src/auth/login.js", "/src/auth/signup.js"],
+                },
             ],
             // Sarah's changes waiting on remote
             remoteCommits: [
@@ -210,22 +223,24 @@ const teamworkLevel2 = createLevel({
                             id: "abc1234",
                             message: "Add email validation to login by Sarah",
                             files: {
-                                "/src/auth/login.js": "// Authentication module\nfunction validateLogin(username, password) {\n  // Sarah's implementation with email validation\n  if (!username || !password) return false;\n  const isValidEmail = username.includes('@');\n  return isValidEmail && password.length >= 6;\n}"
-                            }
-                        }
-                    ]
-                }
+                                "/src/auth/login.js":
+                                    "// Authentication module\nfunction validateLogin(username, password) {\n  // Sarah's implementation with email validation\n  if (!username || !password) return false;\n  const isValidEmail = username.includes('@');\n  return isValidEmail && password.length >= 6;\n}",
+                            },
+                        },
+                    ],
+                },
             ],
             // Your local uncommitted changes (you've been working on this!)
             fileChanges: [
                 {
                     path: "/src/auth/login.js",
                     status: "modified",
-                    content: "// Authentication module\nfunction validateLogin(username, password) {\n  // Your improved implementation with stronger requirements\n  if (!username || !password) return false;\n  return username.length >= 5 && password.length >= 10;\n}"
-                }
-            ]
-        })
-    })
+                    content:
+                        "// Authentication module\nfunction validateLogin(username, password) {\n  // Your improved implementation with stronger requirements\n  if (!username || !password) return false;\n  return username.length >= 5 && password.length >= 10;\n}",
+                },
+            ],
+        }),
+    }),
 });
 
 const teamworkLevel3 = createLevel({
@@ -236,7 +251,7 @@ const teamworkLevel3 = createLevel({
         "teamwork.level3.objective1",
         "teamwork.level3.objective2",
         "teamwork.level3.objective3",
-        "teamwork.level3.objective4"
+        "teamwork.level3.objective4",
     ],
     hints: [
         "teamwork.level3.hint1",
@@ -245,7 +260,7 @@ const teamworkLevel3 = createLevel({
         "teamwork.level3.hint4",
         "teamwork.level3.hint5",
         "teamwork.level3.hint6",
-        "teamwork.level3.hint7"
+        "teamwork.level3.hint7",
     ],
     requirementLogic: "all",
     requirements: [
@@ -255,39 +270,48 @@ const teamworkLevel3 = createLevel({
             alternativeCommands: ["git checkout"],
             requiresArgs: ["-c"],
             description: "teamwork.level3.requirement1.description",
-            successMessage: "teamwork.level3.requirement1.success"
+            successMessage: "teamwork.level3.requirement1.success",
         },
         {
             id: "stage-code-for-review",
             command: "git add",
             description: "teamwork.level3.requirement2.description",
-            successMessage: "teamwork.level3.requirement2.success"
+            successMessage: "teamwork.level3.requirement2.success",
         },
         {
             id: "commit-for-review",
             command: "git commit",
             description: "teamwork.level3.requirement3.description",
-            successMessage: "teamwork.level3.requirement3.success"
+            successMessage: "teamwork.level3.requirement3.success",
         },
         {
             id: "push-for-review",
             command: "git push",
             requiresArgs: ["any"],
             description: "teamwork.level3.requirement4.description",
-            successMessage: "teamwork.level3.requirement4.success"
-        }
+            successMessage: "teamwork.level3.requirement4.success",
+        },
     ],
     story: createStory({
         title: "teamwork.level3.story.title",
         narrative: "teamwork.level3.story.narrative",
         realWorldContext: "teamwork.level3.story.realWorldContext",
-        taskIntroduction: "teamwork.level3.story.taskIntroduction"
+        taskIntroduction: "teamwork.level3.story.taskIntroduction",
     }),
     initialState: createInitialState({
         files: [
-            createFileStructure("/src/auth/password-reset.js", "// Password reset functionality\nfunction initiatePasswordReset(email) {\n  // TODO: Implement password reset logic\n  console.log('Password reset requested for:', email);\n}"),
-            createFileStructure("/src/auth/email-service.js", "// Email service integration\nfunction sendResetEmail(email, token) {\n  // Email sending logic here\n  return true;\n}"),
-            createFileStructure("/tests/password-reset.test.js", "// Tests for password reset\ntest('password reset sends email', () => {\n  // Test implementation\n});")
+            createFileStructure(
+                "/src/auth/password-reset.js",
+                "// Password reset functionality\nfunction initiatePasswordReset(email) {\n  // TODO: Implement password reset logic\n  console.log('Password reset requested for:', email);\n}",
+            ),
+            createFileStructure(
+                "/src/auth/email-service.js",
+                "// Email service integration\nfunction sendResetEmail(email, token) {\n  // Email sending logic here\n  return true;\n}",
+            ),
+            createFileStructure(
+                "/tests/password-reset.test.js",
+                "// Tests for password reset\ntest('password reset sends email', () => {\n  // Test implementation\n});",
+            ),
         ],
         git: createGitState({
             initialized: true,
@@ -296,15 +320,92 @@ const teamworkLevel3 = createLevel({
             commits: [
                 {
                     message: "Add authentication system foundation",
-                    files: ["/src/auth/password-reset.js", "/src/auth/email-service.js"]
-                }
-            ]
-        })
-    })
+                    files: ["/src/auth/password-reset.js", "/src/auth/email-service.js"],
+                },
+            ],
+        }),
+    }),
+});
+
+const teamworkLevel4 = createLevel({
+    id: 4,
+    name: "teamwork.level4.name",
+    description: "teamwork.level4.description",
+    objectives: [
+        "teamwork.level4.objective1",
+        "teamwork.level4.objective2",
+        "teamwork.level4.objective3",
+        "teamwork.level4.objective4",
+    ],
+    hints: ["teamwork.level4.hint1", "teamwork.level4.hint2", "teamwork.level4.hint3"],
+    requirementLogic: "all",
+    requirements: [
+        createRequirement({
+            command: "git diff",
+            description: "teamwork.level4.requirement1.description",
+            successMessage: "teamwork.level4.requirement1.success",
+            id: "review-working-diff",
+        }),
+        createRequirement({
+            command: "git add",
+            requiresArgs: ["any"],
+            description: "teamwork.level4.requirement2.description",
+            successMessage: "teamwork.level4.requirement2.success",
+            id: "stage-reviewed-changes",
+        }),
+        createRequirement({
+            command: "git diff",
+            requiresArgs: ["--staged"],
+            description: "teamwork.level4.requirement3.description",
+            successMessage: "teamwork.level4.requirement3.success",
+            id: "review-staged-diff",
+        }),
+        createRequirement({
+            command: "git commit",
+            requiresArgs: ["-m"],
+            description: "teamwork.level4.requirement4.description",
+            successMessage: "teamwork.level4.requirement4.success",
+            id: "commit-reviewed-changes",
+        }),
+    ],
+    story: createStory({
+        title: "teamwork.level4.story.title",
+        narrative: "teamwork.level4.story.narrative",
+        realWorldContext: "teamwork.level4.story.realWorldContext",
+        taskIntroduction: "teamwork.level4.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure(
+                "/src/profile.js",
+                "// User profile\nfunction validateProfile(user) {\n  return user.name.length > 0;\n}",
+            ),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            branches: ["main"],
+            commits: [
+                {
+                    message: "Add profile validation",
+                    files: ["/src/profile.js"],
+                },
+            ],
+            fileChanges: [
+                {
+                    path: "/src/profile.js",
+                    status: "modified",
+                    content:
+                        "// User profile\nfunction validateProfile(user) {\n  if (!user.email.includes('@')) return false;\n  return user.name.length > 0;\n}",
+                },
+            ],
+        }),
+    }),
 });
 
 export const teamworkLevels = {
     1: teamworkLevel1,
     2: teamworkLevel2,
     3: teamworkLevel3,
+    4: teamworkLevel4,
 };

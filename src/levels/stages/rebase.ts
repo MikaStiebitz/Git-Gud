@@ -275,9 +275,68 @@ const rebaseLevel4 = createLevel({
     }),
 });
 
+// Rebase a branch without checking it out first (two-argument form)
+const rebaseLevel5 = createLevel({
+    id: 5,
+    name: "rebase.level5.name",
+    description: "rebase.level5.description",
+    objectives: ["rebase.level5.objective1"],
+    hints: ["rebase.level5.hint1", "rebase.level5.hint2"],
+    requirements: [
+        createRequirement({
+            command: "git rebase",
+            requiresArgs: ["main", "feature/payment-api"],
+            description: "rebase.level5.requirement1.description",
+            successMessage: "rebase.level5.requirement1.success",
+            id: "git-rebase-two-args",
+        }),
+    ],
+    story: createStory({
+        title: "rebase.level5.story.title",
+        narrative: "rebase.level5.story.narrative",
+        realWorldContext: "rebase.level5.story.realWorldContext",
+        taskIntroduction: "rebase.level5.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure(
+                "/README.md",
+                "# Payments Release\n\nRelease preparation for the TechStart payments service.",
+            ),
+            createFileStructure("/src/main.js", 'console.log("Release candidate build");'),
+            createFileStructure("/src/payment.js", 'console.log("Payment API integration");'),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            branches: ["main", "feature/payment-api"],
+            commits: [
+                // Initial commit on main
+                {
+                    message: "Initial commit",
+                    files: ["/README.md", "/src/main.js"],
+                },
+                // Work on the payment feature branch
+                {
+                    message: "Start payment API integration",
+                    files: ["/src/payment.js"],
+                    branch: "feature/payment-api",
+                },
+                // Main moves ahead while the feature branch falls behind
+                {
+                    message: "Prepare release configuration",
+                    files: ["/src/main.js"],
+                    branch: "main",
+                },
+            ],
+        }),
+    }),
+});
+
 export const rebaseLevels = {
     1: rebaseLevel1,
     2: rebaseLevel2,
     3: rebaseLevel3,
     4: rebaseLevel4,
+    5: rebaseLevel5,
 };

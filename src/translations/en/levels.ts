@@ -41,6 +41,20 @@ const levels = {
     "level.deleteFile": "Delete file",
     "level.confirmDelete": "Are you sure you want to delete {file}?",
     "level.hints": "Hints",
+    "level.tab.challenge": "Challenge",
+    "level.tab.graph": "Git Graph",
+
+    // Level Visualizer (interactive commit graph)
+    "visualizer.emptyTitle": "Your Git story starts here",
+    "visualizer.emptyInitHint": "Initialize a repository with `git init` and your commit graph will grow right here.",
+    "visualizer.emptyCommitHint": "Make your first commit and watch your visual path appear here.",
+    "visualizer.branchFilterHint": "Click to highlight this branch's history",
+    "visualizer.zoomIn": "Zoom in",
+    "visualizer.zoomOut": "Zoom out",
+    "visualizer.fit": "Fit to view",
+    "visualizer.mergeCommit": "Merge",
+    "visualizer.close": "Close",
+    "visualizer.interactHint": "Tap a commit for details · tap a branch to highlight its path",
 
     // Level Content - Intro Stage
     "intro.name": "Introduction to Git",
@@ -87,7 +101,7 @@ const levels = {
     "intro.level3.requirement2.success": "Perfect! You're now inside the cloned repository.",
     "intro.level3.story.title": "Joining an Existing Project",
     "intro.level3.story.narrative":
-        "Your first week at TechStart is going great! Alex calls you over with exciting news.\n\n\"We have a team project that needs your help,\" he says. \"The codebase is already on our Git server. You'll need to clone it to your local machine to start working on it.\"\n\nHe explains: \"When you join an existing project, you don't start from scratch. Instead, you clone the remote repository, which creates a complete copy on your machine—including all the code, history, and branches.\"\n\n\"Think of it like checking out a book from the library, except you get the entire library's records too! Use `git clone <repository-url>` to get started.\"\n\n\"Once cloned, you can navigate into the project folder with `cd <folder-name>` and start working immediately. All the project's history and changes are available to you.\"",
+        'Your first week at TechStart is going great! Alex calls you over with exciting news.\n\n"We have a team project that needs your help," he says. "The codebase is already on our Git server. You\'ll need to clone it to your local machine to start working on it."\n\nHe explains: "When you join an existing project, you don\'t start from scratch. Instead, you clone the remote repository, which creates a complete copy on your machine—including all the code, history, and branches."\n\n"Think of it like checking out a book from the library, except you get the entire library\'s records too! Use `git clone <repository-url>` to get started."\n\n"Once cloned, you can navigate into the project folder with `cd <folder-name>` and start working immediately. All the project\'s history and changes are available to you."',
     "intro.level3.story.realWorldContext":
         "Cloning is how developers join existing projects. Whether contributing to open source or joining a new team, git clone is typically the first command you run.",
     "intro.level3.story.taskIntroduction": "Clone a repository and navigate into it to start working on the project.",
@@ -166,7 +180,7 @@ const levels = {
         "Excellent! You've created a new branch and switched to it using the modern git switch command.",
     "branches.level2.story.title": "Modern Branch Creation",
     "branches.level2.story.narrative":
-        "\"Perfect! Now we want to implement a new feature,\" says Alex. \"For this, we'll create a new branch called 'feature' so our changes don't affect the main code.\"\n\nHe shows you the modern approach: \"Git introduced the `git switch` command to make branch operations clearer. Use `git switch -c feature` to create and switch to the new branch in one step. This is the preferred modern way instead of the older `git checkout -b`.\"",
+        '"Perfect! Now we want to implement a new feature," says Alex. "For this, we\'ll create a new branch called \'feature\' so our changes don\'t affect the main code."\n\nHe shows you the modern approach: "Git introduced the `git switch` command to make branch operations clearer. Use `git switch -c feature` to create and switch to the new branch in one step. This is the preferred modern way instead of the older `git checkout -b`."',
     "branches.level2.story.realWorldContext":
         "In professional development teams, you almost never work directly on the main branch. The `git switch` command, introduced in Git 2.23, provides a cleaner, more intuitive way to work with branches compared to the older checkout command.",
     "branches.level2.story.taskIntroduction":
@@ -181,7 +195,7 @@ const levels = {
     "branches.level3.requirement1.success": "Great job! You've switched between branches using git switch.",
     "branches.level3.story.title": "Branch Navigation",
     "branches.level3.story.narrative":
-        "\"Now that you know how to create branches, let's practice moving between them,\" says Sarah. \"This is something you'll do constantly in real development work.\"\n\nShe explains: \"You can switch to any existing branch using `git switch <branch-name>`. This is much clearer than the old `git checkout` which could be confusing because it did many different things.\"",
+        '"Now that you know how to create branches, let\'s practice moving between them," says Sarah. "This is something you\'ll do constantly in real development work."\n\nShe explains: "You can switch to any existing branch using `git switch <branch-name>`. This is much clearer than the old `git checkout` which could be confusing because it did many different things."',
     "branches.level3.story.realWorldContext":
         "Switching between branches is one of the most common Git operations. The dedicated `git switch` command makes the intent clear and reduces confusion compared to the multipurpose checkout command.",
     "branches.level3.story.taskIntroduction": "Practice switching to another branch using `git switch`.",
@@ -209,7 +223,7 @@ const levels = {
     "branches.level5.requirement1.success": "Perfect! You now master both methods of creating branches.",
     "branches.level5.story.title": "Quick Branch Creation",
     "branches.level5.story.narrative":
-        '"Another handy trick," Sarah says. "You can use \'git switch -c\' to create a new branch and switch to it at the same time."\n\nShe explains: "This is the modern way in Git. The -c flag stands for \'create\' and does exactly the same as the older \'git checkout -b\', but it\'s clearer and more intuitive."',
+        "\"Another handy trick,\" Sarah says. \"You can use 'git switch -c' to create a new branch and switch to it at the same time.\"\n\nShe explains: \"This is the modern way in Git. The -c flag stands for 'create' and does exactly the same as the older 'git checkout -b', but it's clearer and more intuitive.\"",
     "branches.level5.story.realWorldContext":
         "The switch -c pattern is the modern, recommended method for creating and switching branches. It was introduced in Git 2.23 to separate branch operations from other checkout functions and make them more intuitive.",
     "branches.level5.story.taskIntroduction": "Create a new branch using git switch -c and automatically switch to it.",
@@ -336,7 +350,7 @@ const levels = {
     "stash.level3.story.narrative":
         '"Wait, where did I stash those changes again?", you wonder.\n\n"Use `git stash list`," says Lisa. "It shows all saved stashes. With `git stash pop` you retrieve the latest and remove it from the stash."\n\nShe continues: "There\'s also `git stash apply` - it applies the stash but keeps it. Useful when you need the same changes multiple times!"',
     "stash.level3.story.realWorldContext":
-        "**Stash Management Commands**\n\n`git stash list` - Shows all stashes\n\n`git stash pop` - Applies and deletes stash\n\n`git stash apply` - Applies stash, keeps it\n\n`git stash drop` - Deletes a stash\n\n`git stash clear` - Deletes all stashes\n\n**Pro Tip**: Name your stashes with `git stash push -m \"WIP: Feature X\"` - makes the list more organized!",
+        '**Stash Management Commands**\n\n`git stash list` - Shows all stashes\n\n`git stash pop` - Applies and deletes stash\n\n`git stash apply` - Applies stash, keeps it\n\n`git stash drop` - Deletes a stash\n\n`git stash clear` - Deletes all stashes\n\n**Pro Tip**: Name your stashes with `git stash push -m "WIP: Feature X"` - makes the list more organized!',
     "stash.level3.story.taskIntroduction": "List your stashes and retrieve the latest one.",
 
     // Remote Stage
@@ -413,8 +427,7 @@ const levels = {
     "reset.level1.requirement3.description": "Reset to an earlier commit using HEAD~n",
     "reset.level1.requirement3.success": "✅ Excellent! You've mastered HEAD~n notation for soft resets!",
     "reset.level1.story.title": "Understanding git reset --soft",
-    "reset.level1.story.narrative":
-        `🔄 **Understanding git reset --soft**
+    "reset.level1.story.narrative": `🔄 **Understanding git reset --soft**
 
 **The Situation:**
 You're working on a feature and made 5 commits. But looking back, you realize:
@@ -473,7 +486,8 @@ Now you've removed 2 commits, but files are still staged!
 Let's practice these three techniques! 🚀`,
     "reset.level1.story.realWorldContext":
         "git reset --soft is super useful when you want to fix your last commit without losing the work. You can edit the changes and then commit again.",
-    "reset.level1.story.taskIntroduction": "Practice using git reset --soft with different targets: HEAD~1, HEAD, and HEAD~2.",
+    "reset.level1.story.taskIntroduction":
+        "Practice using git reset --soft with different targets: HEAD~1, HEAD, and HEAD~2.",
 
     "reset.level2.name": "Hard Reset - Discard Everything",
     "reset.level2.description": "Go back to a previous commit and discard all changes",
@@ -494,8 +508,7 @@ Let's practice these three techniques! 🚀`,
     "reset.level2.requirement3.description": "Discard multiple commits using --hard",
     "reset.level2.requirement3.success": "💥 Multiple commits destroyed! Workspace is clean again!",
     "reset.level2.story.title": "Understanding git reset --hard - THE NUCLEAR OPTION",
-    "reset.level2.story.narrative":
-        `⚠️  **Understanding git reset --hard - THE NUCLEAR OPTION**
+    "reset.level2.story.narrative": `⚠️  **Understanding git reset --hard - THE NUCLEAR OPTION**
 
 **The Situation:**
 It's Friday evening. You've been experimenting with a new feature all day:
@@ -577,7 +590,8 @@ All 3 bad commits are gone! It's like Friday never happened! 😅
 Ready to practice safe destruction? Let's go! 💪`,
     "reset.level2.story.realWorldContext":
         "--hard reset is a powerful but dangerous tool. It's used when you really need a clean slate. In teams, be careful with reset on pushed commits - it can confuse others.",
-    "reset.level2.story.taskIntroduction": "Practice the nuclear option: use git reset --hard to completely discard commits and changes.",
+    "reset.level2.story.taskIntroduction":
+        "Practice the nuclear option: use git reset --hard to completely discard commits and changes.",
 
     "reset.level3.name": "Reset to Specific Commit",
     "reset.level3.description": "Go back to a specific commit in history",
@@ -595,8 +609,7 @@ Ready to practice safe destruction? Let's go! 💪`,
     "reset.level3.requirement2.description": "Reset to a specific commit using its hash",
     "reset.level3.requirement2.success": "🎯 Perfect! You've mastered resetting to specific commit hashes!",
     "reset.level3.story.title": "Advanced Reset: Using Commit Hashes",
-    "reset.level3.story.narrative":
-        `🎯 **Advanced Reset: Using Commit Hashes**
+    "reset.level3.story.narrative": `🎯 **Advanced Reset: Using Commit Hashes**
 
 **The Situation:**
 Your project has grown. You're now at commit 8, but you need to go back to commit 3.
@@ -677,7 +690,8 @@ deploy.sh --commit=9a2b3c4
 Let's practice professional-grade Git! 🚀`,
     "reset.level3.story.realWorldContext":
         "Using commit hashes is the professional way to reference specific points in history. They're permanent, unambiguous, and work across all team members' repositories.",
-    "reset.level3.story.taskIntroduction": "Use git log to find commit hashes, then use git reset with a specific hash.",
+    "reset.level3.story.taskIntroduction":
+        "Use git log to find commit hashes, then use git reset with a specific hash.",
 
     // Rebase Stage
     "rebase.name": "Rebasing",
@@ -767,10 +781,11 @@ Let's practice professional-grade Git! 🚀`,
     "advanced.level1.requirement3.success": "Excellent! Your tags are now available to the team.",
     "advanced.level1.story.title": "Marking Milestones",
     "advanced.level1.story.narrative":
-        "\"We're about to deploy version 1.0 to production,\" announces your team lead. \"Before we do, we need to tag this commit. Tags are like bookmarks in your Git history - they mark important points like releases.\"\n\nShe continues: \"Unlike branches that move with new commits, tags stay fixed. This means we can always go back to exactly what we shipped in v1.0, even years later.\"\n\n\"In professional teams, every production release gets tagged. It's essential for debugging, rollbacks, and changelogs.\"",
+        '"We\'re about to deploy version 1.0 to production," announces your team lead. "Before we do, we need to tag this commit. Tags are like bookmarks in your Git history - they mark important points like releases."\n\nShe continues: "Unlike branches that move with new commits, tags stay fixed. This means we can always go back to exactly what we shipped in v1.0, even years later."\n\n"In professional teams, every production release gets tagged. It\'s essential for debugging, rollbacks, and changelogs."',
     "advanced.level1.story.realWorldContext":
         "Tags are industry standard for marking releases. They enable semantic versioning (v1.0.0), make rollbacks safe, and help teams communicate about specific versions.",
-    "advanced.level1.story.taskIntroduction": "Create an annotated tag to mark this release: git tag -a v1.0.1 -m 'Bug fix release'",
+    "advanced.level1.story.taskIntroduction":
+        "Create an annotated tag to mark this release: git tag -a v1.0.1 -m 'Bug fix release'",
 
     // Advanced Level 2: Git Log Advanced
     "advanced.level2.name": "Advanced Commit History",
@@ -790,7 +805,7 @@ Let's practice professional-grade Git! 🚀`,
     "advanced.level2.requirement3.success": "Excellent! You can now search through commit messages.",
     "advanced.level2.story.title": "Exploring History",
     "advanced.level2.story.narrative":
-        "\"A bug was introduced somewhere in the last 50 commits,\" your colleague sighs. \"How do I find it?\"\n\nYour senior developer smiles: \"Git log is your detective tool. The default format shows everything, but that's overwhelming. Let me show you the power tools.\"\n\n\"git log --oneline shows each commit in one line - perfect for scanning. Add --graph to see branch structure. Use --grep to search commit messages. These skills turn you from a Git user into a Git detective.\"",
+        '"A bug was introduced somewhere in the last 50 commits," your colleague sighs. "How do I find it?"\n\nYour senior developer smiles: "Git log is your detective tool. The default format shows everything, but that\'s overwhelming. Let me show you the power tools."\n\n"git log --oneline shows each commit in one line - perfect for scanning. Add --graph to see branch structure. Use --grep to search commit messages. These skills turn you from a Git user into a Git detective."',
     "advanced.level2.story.realWorldContext":
         "Mastering git log is essential for debugging, code archaeology, and understanding project evolution. Professional developers use these flags daily.",
     "advanced.level2.story.taskIntroduction": "Explore the commit history using: git log --oneline",
@@ -806,7 +821,7 @@ Let's practice professional-grade Git! 🚀`,
     "advanced.level3.requirement1.success": "Great! You've inspected the commit details and file changes.",
     "advanced.level3.story.title": "Commit Forensics",
     "advanced.level3.story.narrative":
-        "\"This commit broke something, but I can't tell what changed,\" says your teammate.\n\n\"Use git show!\" you respond confidently. \"It shows you everything about a commit: the message, who made it, when, and most importantly - the actual code changes.\"\n\n\"It's like a magnifying glass for commits. Essential for code reviews, debugging, and understanding what colleagues changed.\"",
+        '"This commit broke something, but I can\'t tell what changed," says your teammate.\n\n"Use git show!" you respond confidently. "It shows you everything about a commit: the message, who made it, when, and most importantly - the actual code changes."\n\n"It\'s like a magnifying glass for commits. Essential for code reviews, debugging, and understanding what colleagues changed."',
     "advanced.level3.story.realWorldContext":
         "git show is a fundamental tool for code review and debugging. It's used constantly in pull requests and when investigating issues.",
     "advanced.level3.story.taskIntroduction": "Inspect the latest commit using: git show",
@@ -840,10 +855,10 @@ Let's practice professional-grade Git! 🚀`,
     "workflow.level1.requirement5.description": "Switch back to main branch with 'git switch main'",
     "workflow.level1.requirement5.success": "Switched to main branch!",
     "workflow.level1.requirement6.description": "Merge your feature branch into main",
-    "workflow.level1.requirement6.success": "Feature successfully merged! This is how real teams integrate new features.",
+    "workflow.level1.requirement6.success":
+        "Feature successfully merged! This is how real teams integrate new features.",
     "workflow.level1.story.title": "The Feature Factory",
-    "workflow.level1.story.narrative":
-        `You're a developer at TechCorp, and the team follows strict Git workflows. Your manager Sarah just assigned you a new feature: implementing user authentication.
+    "workflow.level1.story.narrative": `You're a developer at TechCorp, and the team follows strict Git workflows. Your manager Sarah just assigned you a new feature: implementing user authentication.
 
 "Remember," Sarah says, "we never commit directly to main. Always use feature branches, and make sure your commits tell a story."
 
@@ -907,8 +922,7 @@ In this level, we're simulating the workflow by having you push and merge direct
     "workflow.level2.requirement5.description": "Merge the hotfix into main",
     "workflow.level2.requirement5.success": "Hotfix merged successfully!",
     "workflow.level2.story.title": "Code Red: Production Emergency",
-    "workflow.level2.story.narrative":
-        `🚨 URGENT: Production is down! 🚨
+    "workflow.level2.story.narrative": `🚨 URGENT: Production is down! 🚨
 
 At 2:47 AM, your phone buzzes with alerts. The payment system is failing, and customers can't complete purchases. The bug tracker shows a critical security vulnerability was introduced in the latest release.
 
@@ -951,8 +965,7 @@ Time is money. Let's fix this!`,
     "workflow.level3.requirement6.description": "Tag the release with version number (e.g., 'v2.0.0')",
     "workflow.level3.requirement6.success": "Release tagged! Version 2.0.0 is now live in production!",
     "workflow.level3.story.title": "The Release Manager",
-    "workflow.level3.story.narrative":
-        `Congratulations! You've been promoted to Release Manager at GitFlow Inc., a company that ships software every two weeks like clockwork.
+    "workflow.level3.story.narrative": `Congratulations! You've been promoted to Release Manager at GitFlow Inc., a company that ships software every two weeks like clockwork.
 
 Your job is to orchestrate the release of version 2.0, which includes:
 - Three new features from different teams
@@ -1006,7 +1019,8 @@ This is enterprise-level Git management. Welcome to the big leagues!`,
     "teamwork.level1.hint3": "Edit the team.md file to add your name and role",
     "teamwork.level1.hint4": "Stage all changes with 'git add .'",
     "teamwork.level1.hint5": "Commit with a clear message: 'git commit -m \"Add my profile\"'",
-    "teamwork.level1.hint6": "Push your branch with 'git push origin feature/YOUR-NAME' or 'git push --set-upstream origin feature/YOUR-NAME'",
+    "teamwork.level1.hint6":
+        "Push your branch with 'git push origin feature/YOUR-NAME' or 'git push --set-upstream origin feature/YOUR-NAME'",
     "teamwork.level1.requirement1.description": "Pull the latest changes from the team repository",
     "teamwork.level1.requirement1.success": "Latest changes pulled successfully!",
     "teamwork.level1.requirement2.description": "Create your feature branch for team profile",
@@ -1020,8 +1034,7 @@ This is enterprise-level Git management. Welcome to the big leagues!`,
     "teamwork.level1.requirement6.description": "Push your changes to the remote repository",
     "teamwork.level1.requirement6.success": "Changes pushed to remote!",
     "teamwork.level1.story.title": "Welcome to the Dev Team",
-    "teamwork.level1.story.narrative":
-        `🎉 Congratulations! You've just been hired as a developer at InnovateCorp, a fast-growing tech startup.
+    "teamwork.level1.story.narrative": `🎉 Congratulations! You've just been hired as a developer at InnovateCorp, a fast-growing tech startup.
 
 Your team lead, Alex, walks you through your first day:
 
@@ -1068,8 +1081,7 @@ This is real-world team development. Let's make your first contribution!`,
     "teamwork.level2.requirement5.description": "Commit the merge resolution",
     "teamwork.level2.requirement5.success": "Merge conflict resolved!",
     "teamwork.level2.story.title": "The Great Merge Conflict Crisis",
-    "teamwork.level2.story.narrative":
-        `⚠️ Welcome to your first merge conflict!
+    "teamwork.level2.story.narrative": `⚠️ Welcome to your first merge conflict!
 
 **The Situation:**
 You've been working on \`/src/auth/login.js\` this morning. You've improved the password validation to be stricter (minimum 5 chars for username, 10 for password). Great work!
@@ -1123,10 +1135,11 @@ This is completely normal in team development! Merge conflicts happen when multi
     "teamwork.level3.hint1": "Create a feature branch: git switch -c feature/password-reset",
     "teamwork.level3.hint2": "Alternative (classic): git checkout -b feature/password-reset",
     "teamwork.level3.hint3": "Stage all changes: git add .",
-    "teamwork.level3.hint4": "Commit with a descriptive message: git commit -m \"Add password reset functionality\"",
+    "teamwork.level3.hint4": 'Commit with a descriptive message: git commit -m "Add password reset functionality"',
     "teamwork.level3.hint5": "Push to remote: git push origin feature/password-reset",
     "teamwork.level3.hint6": "Alternative with shorthand: git push -u origin feature/password-reset",
-    "teamwork.level3.hint7": "Note: Use the branch name you created (not 'feature/password-reset' if you chose a different name)",
+    "teamwork.level3.hint7":
+        "Note: Use the branch name you created (not 'feature/password-reset' if you chose a different name)",
     "teamwork.level3.requirement1.description": "Create a branch for code review demonstration",
     "teamwork.level3.requirement1.success": "Feature branch created! ✨",
     "teamwork.level3.requirement2.description": "Stage your code for review",
@@ -1134,10 +1147,10 @@ This is completely normal in team development! Merge conflicts happen when multi
     "teamwork.level3.requirement3.description": "Commit with a clear, reviewable message",
     "teamwork.level3.requirement3.success": "Code committed with clear message! 💬",
     "teamwork.level3.requirement4.description": "Push your branch for code review",
-    "teamwork.level3.requirement4.success": "Code pushed for team review! 🚀 In real teams, you'd now create a Pull Request!",
+    "teamwork.level3.requirement4.success":
+        "Code pushed for team review! 🚀 In real teams, you'd now create a Pull Request!",
     "teamwork.level3.story.title": "The Code Review Culture",
-    "teamwork.level3.story.narrative":
-        `📝 Welcome to InnovateCorp's Code Review Process!
+    "teamwork.level3.story.narrative": `📝 Welcome to InnovateCorp's Code Review Process!
 
 **The Situation:**
 You've just finished implementing the password reset feature. The code works perfectly in your local tests! 🎉
@@ -1222,8 +1235,7 @@ Let's get your code ready for the team! 🚀`,
     "mastery.level2.requirement3.description": "Attempt a commit to trigger the quality checks",
     "mastery.level2.requirement3.success": "Quality checks passed!",
     "mastery.level2.story.title": "The Quality Guardian",
-    "mastery.level2.story.narrative":
-        `⚡ You've been promoted to DevOps Engineer, and your first mission is to implement the "Quality Guardian" - an automated system that prevents bad code from entering the repository.
+    "mastery.level2.story.narrative": `⚡ You've been promoted to DevOps Engineer, and your first mission is to implement the "Quality Guardian" - an automated system that prevents bad code from entering the repository.
 
 The development team has been growing rapidly, and with growth comes inconsistency:
 - Commits without proper testing
@@ -1278,8 +1290,7 @@ This is infrastructure work that will benefit every developer on your team. You'
     "mastery.level3.requirement4.description": "Push the emergency release tags",
     "mastery.level3.requirement4.success": "🎉 MASTERY ACHIEVED! You are now a Git Master!",
     "mastery.level3.story.title": "The Ultimate Git Challenge: Black Friday Crisis",
-    "mastery.level3.story.narrative":
-        `🚨 BLACK FRIDAY, 2:00 AM - THE ULTIMATE TEST
+    "mastery.level3.story.narrative": `🚨 BLACK FRIDAY, 2:00 AM - THE ULTIMATE TEST
 
 You are the Senior DevOps Engineer at MegaCorp, and you're facing the perfect storm of Git challenges on the biggest shopping day of the year.
 
@@ -1360,9 +1371,12 @@ Ready to prove your mastery? The clock is ticking...`,
     "archaeology.level1.requirement3.description": "Examine the details of a specific commit",
     "archaeology.level1.requirement3.success": "Commit details analyzed!",
     "archaeology.level1.story.title": "The Case of the Mysterious Bug",
-    "archaeology.level1.story.narrative": "A critical bug in the validation code is affecting 23% of European customers. The code was written by 4 different developers over 18 months. Your senior developer explains: 'Welcome to code archaeology! Git isn't just version control - it's your time machine. Every line has a story.' Use git blame, git log, and git show to investigate the bug and understand why the code was written this way.",
-    "archaeology.level1.story.realWorldContext": "Code archaeology skills are essential for maintaining large, long-lived codebases with multiple contributors over time.",
-    "archaeology.level1.story.taskIntroduction": "Learn to investigate code history and track down the source of bugs using Git forensic tools.",
+    "archaeology.level1.story.narrative":
+        "A critical bug in the validation code is affecting 23% of European customers. The code was written by 4 different developers over 18 months. Your senior developer explains: 'Welcome to code archaeology! Git isn't just version control - it's your time machine. Every line has a story.' Use git blame, git log, and git show to investigate the bug and understand why the code was written this way.",
+    "archaeology.level1.story.realWorldContext":
+        "Code archaeology skills are essential for maintaining large, long-lived codebases with multiple contributors over time.",
+    "archaeology.level1.story.taskIntroduction":
+        "Learn to investigate code history and track down the source of bugs using Git forensic tools.",
 
     "archaeology.level2.name": "Commit Forensics with Git Log",
     "archaeology.level2.description": "Master advanced techniques to investigate complex code history",
@@ -1381,9 +1395,12 @@ Ready to prove your mastery? The clock is ticking...`,
     "archaeology.level2.requirement3.description": "Find all commits by Sarah to understand her contributions",
     "archaeology.level2.requirement3.success": "Sarah's contribution history analyzed!",
     "archaeology.level2.story.title": "The Security Audit Trail",
-    "archaeology.level2.story.narrative": "Your company received a security audit. The auditors want a complete history of all security-related changes: authentication, password handling, encryption. The codebase has 2,847 commits over 3 years. Your security lead explains Git's search capabilities: --grep for messages, -S for code content, --author for contributors. Build a comprehensive audit trail using advanced git log techniques.",
-    "archaeology.level2.story.realWorldContext": "Advanced Git log techniques are essential for security audits, code reviews, and understanding complex project histories.",
-    "archaeology.level2.story.taskIntroduction": "Master advanced Git log techniques for comprehensive code history investigation and forensic analysis.",
+    "archaeology.level2.story.narrative":
+        "Your company received a security audit. The auditors want a complete history of all security-related changes: authentication, password handling, encryption. The codebase has 2,847 commits over 3 years. Your security lead explains Git's search capabilities: --grep for messages, -S for code content, --author for contributors. Build a comprehensive audit trail using advanced git log techniques.",
+    "archaeology.level2.story.realWorldContext":
+        "Advanced Git log techniques are essential for security audits, code reviews, and understanding complex project histories.",
+    "archaeology.level2.story.taskIntroduction":
+        "Master advanced Git log techniques for comprehensive code history investigation and forensic analysis.",
 
     "archaeology.level3.name": "Git Reflog - The Time Machine",
     "archaeology.level3.description": "Use Git reflog to recover lost commits and understand repository state changes",
@@ -1402,10 +1419,320 @@ Ready to prove your mastery? The clock is ticking...`,
     "archaeology.level3.requirement3.description": "Create a recovery branch from a reflog entry",
     "archaeology.level3.requirement3.success": "Recovery branch created!",
     "archaeology.level3.story.title": "The Great Git Disaster Recovery",
-    "archaeology.level3.story.narrative": "It's Friday 4:30 PM. Your teammate Jake panics: 'I accidentally ran git reset --hard and lost two weeks of work! The authentication system, UI components, tests - all gone!' But you remember: Git never forgets. Git reflog tracks every commit, branch switch, merge, and reset. Even 'deleted' commits exist in reflog for 90 days. Your mission: examine the reflog, find the lost commits, and recover Jake's work. Time to be the hero!",
-    "archaeology.level3.story.realWorldContext": "Git reflog is a powerful recovery tool that can save developers from catastrophic data loss scenarios.",
-    "archaeology.level3.story.taskIntroduction": "Master Git reflog to become the hero who can recover 'lost' work and save the day for your teammates.",
+    "archaeology.level3.story.narrative":
+        "It's Friday 4:30 PM. Your teammate Jake panics: 'I accidentally ran git reset --hard and lost two weeks of work! The authentication system, UI components, tests - all gone!' But you remember: Git never forgets. Git reflog tracks every commit, branch switch, merge, and reset. Even 'deleted' commits exist in reflog for 90 days. Your mission: examine the reflog, find the lost commits, and recover Jake's work. Time to be the hero!",
+    "archaeology.level3.story.realWorldContext":
+        "Git reflog is a powerful recovery tool that can save developers from catastrophic data loss scenarios.",
+    "archaeology.level3.story.taskIntroduction":
+        "Master Git reflog to become the hero who can recover 'lost' work and save the day for your teammates.",
 
+    // Intro Level 4
+    "intro.level4.name": "Inspecting Changes",
+    "intro.level4.description": "See exactly what changed in your files",
+    "intro.level4.objective1": "Find out which files have been modified",
+    "intro.level4.objective2": "Inspect the exact changes line by line",
+    "intro.level4.hint1": "Use `git status` to see which files have been modified",
+    "intro.level4.hint2": "Use `git diff` to see the exact changes inside those files",
+    "intro.level4.hint3": "You can also run `git diff <file>` to inspect a single file",
+    "intro.level4.requirement1.description": "Check which files have been modified",
+    "intro.level4.requirement1.success": "Good! `git status` shows that src/config.js has been modified.",
+    "intro.level4.requirement2.description": "Show the exact changes with git diff",
+    "intro.level4.requirement2.success":
+        "Excellent! Now you can see exactly which lines changed before anything gets committed.",
+    "intro.level4.story.title": "The Mystery Change",
+    "intro.level4.story.narrative":
+        'Monday morning at TechStart. Alex hurries over to your desk with a worried look.\n\n"Before she left on Friday, Sarah changed something in the website config - but she\'s on vacation now and we\'re releasing today. I need to know exactly what she changed."\n\nHe explains: "`git status` only tells you WHICH files changed. To see WHAT changed inside them, we use `git diff`. It compares your working files with the last commit and shows every added and removed line."\n\n"First check the status of the repository, then inspect the change with `git diff`. Lines starting with + were added, lines starting with - were removed."',
+    "intro.level4.story.realWorldContext":
+        "Developers run `git diff` many times a day - especially right before committing. Reviewing your own changes first is how you catch debug flags, leftover test code, and secrets before they end up in the project history.",
+    "intro.level4.story.taskIntroduction":
+        "Use `git status` to find the modified file, then `git diff` to see exactly what changed.",
+
+    // Files Level 4
+    "files.level4.name": "Renaming Files",
+    "files.level4.description": "Rename a file with Git and keep its history",
+    "files.level4.objective1": "Rename src/app-config.js to src/config.js using git mv",
+    "files.level4.objective2": "Commit the rename with a descriptive message",
+    "files.level4.hint1": "Use the `git mv <old-name> <new-name>` command",
+    "files.level4.hint2": "`git mv` renames the file and stages the change in one step",
+    "files.level4.hint3": "Finish with `git commit -m 'Your message'` to record the rename",
+    "files.level4.requirement1.description": "Rename the file using git mv",
+    "files.level4.requirement1.success": "Nice! Git has renamed the file and already staged the change for you.",
+    "files.level4.requirement2.description": "Commit the rename with a message",
+    "files.level4.requirement2.success": "Perfect! The rename is now part of the project history.",
+    "files.level4.story.title": "A Tidy Codebase",
+    "files.level4.story.narrative":
+        '"One more thing before the code review," says Alex, pointing at your file tree. "We agreed on short, consistent file names in the team. app-config.js should simply be called config.js."\n\nHe adds: "Don\'t just rename it in your file explorer! Use `git mv` instead - it renames the file and stages the change in a single step, so Git keeps track of the file\'s history."',
+    "files.level4.story.realWorldContext":
+        "Renaming files happens all the time as projects grow and naming conventions evolve. With `git mv`, Git records the rename cleanly instead of seeing an unrelated deletion and a brand-new file.",
+    "files.level4.story.taskIntroduction":
+        "Rename src/app-config.js to src/config.js with `git mv` and then commit the change.",
+
+    // Branches Level 6
+    "branches.level6.name": "Branch Cleanup",
+    "branches.level6.description": "Delete merged and abandoned branches to keep your repository tidy",
+    "branches.level6.objective1": "Delete the merged branch feature/search-filters",
+    "branches.level6.objective2": "Force-delete the abandoned branch experiment/new-ui",
+    "branches.level6.hint1": "Run `git branch` to see which branches still exist",
+    "branches.level6.hint2":
+        "Use `git branch -d feature/search-filters` - the lowercase -d only deletes branches that are fully merged",
+    "branches.level6.hint3":
+        "Git refuses to delete unmerged branches with -d. Use `git branch -D experiment/new-ui` to force the deletion",
+    "branches.level6.requirement1.description": "Delete the merged branch feature/search-filters using git branch -d",
+    "branches.level6.requirement1.success":
+        "Well done! Git allowed the deletion because everything from feature/search-filters is already in main.",
+    "branches.level6.requirement2.description":
+        "Force-delete the abandoned branch experiment/new-ui using git branch -D",
+    "branches.level6.requirement2.success":
+        "Perfect! With -D you discarded the unmerged experiment - your branch list is clean again.",
+    "branches.level6.story.title": "Spring Cleaning in the Repository",
+    "branches.level6.story.narrative":
+        '"Our branch list is getting crowded," says Alex, scrolling through the repository. "The search filters from feature/search-filters were merged into main weeks ago, and experiment/new-ui was a prototype we decided against."\n\nHe explains: "Use `git branch -d` for the merged branch - the lowercase -d is safe because Git checks that nothing gets lost. For the experiment, Git will refuse, since its commits were never merged. That\'s what the capital -D is for: it deletes the branch even with unmerged work, so only use it when you\'re sure."',
+    "branches.level6.story.realWorldContext":
+        "In real projects, dozens of stale branches pile up over time. Deleting merged branches regularly keeps the repository easy to navigate. The lowercase -d is the safe default because Git protects unmerged commits, while -D consciously discards work - the commits can often still be rescued via the reflog, but you should never rely on that.",
+    "branches.level6.story.taskIntroduction":
+        "First delete the merged branch feature/search-filters with `git branch -d`, then force-delete the abandoned branch experiment/new-ui with `git branch -D`.",
+
+    // Merge Level 4
+    "merge.level4.name": "Resolving Merge Conflicts",
+    "merge.level4.description": "Resolve a merge conflict by hand and complete the merge",
+    "merge.level4.objective1": "Check with git status which file is in conflict",
+    "merge.level4.objective2": "Edit src/api.js, remove the conflict markers and stage the resolved file",
+    "merge.level4.objective3": "Complete the merge with a commit",
+    "merge.level4.hint1": "Start with `git status` to see which files are in conflict",
+    "merge.level4.hint2":
+        "Open `src/api.js` and remove the conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) — keep the code the team needs, then stage the file with `git add .`",
+    "merge.level4.hint3": "Finish the merge with `git commit -m 'Resolve merge conflict'`",
+    "merge.level4.requirement1.description": "Inspect the conflict with git status",
+    "merge.level4.requirement1.success": "Good! Now you know exactly which file needs your attention: src/api.js.",
+    "merge.level4.requirement2.description": "Stage the resolved file",
+    "merge.level4.requirement2.success": "Great! The resolved file is staged — no conflict markers left behind.",
+    "merge.level4.requirement3.description": "Commit to complete the merge",
+    "merge.level4.requirement3.success": "Outstanding! You've resolved your first merge conflict like a pro.",
+    "merge.level4.story.title": "No More Running Away",
+    "merge.level4.story.narrative":
+        '"Remember the merge we aborted?", asks Sarah with a smile. "The rate limiter has to go live today — this time we resolve the conflict instead of backing out."\n\nShe points at your screen: "Git marked the conflict right inside the file. Everything between <<<<<<< HEAD and ======= is our version from main, everything below down to >>>>>>> comes from feature/rate-limit. Your job: edit the file, keep what we need, delete the markers. Then `git add` and `git commit` — that\'s how you finish a merge."',
+    "merge.level4.story.realWorldContext":
+        "Resolving conflicts is everyday business in team development. The steps are always the same: 1) open the conflicted file, 2) decide which code survives (often a combination of both), 3) remove the markers, 4) stage the file and commit. Modern editors highlight the markers for you, but underneath it's exactly this workflow.",
+    "merge.level4.story.taskIntroduction":
+        "A merge of feature/rate-limit into main stopped with a conflict in src/api.js. Check the status, resolve the conflict in the file, then stage it and complete the merge with a commit.",
+
+    // Rebase Level 5
+    "rebase.level5.name": "Rebasing Without Switching",
+    "rebase.level5.description":
+        "Learn the two-argument form of git rebase to rebase a branch without checking it out first",
+    "rebase.level5.objective1":
+        "Rebase the feature/payment-api branch onto main using the two-argument form of git rebase",
+    "rebase.level5.hint1":
+        "You can pass two arguments: `git rebase <upstream> <branch>` — Git checks out `<branch>` and rebases it onto `<upstream>` in one step",
+    "rebase.level5.hint2": "Try `git rebase main feature/payment-api` — no need to switch branches first",
+    "rebase.level5.requirement1.description": "Rebase feature/payment-api onto main with the two-argument form",
+    "rebase.level5.requirement1.success":
+        "Brilliant! You rebased feature/payment-api onto main in a single command — no branch switching required.",
+    "rebase.level5.story.title": "One Command, Two Arguments",
+    "rebase.level5.story.narrative":
+        '"We ship the payments release tonight," Alex says, glancing at the board. "You\'re on main double-checking the release, and the feature/payment-api branch has fallen behind again."\n\nHe grins: "Here\'s a trick most people miss: git rebase takes a second argument. Instead of switching branches first, tell Git right in the command which branch to rebase — it checks the branch out and replays it onto main in one go."',
+    "rebase.level5.story.realWorldContext":
+        "The two-argument form git rebase <upstream> <branch> is a handy shortcut in day-to-day work: it checks out <branch> and rebases it onto <upstream> in a single step. It saves an extra checkout and keeps busy release days moving.",
+    "rebase.level5.story.taskIntroduction":
+        "You are on main. Rebase feature/payment-api onto main in one command: git rebase main feature/payment-api",
+
+    // Remote Level 4
+    "remote.level4.name": "Upstream Tracking with -u",
+    "remote.level4.description": "Set an upstream once, then push without any arguments",
+    "remote.level4.objective1": "Publish the login-form branch with upstream tracking",
+    "remote.level4.objective2": "Commit the improved error messages",
+    "remote.level4.objective3": "Push again — this time without any arguments",
+    "remote.level4.hint1":
+        "Publish the branch first: `git push -u origin login-form`. The `-u` flag links your local branch to the remote branch.",
+    "remote.level4.hint2":
+        "Then stage and commit the polish: `git add .` followed by `git commit -m 'Polish login error messages'`",
+    "remote.level4.hint3": "Because the upstream is set, a plain `git push` is now enough — no remote, no branch name.",
+    "remote.level4.requirement1.description": "Publish the login-form branch with `git push -u origin login-form`",
+    "remote.level4.requirement1.success":
+        "Branch published! Git now remembers that login-form tracks origin/login-form.",
+    "remote.level4.requirement2.description": "Commit the improved error messages in src/login.js",
+    "remote.level4.requirement2.success": "Great! Your polish is committed locally — one step away from the team.",
+    "remote.level4.requirement3.description": "Push your new commit with a plain `git push`",
+    "remote.level4.requirement3.success":
+        "Perfect! A plain `git push` was enough — that's the power of upstream tracking.",
+    "remote.level4.story.title": "Set It Once, Push Forever",
+    "remote.level4.story.narrative":
+        '"The login form looks fantastic!" Alex says, rolling his chair over to your desk at TechStart. "Publish your `login-form` branch so the team can start the review. And do yourself a favor: push it with `-u`. That flag sets the upstream — Git remembers which remote branch your local branch belongs to."\n\nHe grins: "I still see one uncommitted improvement in `src/login.js` — the friendlier error messages. Publish the branch first, then commit the polish and push again. Watch closely: the second time, a plain `git push` is all you need. No remote, no branch name — Git already knows where it goes."',
+    "remote.level4.story.realWorldContext":
+        "The very first push of a new branch is almost always `git push -u origin <branch>`. Once the upstream is set, `git push` and `git pull` work without arguments, and `git status` can tell you how many commits you are ahead of or behind the remote. Without an upstream, Git stops you with the famous error: 'The current branch has no upstream branch.'",
+    "remote.level4.story.taskIntroduction":
+        "Publish the branch with `git push -u origin login-form`, then commit the improved error messages and push them with a plain `git push`.",
+
+    // Workflow Level 4
+    "workflow.level4.name": "The Perfect Commit: Amend",
+    "workflow.level4.description": "Fix your last commit with git commit --amend before anyone ever sees the mistake",
+    "workflow.level4.objective1": "Stage the forgotten config file",
+    "workflow.level4.objective2": "Amend your last commit to include the file and fix the message",
+    "workflow.level4.objective3": "Push the corrected commit to the remote",
+    "workflow.level4.hint1":
+        "Run `git status` — the updated /src/config.js was never staged, so your fix commit is incomplete.",
+    "workflow.level4.hint2": "Stage the missing file with `git add src/config.js` (or `git add .`).",
+    "workflow.level4.hint3":
+        "Use `git commit --amend -m 'Fix login timeout'` to fold the staged file into your last commit AND correct the typo in the message.",
+    "workflow.level4.hint4":
+        "Amending is safe here because the commit was never pushed. Finish with `git push origin main`. Never amend commits that are already pushed!",
+    "workflow.level4.requirement1.description": "Stage the forgotten config file",
+    "workflow.level4.requirement1.success": "File staged! Now it can be folded into the previous commit.",
+    "workflow.level4.requirement2.description": "Amend the last commit with 'git commit --amend'",
+    "workflow.level4.requirement2.success":
+        "Commit amended! One bug, one clean commit — including the config file and a typo-free message.",
+    "workflow.level4.requirement3.description": "Push the corrected commit with 'git push origin main'",
+    "workflow.level4.requirement3.success":
+        "Pushed! Nobody will ever know about the typo — your history looks like you got it right the first time.",
+    "workflow.level4.story.title": "The Almost-Perfect Commit",
+    "workflow.level4.story.narrative":
+        'It\'s 4:55 PM on a Friday at TechStart. You just committed the fix for the login-timeout bug and you\'re already reaching for your jacket when team lead Alex rolls a chair over to your desk.\n\n"Hold on — look at your last commit," Alex says, pointing at the screen.\n\n`git log` shows your commit message: **"Fix login timout"**. Ouch, a typo. And `git status` reveals something worse: `src/config.js` — the file that actually raises the session timeout to 30 minutes — was never staged. Your "fix" commit contains only half the fix.\n\n"Don\'t panic," Alex grins. "You haven\'t pushed yet. That means we can rewrite the last commit as if the mistake never happened."\n\n**What does `git commit --amend` do?**\nIt REPLACES your last commit with a corrected version:\n- Everything currently staged is added to the commit\n- With `-m` you can write a brand-new commit message\n- The old commit is discarded — history stays clean\n\n**The rescue plan:**\n1. Stage the forgotten file: `git add src/config.js`\n2. Rewrite the commit: `git commit --amend -m "Fix login timeout"`\n3. Ship it: `git push origin main`\n\n**The golden rule:** Only amend commits that have NOT been pushed. Amending rewrites history — if teammates have already pulled the old commit, you\'ll create chaos in every clone. Local and unpushed? Amend away.',
+    "workflow.level4.story.realWorldContext":
+        "Forgetting a file or making a typo in a commit message happens to every developer, every week. `git commit --amend` is the everyday tool that keeps history clean: one logical change, one polished commit. Professional teams follow one iron rule — never amend a commit that has already been pushed, because rewriting shared history breaks your teammates' repositories.",
+    "workflow.level4.story.taskIntroduction":
+        "Rescue your last commit: stage the forgotten config file, amend the commit with a corrected message, then push a history so clean that nobody will ever know.",
+
+    // Reset Level 4
+    "reset.level4.name": "Safe Undo with Revert",
+    "reset.level4.description": "Undo a public commit without rewriting history",
+    "reset.level4.objective1": "Inspect the history to find the bad commit",
+    "reset.level4.objective2": "Undo the last commit safely with revert",
+    "reset.level4.hint1": "Use `git log --oneline` to see a compact history",
+    "reset.level4.hint2": "`git revert HEAD` creates a new commit that undoes the last one",
+    "reset.level4.hint3": "Unlike `git reset`, revert never rewrites history that teammates already pulled",
+    "reset.level4.requirement1.description": "Show the compact commit history",
+    "reset.level4.requirement1.success": "There it is — 'Quick fix without review' is the bad commit on top.",
+    "reset.level4.requirement2.description": "Revert the last commit",
+    "reset.level4.requirement2.success": "Perfect! A new revert commit undoes the change — history stays intact.",
+    "reset.level4.story.title": "The Fix That Broke Refunds",
+    "reset.level4.story.narrative":
+        "Red alert! Someone pushed a 'quick fix' straight to main without review — and it breaks the refund flow.\n\nAlex rushes over: \"We can't use `git reset` here. The commit is already public and the whole team has pulled it. If we rewrite history now, everyone's repository breaks.\n\nThis is exactly what `git revert` is for: it creates a NEW commit that undoes the bad one. History stays intact, and everyone stays in sync.\"",
+    "reset.level4.story.realWorldContext":
+        "On shared branches, professional teams almost always use revert instead of reset. Rewriting public history causes chaos for everyone who already pulled it.",
+    "reset.level4.story.taskIntroduction":
+        "Check the history with `git log --oneline`, then undo the bad commit with `git revert HEAD`.",
+
+    // Stash Level 4
+    "stash.level4.name": "Keep Your Backup: Stash Apply",
+    "stash.level4.description": "Apply stashed work while keeping the stash as a backup",
+    "stash.level4.objective1": "Stash your risky experiment",
+    "stash.level4.objective2": "Bring the work back with apply (keeping the stash)",
+    "stash.level4.objective3": "Commit the experiment once you trust it",
+    "stash.level4.hint1": "`git stash` saves your changes and gives you a clean working tree",
+    "stash.level4.hint2":
+        "`git stash apply` restores the changes but keeps a copy in the stash — unlike `git stash pop`",
+    "stash.level4.hint3": 'After staging with `git add`, commit with `git commit -m "message"`',
+    "stash.level4.requirement1.description": "Stash your current changes",
+    "stash.level4.requirement1.success": "Experiment safely tucked away — your working tree is clean.",
+    "stash.level4.requirement2.description": "Apply the stash without deleting it",
+    "stash.level4.requirement2.success": "Work restored — and the stash still holds your backup copy!",
+    "stash.level4.requirement3.description": "Commit the experiment",
+    "stash.level4.requirement3.success": "Committed! The stash backup saved you from losing the risky work.",
+    "stash.level4.story.title": "The Risky Experiment",
+    "stash.level4.story.narrative":
+        "You've been experimenting with fuzzy search — promising, but risky.\n\nAlex suggests: \"Before you go further, stash it. But here's a pro move: use `git stash apply` instead of `pop` when you bring it back. Apply restores your changes but KEEPS the copy in the stash. If your next step goes wrong, your backup is still there.\"",
+    "stash.level4.story.realWorldContext":
+        "Developers use `apply` instead of `pop` when they want a safety net: the stash entry survives as a backup until they explicitly drop it.",
+    "stash.level4.story.taskIntroduction":
+        "Stash the experiment, bring it back with `git stash apply`, then commit it.",
+
+    // Teamwork Level 4
+    "teamwork.level4.name": "Review Before You Ship",
+    "teamwork.level4.description": "Review your own changes with git diff before committing",
+    "teamwork.level4.objective1": "Review your unstaged changes",
+    "teamwork.level4.objective2": "Stage the reviewed changes",
+    "teamwork.level4.objective3": "Double-check what is about to be committed",
+    "teamwork.level4.objective4": "Commit the reviewed changes",
+    "teamwork.level4.hint1": "`git diff` shows changes in your working directory that are not staged yet",
+    "teamwork.level4.hint2": "`git diff --staged` shows exactly what will go into the next commit",
+    "teamwork.level4.hint3": "Review first, then `git add`, review again with `--staged`, then commit",
+    "teamwork.level4.requirement1.description": "Show your unstaged changes",
+    "teamwork.level4.requirement1.success": "Good habit! You reviewed the diff before staging anything.",
+    "teamwork.level4.requirement2.description": "Stage the changes",
+    "teamwork.level4.requirement2.success": "Changes staged — ready for the final check.",
+    "teamwork.level4.requirement3.description": "Show the staged changes",
+    "teamwork.level4.requirement3.success": "That's exactly what will land in the commit. No surprises.",
+    "teamwork.level4.requirement4.description": "Commit the reviewed changes",
+    "teamwork.level4.requirement4.success": "Shipped with confidence — reviewed twice, committed once!",
+    "teamwork.level4.story.title": "The Self-Review Habit",
+    "teamwork.level4.story.narrative":
+        'Your teammate Sarah just got burned: she committed a debug line by accident and the reviewer caught it in the pull request. Embarrassing.\n\nAlex shares the team\'s golden rule: "Review your OWN diff before anyone else sees it. `git diff` shows what you changed, and after staging, `git diff --staged` shows exactly what goes into the commit. Two quick checks that catch stray debug lines, typos and forgotten files."',
+    "teamwork.level4.story.realWorldContext":
+        "Self-reviewing diffs before committing is one of the highest-impact habits in professional teams — it catches mistakes before they ever reach code review.",
+    "teamwork.level4.story.taskIntroduction":
+        "Review with `git diff`, stage with `git add`, verify with `git diff --staged`, then commit.",
+
+    // Advanced Level 4
+    "advanced.level4.name": "Bug Hunting with Bisect",
+    "advanced.level4.description": "Find the commit that broke the app using binary search",
+    "advanced.level4.objective1": "Start a bisect session",
+    "advanced.level4.objective2": "Mark the broken and working versions",
+    "advanced.level4.objective3": "End the bisect session",
+    "advanced.level4.hint1": "`git bisect start` begins the binary search through your history",
+    "advanced.level4.hint2":
+        "Mark the current broken state with `git bisect bad`, then a known working commit with `git bisect good`",
+    "advanced.level4.hint3": "When you're done, `git bisect reset` returns you to where you started",
+    "advanced.level4.requirement1.description": "Start bisecting",
+    "advanced.level4.requirement1.success": "Bisect session started — Git is ready to narrow down the culprit.",
+    "advanced.level4.requirement2.description": "Mark the current commit as bad",
+    "advanced.level4.requirement2.success": "Current version marked as broken.",
+    "advanced.level4.requirement3.description": "Mark a working commit as good",
+    "advanced.level4.requirement3.success": "Git now knows the good/bad range and can binary-search between them!",
+    "advanced.level4.requirement4.description": "End the bisect session",
+    "advanced.level4.requirement4.success": "Session closed — you found your culprit in logarithmic time!",
+    "advanced.level4.story.title": "The Needle in the Haystack",
+    "advanced.level4.story.narrative":
+        'Search is broken in production — but it worked fine last week, and there are dozens of commits in between.\n\nAlex grins: "Checking every commit by hand would take hours. `git bisect` does a binary search: tell it one bad commit and one good commit, and it repeatedly checks out the middle until it pinpoints the exact commit that broke things. Twenty commits? Only about five checks."',
+    "advanced.level4.story.realWorldContext":
+        "git bisect is the fastest way to find regressions in large histories. With 1000 commits, binary search needs only ~10 steps to find the culprit.",
+    "advanced.level4.story.taskIntroduction":
+        "Start with `git bisect start`, mark versions with `bad` and `good`, then finish with `git bisect reset`.",
+
+    // Archaeology Level 4
+    "archaeology.level4.name": "Working Tree Rescue",
+    "archaeology.level4.description": "Undo accidental changes with git restore",
+    "archaeology.level4.objective1": "Unstage the accidentally staged config change",
+    "archaeology.level4.objective2": "Throw away the garbled changes in the notes file",
+    "archaeology.level4.hint1":
+        "`git restore --staged config.js` moves a file out of the staging area without losing its changes",
+    "archaeology.level4.hint2":
+        "`git restore notes.md` discards working-directory changes and brings back the committed version",
+    "archaeology.level4.hint3": "Check `git status` anytime to see what is staged and what is modified",
+    "archaeology.level4.requirement1.description": "Unstage the config file",
+    "archaeology.level4.requirement1.success": "The local URL is out of the staging area — crisis averted.",
+    "archaeology.level4.requirement2.description": "Restore the notes file to its committed state",
+    "archaeology.level4.requirement2.success":
+        "The cat's masterpiece is gone — your notes are back to the committed version.",
+    "archaeology.level4.story.title": "The Keyboard Cat Incident",
+    "archaeology.level4.story.narrative":
+        'Disaster strikes twice: first you accidentally staged a config change that points the app at localhost — that must NOT be committed. Then your cat walked across the keyboard and garbled your sprint notes.\n\nAlex laughs: "Happens to everyone. `git restore --staged` pulls a file back out of the staging area, and plain `git restore` throws away working-directory changes and restores the last committed version. Two different rescues, one command."',
+    "archaeology.level4.story.realWorldContext":
+        "git restore is the modern, safer replacement for the old 'git checkout -- file' and 'git reset HEAD file' recipes for unstaging and discarding changes.",
+    "archaeology.level4.story.taskIntroduction":
+        "Unstage config.js with `git restore --staged config.js`, then discard the notes.md changes with `git restore notes.md`.",
+
+    // Mastery Level 4
+    "mastery.level4.name": "The Perfect Release",
+    "mastery.level4.description": "Fix the last commit with --amend and tag the release",
+    "mastery.level4.objective1": "Stage the forgotten release notes",
+    "mastery.level4.objective2": "Amend the release commit to include them",
+    "mastery.level4.objective3": "Tag the polished release",
+    "mastery.level4.hint1": "Stage the forgotten file with `git add .`",
+    "mastery.level4.hint2": '`git commit --amend -m "message"` folds staged changes into the previous commit',
+    "mastery.level4.hint3": 'Create an annotated tag with `git tag -a v3.0.0 -m "Release 3.0.0"`',
+    "mastery.level4.requirement1.description": "Stage the release notes",
+    "mastery.level4.requirement1.success": "Release notes staged — ready to join the release commit.",
+    "mastery.level4.requirement2.description": "Amend the previous commit",
+    "mastery.level4.requirement2.success": "The release commit now includes the notes — as if you never forgot them.",
+    "mastery.level4.requirement3.description": "Create an annotated release tag",
+    "mastery.level4.requirement3.success": "v3.0.0 tagged — a picture-perfect release. You've truly mastered Git!",
+    "mastery.level4.story.title": "One Commit to Rule the Release",
+    "mastery.level4.story.narrative":
+        "Release day! You committed 'Prepare release v3.0.0' — and then spot the release notes file, unstaged and forgotten. A second 'oops, forgot the notes' commit would look sloppy in the history books.\n\nAlex nods approvingly: \"Since the commit isn't pushed yet, use `git commit --amend`. It folds your staged changes into the previous commit as if they were always there. Then crown it with an annotated tag.\"",
+    "mastery.level4.story.realWorldContext":
+        "Amending unpushed commits keeps history clean and intentional. Combined with annotated tags, it is how professionals cut tidy, well-documented releases.",
+    "mastery.level4.story.taskIntroduction":
+        "Stage the notes with `git add .`, fold them in with `git commit --amend`, then tag with `git tag -a`.",
 };
 
 export default levels;

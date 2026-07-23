@@ -59,7 +59,7 @@ const branchesLevel2 = createLevel({
             alternativeCommands: ["git checkout"],
             description: "branches.level2.requirement1.description",
             successMessage: "branches.level2.requirement1.success",
-            id: "git-switch"
+            id: "git-switch",
         }),
     ],
     story: createStory({
@@ -99,7 +99,7 @@ const branchesLevel3 = createLevel({
             requiresArgs: ["any"],
             description: "branches.level3.requirement1.description",
             successMessage: "branches.level3.requirement1.success",
-            id: "git-switch-2"
+            id: "git-switch-2",
         }),
     ],
     story: createStory({
@@ -139,7 +139,7 @@ const branchesLevel4 = createLevel({
             command: "git checkout",
             description: "branches.level4.requirement1.description",
             successMessage: "branches.level4.requirement1.success",
-            id: "git-checkout"
+            id: "git-checkout",
         }),
     ],
     story: createStory({
@@ -181,7 +181,7 @@ const branchesLevel5 = createLevel({
             alternativeCommands: ["git checkout", "git branch"],
             description: "branches.level5.requirement1.description",
             successMessage: "branches.level5.requirement1.success",
-            id: "git-switch-3"
+            id: "git-switch-3",
         }),
     ],
     story: createStory({
@@ -208,10 +208,73 @@ const branchesLevel5 = createLevel({
     }),
 });
 
+// Level 6: git branch -d / -D zum Löschen von gemergten und verworfenen Branches
+const branchesLevel6 = createLevel({
+    id: 6,
+    name: "branches.level6.name",
+    description: "branches.level6.description",
+    objectives: ["branches.level6.objective1", "branches.level6.objective2"],
+    hints: ["branches.level6.hint1", "branches.level6.hint2", "branches.level6.hint3"],
+    requirements: [
+        createRequirement({
+            command: "git branch",
+            requiresArgs: ["-d", "feature/search-filters"],
+            description: "branches.level6.requirement1.description",
+            successMessage: "branches.level6.requirement1.success",
+            id: "branch-delete-merged",
+        }),
+        createRequirement({
+            command: "git branch",
+            requiresArgs: ["-D", "experiment/new-ui"],
+            description: "branches.level6.requirement2.description",
+            successMessage: "branches.level6.requirement2.success",
+            id: "branch-force-delete",
+        }),
+    ],
+    requirementLogic: "all",
+    story: createStory({
+        title: "branches.level6.story.title",
+        narrative: "branches.level6.story.narrative",
+        realWorldContext: "branches.level6.story.realWorldContext",
+        taskIntroduction: "branches.level6.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure("/README.md", "# TechStart Shop\n\nThe TechStart online shop application."),
+            createFileStructure("/src/app.js", 'console.log("TechStart shop is running");'),
+            createFileStructure(
+                "/src/search.js",
+                "// Search filters - merged from feature/search-filters\nexport function filterProducts(products, query) {\n    return products.filter(p => p.name.includes(query));\n}",
+            ),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            branches: ["main", "feature/search-filters", "experiment/new-ui"],
+            commits: [
+                {
+                    message: "Initial commit",
+                    files: ["/README.md", "/src/app.js"],
+                },
+                {
+                    message: "Add search filters",
+                    files: ["/src/search.js"],
+                },
+                {
+                    message: "Experiment with a new UI layout",
+                    files: [],
+                    branch: "experiment/new-ui",
+                },
+            ],
+        }),
+    }),
+});
+
 export const branchesLevels = {
     1: branchesLevel1,
     2: branchesLevel2,
     3: branchesLevel3,
     4: branchesLevel4,
     5: branchesLevel5,
+    6: branchesLevel6,
 };

@@ -1,5 +1,6 @@
 import {
     createLevel,
+    createRequirement,
     createStory,
     createInitialState,
     createFileStructure,
@@ -14,14 +15,9 @@ const stashLevel1 = createLevel({
         "stash.level1.objective1",
         "stash.level1.objective2",
         "stash.level1.objective3",
-        "stash.level1.objective4"
+        "stash.level1.objective4",
     ],
-    hints: [
-        "stash.level1.hint1",
-        "stash.level1.hint2",
-        "stash.level1.hint3",
-        "stash.level1.hint4"
-    ],
+    hints: ["stash.level1.hint1", "stash.level1.hint2", "stash.level1.hint3", "stash.level1.hint4"],
     requirementLogic: "all",
     requirements: [
         {
@@ -97,7 +93,8 @@ const stashLevel1 = createLevel({
                 {
                     path: "/src/feature.js",
                     status: "modified",
-                    content: "// Feature in progress\nfunction newFeature() {\n  // Work in progress - NOT DONE YET!\n  console.log('Still working on this...');\n  return 'incomplete';\n}",
+                    content:
+                        "// Feature in progress\nfunction newFeature() {\n  // Work in progress - NOT DONE YET!\n  console.log('Still working on this...');\n  return 'incomplete';\n}",
                 },
             ],
         }),
@@ -113,14 +110,14 @@ const stashLevel2 = createLevel({
         "stash.level2.objective2",
         "stash.level2.objective3",
         "stash.level2.objective4",
-        "stash.level2.objective5"
+        "stash.level2.objective5",
     ],
     hints: [
         "stash.level2.hint1",
         "stash.level2.hint2",
         "stash.level2.hint3",
         "stash.level2.hint4",
-        "stash.level2.hint5"
+        "stash.level2.hint5",
     ],
     requirementLogic: "all",
     requirements: [
@@ -204,15 +201,8 @@ const stashLevel3 = createLevel({
     id: 3,
     name: "stash.level3.name",
     description: "stash.level3.description",
-    objectives: [
-        "stash.level3.objective1",
-        "stash.level3.objective2"
-    ],
-    hints: [
-        "stash.level3.hint1",
-        "stash.level3.hint2",
-        "stash.level3.hint3"
-    ],
+    objectives: ["stash.level3.objective1", "stash.level3.objective2"],
+    hints: ["stash.level3.hint1", "stash.level3.hint2", "stash.level3.hint3"],
     requirementLogic: "all",
     requirements: [
         {
@@ -262,8 +252,73 @@ const stashLevel3 = createLevel({
     }),
 });
 
+const stashLevel4 = createLevel({
+    id: 4,
+    name: "stash.level4.name",
+    description: "stash.level4.description",
+    objectives: ["stash.level4.objective1", "stash.level4.objective2", "stash.level4.objective3"],
+    hints: ["stash.level4.hint1", "stash.level4.hint2", "stash.level4.hint3"],
+    requirementLogic: "all",
+    requirements: [
+        createRequirement({
+            command: "git stash",
+            description: "stash.level4.requirement1.description",
+            successMessage: "stash.level4.requirement1.success",
+            id: "stash-experiment",
+        }),
+        createRequirement({
+            command: "git stash",
+            requiresArgs: ["apply"],
+            description: "stash.level4.requirement2.description",
+            successMessage: "stash.level4.requirement2.success",
+            id: "stash-apply",
+        }),
+        createRequirement({
+            command: "git commit",
+            requiresArgs: ["-m"],
+            description: "stash.level4.requirement3.description",
+            successMessage: "stash.level4.requirement3.success",
+            id: "commit-experiment",
+        }),
+    ],
+    story: createStory({
+        title: "stash.level4.story.title",
+        narrative: "stash.level4.story.narrative",
+        realWorldContext: "stash.level4.story.realWorldContext",
+        taskIntroduction: "stash.level4.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure(
+                "/src/search.js",
+                "// Search module\nfunction search(query) {\n  return index.find(query);\n}",
+            ),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            branches: ["main"],
+            commits: [
+                {
+                    message: "Add basic search",
+                    files: ["/src/search.js"],
+                },
+            ],
+            fileChanges: [
+                {
+                    path: "/src/search.js",
+                    status: "modified",
+                    content:
+                        "// Search module\nfunction search(query) {\n  // EXPERIMENT: fuzzy matching\n  return index.fuzzyFind(query, { maxDistance: 2 });\n}",
+                },
+            ],
+        }),
+    }),
+});
+
 export const stashLevels = {
     1: stashLevel1,
     2: stashLevel2,
     3: stashLevel3,
+    4: stashLevel4,
 };
