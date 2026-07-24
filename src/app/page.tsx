@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -13,7 +15,6 @@ import {
     LockIcon,
     Code,
     BookOpen,
-    Sparkles,
     ChevronRight,
     Activity,
     Award,
@@ -24,6 +25,7 @@ import {
     Settings,
     ShoppingCart,
     Gamepad2,
+    Terminal as TerminalIcon,
 } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
@@ -36,54 +38,76 @@ import { Minigames } from "~/components/Minigames";
 import { getAvailableStagesForDifficulty } from "~/config/difficulties";
 import type { DifficultyLevel } from "~/types";
 
-// Animation helper component
-const AnimatedElement = ({
-    children,
-    delay = 0,
-    className = "",
-}: {
-    children: React.ReactNode;
-    delay?: number;
-    className?: string;
-}) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            entries => {
-                const entry = entries[0];
-                if (entry?.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.1 },
-        );
-
-        const currentRef = ref.current;
-        if (currentRef) {
-            observer.observe(currentRef);
-        }
-
-        return () => {
-            if (currentRef) {
-                observer.disconnect();
-            }
-        };
-    }, []);
-
-    return (
-        <div
-            ref={ref}
-            className={`transition-all duration-700 ${className} ${
-                isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-            }`}
-            style={{ transitionDelay: `${delay}ms` }}>
-            {children}
-        </div>
-    );
-};
+/**
+ * Animated hero commit-graph: draws itself on load and gently pulses.
+ * Pure SVG, animated with GSAP through the parent timeline (classes hg-*).
+ */
+const HeroGraph = () => (
+    <svg viewBox="0 0 340 380" className="h-full w-full" fill="none" aria-hidden="true">
+        {/* main lane */}
+        <path className="hg-path" d="M170 340 L170 60" stroke="#a78bfa" strokeWidth="2.5" strokeLinecap="round" />
+        {/* feature branch out + merge back */}
+        <path
+            className="hg-path"
+            d="M170 290 C170 250 250 260 250 220 L250 170 C250 130 170 140 170 100"
+            stroke="#38bdf8"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+        />
+        {/* second branch */}
+        <path
+            className="hg-path"
+            d="M170 240 C170 210 96 216 96 180 L96 150"
+            stroke="#f472b6"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+        />
+        {/* nodes bottom-up */}
+        {[
+            { cx: 170, cy: 340, c: "#a78bfa" },
+            { cx: 170, cy: 290, c: "#a78bfa" },
+            { cx: 250, cy: 220, c: "#38bdf8" },
+            { cx: 170, cy: 240, c: "#a78bfa" },
+            { cx: 96, cy: 180, c: "#f472b6" },
+            { cx: 250, cy: 170, c: "#38bdf8" },
+            { cx: 96, cy: 150, c: "#f472b6" },
+            { cx: 170, cy: 100, c: "#a78bfa" },
+            { cx: 170, cy: 60, c: "#c4b5fd" },
+        ].map((n, i) => (
+            <g key={i} className="hg-node">
+                <circle cx={n.cx} cy={n.cy} r="10" fill="#171126" stroke={n.c} strokeWidth="2.5" />
+                <circle cx={n.cx} cy={n.cy} r="3.5" fill={n.c} />
+            </g>
+        ))}
+        {/* HEAD badge */}
+        <g className="hg-badge">
+            <rect x="196" y="46" width="72" height="26" rx="13" fill="#a78bfa" />
+            <text
+                x="232"
+                y="63"
+                textAnchor="middle"
+                fontSize="12"
+                fontWeight="700"
+                fill="#171126"
+                fontFamily="monospace">
+                main ★
+            </text>
+            <path d="M186 60 L198 53 L198 67 Z" fill="#a78bfa" />
+        </g>
+        <g className="hg-badge">
+            <rect x="24" y="137" width="62" height="24" rx="12" fill="#241a3a" stroke="#f472b6" />
+            <text x="55" y="153" textAnchor="middle" fontSize="11" fill="#f472b6" fontFamily="monospace">
+                fix/ui
+            </text>
+        </g>
+        <g className="hg-badge">
+            <rect x="264" y="158" width="66" height="24" rx="12" fill="#241a3a" stroke="#38bdf8" />
+            <text x="297" y="174" textAnchor="middle" fontSize="11" fill="#38bdf8" fontFamily="monospace">
+                feature
+            </text>
+        </g>
+    </svg>
+);
 
 export default function Home() {
     const { levelManager, progressManager, currentDifficulty, setCurrentDifficulty } = useGameContext();
@@ -96,10 +120,148 @@ export default function Home() {
     const [isFirstVisit, setIsFirstVisit] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
 
+    const rootRef = useRef<HTMLDivElement>(null);
+
     // Handle mounting to avoid hydration issues
     useEffect(() => {
         setIsMounted(true);
     }, []);
+
+    // ── GSAP: hero timeline, scroll reveals, parallax, counters ─────────────
+    useEffect(() => {
+        if (!rootRef.current) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const ctx = gsap.context(() => {
+            const mm = gsap.matchMedia();
+
+            mm.add("(prefers-reduced-motion: no-preference)", () => {
+                // Hero entrance
+                const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+                tl.from(".hero-badge", { y: 24, opacity: 0, duration: 0.6 })
+                    .from(
+                        ".hero-word > span",
+                        { yPercent: 120, duration: 0.9, stagger: 0.08, ease: "power4.out" },
+                        "-=0.3",
+                    )
+                    .from(".hero-sub", { y: 20, opacity: 0, duration: 0.7 }, "-=0.5")
+                    .from(".hero-cta > *", { y: 18, opacity: 0, duration: 0.5, stagger: 0.08 }, "-=0.45")
+                    .from(
+                        ".hero-panel",
+                        { y: 40, opacity: 0, scale: 0.96, duration: 0.9, ease: "power4.out" },
+                        "-=0.7",
+                    );
+
+                // Hero commit graph draws itself
+                gsap.utils.toArray<SVGPathElement>(".hg-path").forEach((path, i) => {
+                    const len = path.getTotalLength();
+                    tl.fromTo(
+                        path,
+                        { strokeDasharray: len, strokeDashoffset: len },
+                        { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut" },
+                        0.5 + i * 0.25,
+                    );
+                });
+                tl.from(
+                    ".hg-node",
+                    { scale: 0, transformOrigin: "center center", stagger: 0.09, duration: 0.5, ease: "back.out(2.5)" },
+                    0.9,
+                );
+                tl.from(
+                    ".hg-badge",
+                    {
+                        opacity: 0,
+                        scale: 0.6,
+                        transformOrigin: "center center",
+                        stagger: 0.12,
+                        duration: 0.45,
+                        ease: "back.out(2)",
+                    },
+                    1.7,
+                );
+
+                // Floating glow orbs — slow drift + scroll parallax
+                gsap.to(".orb-a", { y: -40, x: 30, duration: 8, yoyo: true, repeat: -1, ease: "sine.inOut" });
+                gsap.to(".orb-b", { y: 50, x: -20, duration: 10, yoyo: true, repeat: -1, ease: "sine.inOut" });
+                gsap.to(".orb-a", {
+                    yPercent: -30,
+                    scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 1 },
+                });
+
+                // Generic scroll reveals
+                gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(el => {
+                    gsap.from(el, {
+                        y: 44,
+                        opacity: 0,
+                        duration: 0.85,
+                        ease: "power3.out",
+                        scrollTrigger: { trigger: el, start: "top 88%" },
+                    });
+                });
+
+                // Stage cards stagger in alternating from the sides
+                gsap.utils.toArray<HTMLElement>("[data-stage-card]").forEach((el, i) => {
+                    gsap.from(el, {
+                        x: i % 2 === 0 ? 60 : -60,
+                        opacity: 0,
+                        duration: 0.9,
+                        ease: "power3.out",
+                        scrollTrigger: { trigger: el, start: "top 85%" },
+                    });
+                });
+
+                // Learning-path spine grows with scroll
+                const line = document.querySelector(".path-line-fill");
+                if (line) {
+                    gsap.fromTo(
+                        line,
+                        { scaleY: 0, transformOrigin: "top center" },
+                        {
+                            scaleY: 1,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: ".path-section",
+                                start: "top 60%",
+                                end: "bottom 80%",
+                                scrub: 0.5,
+                            },
+                        },
+                    );
+                }
+
+                // Stat counters roll up
+                gsap.utils.toArray<HTMLElement>("[data-counter]").forEach(el => {
+                    const target = parseInt(el.dataset.counter ?? "0", 10);
+                    const obj = { val: 0 };
+                    gsap.to(obj, {
+                        val: target,
+                        duration: 1.4,
+                        ease: "power2.out",
+                        scrollTrigger: { trigger: el, start: "top 92%" },
+                        onUpdate: () => {
+                            el.textContent = String(Math.round(obj.val));
+                        },
+                    });
+                });
+            });
+
+            // Pointer parallax on the hero glow (all motion preferences: very subtle)
+            const hero = document.querySelector<HTMLElement>(".hero-section");
+            if (hero) {
+                const xTo = gsap.quickTo(".orb-a", "xPercent", { duration: 0.8, ease: "power3.out" });
+                const yTo = gsap.quickTo(".orb-a", "yPercent", { duration: 0.8, ease: "power3.out" });
+                const onMove = (e: PointerEvent) => {
+                    const r = hero.getBoundingClientRect();
+                    xTo(((e.clientX - r.left) / r.width - 0.5) * 8);
+                    yTo(((e.clientY - r.top) / r.height - 0.5) * 8);
+                };
+                hero.addEventListener("pointermove", onMove);
+                return () => hero.removeEventListener("pointermove", onMove);
+            }
+        }, rootRef);
+
+        return () => ctx.revert();
+    }, [isMounted]);
 
     // Update progress when it changes
     useEffect(() => {
@@ -144,8 +306,6 @@ export default function Home() {
 
     // Navigation function to use correct URL structure for [level] dynamic route
     const navigateToLevel = (stageId: string, levelId: number) => {
-        // Navigate using the correct URL structure for [level] dynamic route with proper parameters
-        // Don't set localStorage here - let the [level] page handle it via URL parameters
         router.push(`/${stageId.toLowerCase()}?stage=${stageId}&level=${levelId}`);
     };
 
@@ -251,55 +411,64 @@ export default function Home() {
         return translatedHeading === headingKey ? t("home.learningPath.default") : translatedHeading;
     }
 
+    const completedCount = Object.values(progress.completedLevels).flat().length;
+
     return (
         <PageLayout>
-            <div className="min-h-screen bg-gradient-to-b from-[#1a1625] to-[#231c33] text-purple-100">
-                {/* Hero Section with animation */}
-                <section className="container relative mx-auto overflow-hidden px-4 py-12 text-center sm:py-20">
-                    {/* Background decoration */}
-                    <div className="absolute left-0 top-0 -z-10 h-64 w-64 rotate-45 rounded-full bg-purple-600/10 blur-3xl"></div>
-                    <div className="absolute bottom-0 right-0 -z-10 h-64 w-64 rotate-45 rounded-full bg-indigo-600/10 blur-3xl"></div>
+            <div ref={rootRef} className="min-h-screen overflow-x-clip bg-[#120d1e] text-purple-100">
+                {/* ── Hero ─────────────────────────────────────────────────── */}
+                <section className="hero-section relative overflow-hidden">
+                    {/* Layered background: Higgsfield nebula + glow orbs + grid */}
+                    <div className="pointer-events-none absolute inset-0 -z-10">
+                        <img
+                            src="/hero-nebula.webp"
+                            alt=""
+                            className="h-full w-full [mask-image:linear-gradient(to_bottom,black_45%,transparent_100%)] object-cover opacity-60"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-[#120d1e]/30 via-[#120d1e]/55 to-[#120d1e]"></div>
+                        <div className="orb-a absolute top-10 -left-24 h-96 w-96 rounded-full bg-purple-600/25 blur-3xl"></div>
+                        <div className="orb-b absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-fuchsia-600/15 blur-3xl"></div>
+                        <div className="absolute inset-0 [background-image:linear-gradient(rgba(167,139,250,0.35)_1px,transparent_1px),linear-gradient(90deg,rgba(167,139,250,0.35)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_35%,black,transparent)] [background-size:56px_56px] opacity-[0.15]"></div>
+                    </div>
 
-                    <AnimatedElement>
-                        <div className="mb-4 flex justify-center">
-                            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-purple-900/30 p-4">
-                                <GitBranch className="h-10 w-10 text-purple-400" />
+                    <div className="container mx-auto grid items-center gap-10 px-4 py-16 sm:py-24 lg:grid-cols-[1.15fr_0.85fr] lg:gap-6 lg:py-28">
+                        <div className="text-center lg:text-left">
+                            <div className="hero-badge mb-6 inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-xs font-medium tracking-wide text-purple-200 backdrop-blur-sm sm:text-sm">
+                                <GitBranch className="h-3.5 w-3.5 text-purple-400" />
+                                {t("home.badge")}
                             </div>
-                        </div>
-                    </AnimatedElement>
 
-                    <AnimatedElement delay={200}>
-                        <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-6xl">
-                            {t("home.title")}
-                            <span className="relative ml-2 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-                                {t("home.title2")}
-                                <span className="absolute -right-6 -top-6">
-                                    <Sparkles className="animate-pulse h-6 w-6 text-purple-400" />
+                            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
+                                {t("home.title")
+                                    .split(" ")
+                                    .map((word, i) => (
+                                        <span
+                                            key={i}
+                                            className="hero-word inline-block overflow-hidden pb-1 align-bottom">
+                                            <span className="inline-block">{word}&nbsp;</span>
+                                        </span>
+                                    ))}
+                                <span className="hero-word inline-block overflow-hidden pb-1 align-bottom">
+                                    <span className="inline-block bg-gradient-to-r from-purple-400 via-fuchsia-400 to-pink-500 bg-clip-text text-transparent">
+                                        {t("home.title2")}
+                                    </span>
                                 </span>
-                            </span>
-                        </h1>
-                    </AnimatedElement>
+                            </h1>
 
-                    <AnimatedElement delay={400}>
-                        <p className="mx-auto mt-4 max-w-2xl text-base text-purple-200 sm:mt-6 sm:text-lg">
-                            {t("home.subtitle")}
-                        </p>
-                    </AnimatedElement>
+                            <p className="hero-sub mx-auto mt-6 max-w-xl text-base leading-relaxed text-purple-200/90 sm:text-lg lg:mx-0">
+                                {t("home.subtitle")}
+                            </p>
 
-                    <AnimatedElement delay={600}>
-                        <div className="mt-6 flex flex-col justify-center gap-3 sm:mt-10 sm:gap-4">
-                            {/* First row - Main action buttons */}
-                            <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
+                            <div className="hero-cta mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
                                 <Link href="/intro" className="group w-full sm:w-auto">
                                     <Button
                                         size="lg"
-                                        className="group relative w-full overflow-hidden bg-gradient-to-r from-purple-600 to-purple-700 text-white transition-all duration-300 hover:from-purple-700 hover:to-purple-800 sm:w-auto">
+                                        className="group relative w-full overflow-hidden bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white shadow-lg shadow-purple-900/40 transition-all duration-300 hover:shadow-purple-700/40 hover:brightness-110 sm:w-auto">
                                         <span className="relative z-10 flex items-center">
                                             <Code className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
                                             {t("home.startLearning")}
                                             <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                                         </span>
-                                        <span className="absolute bottom-0 left-0 h-1 w-0 bg-white/20 transition-all duration-300 group-hover:w-full"></span>
                                     </Button>
                                 </Link>
 
@@ -307,122 +476,134 @@ export default function Home() {
                                     <Button
                                         size="lg"
                                         variant="outline"
-                                        className="w-full border-purple-700 text-purple-300 transition-all duration-300 hover:border-purple-600 hover:bg-purple-900/50 hover:text-purple-200 sm:w-auto">
+                                        className="w-full border-purple-600/50 bg-purple-950/30 text-purple-200 backdrop-blur-sm transition-all duration-300 hover:border-purple-500 hover:bg-purple-900/50 hover:text-purple-100 sm:w-auto">
                                         <BookOpen className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
                                         {t("home.cheatSheet")}
                                     </Button>
                                 </Link>
                             </div>
 
-                            {/* Second row - Gamification buttons */}
-                            <div className="flex flex-col justify-center gap-2 sm:flex-row sm:gap-3">
+                            <div className="hero-cta mt-4 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                                 <Button
-                                    size="lg"
+                                    size="sm"
                                     variant="outline"
                                     onClick={() => setShowDifficultySelector(true)}
-                                    className="w-full border-purple-700 text-purple-300 transition-all duration-300 hover:border-purple-600 hover:bg-purple-900/50 hover:text-purple-200 sm:w-auto">
-                                    <Settings className="mr-2 h-4 w-4" />
+                                    className="border-purple-800/60 bg-transparent text-purple-300 transition-all duration-300 hover:border-purple-600 hover:bg-purple-900/40 hover:text-purple-100">
+                                    <Settings className="mr-1.5 h-3.5 w-3.5" />
                                     Difficulty
                                 </Button>
-
                                 <Button
-                                    size="lg"
+                                    size="sm"
                                     variant="outline"
                                     onClick={() => setShowShop(true)}
-                                    className="w-full border-yellow-700 text-yellow-300 transition-all duration-300 hover:border-yellow-600 hover:bg-yellow-900/50 hover:text-yellow-200 sm:w-auto">
-                                    <ShoppingCart className="mr-2 h-4 w-4" />
+                                    className="border-yellow-800/60 bg-transparent text-yellow-300/90 transition-all duration-300 hover:border-yellow-600 hover:bg-yellow-900/30 hover:text-yellow-200">
+                                    <ShoppingCart className="mr-1.5 h-3.5 w-3.5" />
                                     Shop
                                 </Button>
-
                                 <Button
-                                    size="lg"
+                                    size="sm"
                                     variant="outline"
                                     onClick={() => setShowMinigames(true)}
-                                    className="w-full border-green-700 text-green-300 transition-all duration-300 hover:border-green-600 hover:bg-green-900/50 hover:text-green-200 sm:w-auto">
-                                    <Gamepad2 className="mr-2 h-4 w-4" />
+                                    className="border-green-800/60 bg-transparent text-green-300/90 transition-all duration-300 hover:border-green-600 hover:bg-green-900/30 hover:text-green-200">
+                                    <Gamepad2 className="mr-1.5 h-3.5 w-3.5" />
                                     Mini Games
                                 </Button>
                             </div>
                         </div>
-                    </AnimatedElement>
+
+                        {/* Hero panel: fake window with the animated commit graph */}
+                        <div className="hero-panel relative mx-auto w-full max-w-md">
+                            <div className="absolute -inset-3 -z-10 rounded-3xl bg-gradient-to-br from-purple-500/25 via-fuchsia-500/10 to-transparent blur-xl"></div>
+                            <div className="overflow-hidden rounded-2xl border border-purple-500/25 bg-[#171126]/90 shadow-2xl shadow-purple-950/60 backdrop-blur-md">
+                                <div className="flex items-center gap-2 border-b border-purple-800/40 px-4 py-2.5">
+                                    <span className="h-2.5 w-2.5 rounded-full bg-red-400/80"></span>
+                                    <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80"></span>
+                                    <span className="h-2.5 w-2.5 rounded-full bg-green-400/80"></span>
+                                    <span className="ml-2 flex items-center gap-1.5 font-mono text-xs text-purple-300/80">
+                                        <TerminalIcon className="h-3 w-3" />
+                                        {t("home.heroTerminalTitle")}
+                                    </span>
+                                </div>
+                                <div className="h-[300px] p-3 sm:h-[360px]">
+                                    <HeroGraph />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 {/* Difficulty Completion Celebration */}
                 {isMounted && isDifficultyCompleted() && getNextDifficulty() && (
-                    <AnimatedElement>
-                        <section className="container mx-auto px-4 py-6">
-                            <div className="mx-auto max-w-2xl rounded-lg border border-green-700/50 bg-gradient-to-r from-green-900/30 to-emerald-900/20 p-6 text-center">
-                                <div className="mb-4 flex justify-center">
-                                    <Award className="h-12 w-12 text-yellow-400" />
-                                </div>
-                                <h2 className="mb-4 text-xl font-bold text-white sm:text-2xl">
-                                    🎉 Difficulty Mastered!
-                                </h2>
-                                <p className="mb-6 text-green-200">
-                                    Congratulations! You've completed all levels in {currentDifficulty} difficulty.
-                                    Ready for the next challenge?
-                                </p>
-                                <Button
-                                    onClick={() => {
-                                        const nextDiff = getNextDifficulty();
-                                        if (nextDiff) {
-                                            setCurrentDifficulty(nextDiff);
-                                        }
-                                    }}
-                                    size="lg"
-                                    className="group bg-gradient-to-r from-green-600 to-emerald-700 text-white hover:from-green-700 hover:to-emerald-800">
-                                    <ChevronRight className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                                    Advance to {getNextDifficulty()} Difficulty
-                                </Button>
+                    <section className="container mx-auto px-4 py-6" data-reveal>
+                        <div className="mx-auto max-w-2xl rounded-2xl border border-green-700/50 bg-gradient-to-r from-green-900/30 to-emerald-900/20 p-6 text-center">
+                            <div className="mb-4 flex justify-center">
+                                <Award className="h-12 w-12 text-yellow-400" />
                             </div>
-                        </section>
-                    </AnimatedElement>
+                            <h2 className="mb-4 text-xl font-bold text-white sm:text-2xl">🎉 Difficulty Mastered!</h2>
+                            <p className="mb-6 text-green-200">
+                                Congratulations! You&apos;ve completed all levels in {currentDifficulty} difficulty.
+                                Ready for the next challenge?
+                            </p>
+                            <Button
+                                onClick={() => {
+                                    const nextDiff = getNextDifficulty();
+                                    if (nextDiff) {
+                                        setCurrentDifficulty(nextDiff);
+                                    }
+                                }}
+                                size="lg"
+                                className="group bg-gradient-to-r from-green-600 to-emerald-700 text-white hover:from-green-700 hover:to-emerald-800">
+                                <ChevronRight className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                Advance to {getNextDifficulty()} Difficulty
+                            </Button>
+                        </div>
+                    </section>
                 )}
 
-                {/* Animated Stats Section */}
-                <AnimatedElement>
-                    <section className="container mx-auto px-4 py-6">
-                        <ClientOnly>
-                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-                                <div className="rounded-lg border border-purple-800/30 bg-purple-900/20 p-3 text-center sm:p-4">
-                                    <h3 className="text-xs text-purple-400 sm:text-sm">{t("home.points")}</h3>
-                                    <p className="text-xl font-bold text-white sm:text-2xl">{progress.score}</p>
-                                </div>
-                                <div className="rounded-lg border border-purple-800/30 bg-purple-900/20 p-3 text-center sm:p-4">
-                                    <h3 className="text-xs text-purple-400 sm:text-sm">{t("home.completed")}</h3>
-                                    <p className="text-xl font-bold text-white sm:text-2xl">
-                                        {Object.values(progress.completedLevels).flat().length}
+                {/* ── Stats ─────────────────────────────────────────────────── */}
+                <section className="container mx-auto px-4 py-6" data-reveal>
+                    <ClientOnly>
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+                            {[
+                                { label: t("home.points"), value: progress.score },
+                                { label: t("home.completed"), value: completedCount },
+                                { label: t("level.level"), value: progress.currentLevel },
+                            ].map((stat, i) => (
+                                <div
+                                    key={i}
+                                    className="rounded-xl border border-purple-800/30 bg-gradient-to-b from-purple-900/25 to-purple-900/10 p-3 text-center backdrop-blur-sm sm:p-5">
+                                    <h3 className="text-xs text-purple-400 sm:text-sm">{stat.label}</h3>
+                                    <p
+                                        className="text-2xl font-bold text-white tabular-nums sm:text-3xl"
+                                        data-counter={stat.value}>
+                                        {stat.value}
                                     </p>
                                 </div>
-                                <div className="rounded-lg border border-purple-800/30 bg-purple-900/20 p-3 text-center sm:p-4">
-                                    <h3 className="text-xs text-purple-400 sm:text-sm">{t("level.level")}</h3>
-                                    <p className="text-xl font-bold text-white sm:text-2xl">{progress.currentLevel}</p>
-                                </div>
-                                <div className="rounded-lg border border-purple-800/30 bg-purple-900/20 p-3 text-center sm:p-4">
-                                    <h3 className="text-xs text-purple-400 sm:text-sm">{t("level.branch")}</h3>
-                                    <p className="text-xl font-bold text-white sm:text-2xl">{progress.currentStage}</p>
-                                </div>
+                            ))}
+                            <div className="rounded-xl border border-purple-800/30 bg-gradient-to-b from-purple-900/25 to-purple-900/10 p-3 text-center backdrop-blur-sm sm:p-5">
+                                <h3 className="text-xs text-purple-400 sm:text-sm">{t("level.branch")}</h3>
+                                <p className="truncate text-2xl font-bold text-white sm:text-3xl">
+                                    {progress.currentStage}
+                                </p>
                             </div>
-                        </ClientOnly>
-                    </section>
-                </AnimatedElement>
+                        </div>
+                    </ClientOnly>
+                </section>
 
-                {/* Progress Path - Enhanced with animations */}
-                <section className="container mx-auto px-4 py-8 sm:py-16">
-                    <AnimatedElement>
-                        <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl">
-                            <span className="relative">
-                                {learningPathHeading()}
-                                <span className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-purple-500 to-purple-300"></span>
-                            </span>
-                        </h2>
-                    </AnimatedElement>
+                {/* ── Learning Path ─────────────────────────────────────────── */}
+                <section className="path-section container mx-auto px-4 py-8 sm:py-16">
+                    <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl" data-reveal>
+                        <span className="relative">
+                            {learningPathHeading()}
+                            <span className="absolute -bottom-1 left-0 h-1 w-full rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-300"></span>
+                        </span>
+                    </h2>
 
                     <ClientOnly>
                         <div className="relative">
-                            {/* Central Line - Enhanced with animation */}
-                            <div className="absolute left-1/2 hidden h-full w-1 -translate-x-1/2 bg-gradient-to-b from-purple-900/50 to-purple-600/50 lg:block">
-                                <div className="animate-pulse absolute h-full w-full bg-gradient-to-b from-purple-500/20 to-purple-800/20"></div>
+                            {/* Central spine that fills as you scroll */}
+                            <div className="absolute left-1/2 hidden h-full w-1 -translate-x-1/2 overflow-hidden rounded-full bg-purple-900/40 lg:block">
+                                <div className="path-line-fill h-full w-full bg-gradient-to-b from-purple-400 via-fuchsia-500 to-purple-700"></div>
                             </div>
 
                             <div className="space-y-10 sm:space-y-16 lg:space-y-24">
@@ -433,125 +614,124 @@ export default function Home() {
                                     const progressPercent = calculateProgress(stageId);
 
                                     return (
-                                        <AnimatedElement key={stageId} delay={index * 150}>
-                                            <div className="relative">
-                                                {/* Stage Node - Enhanced with glow and animation */}
-                                                <div
-                                                    className={`group hidden h-12 w-12 transform items-center justify-center rounded-full lg:absolute lg:left-1/2 lg:top-0 lg:flex lg:-translate-x-1/2 lg:-translate-y-1/2 ${
-                                                        isUnlocked
-                                                            ? "bg-gradient-to-br from-purple-500 to-purple-700"
-                                                            : "bg-gray-700"
-                                                    } ${stageId === progress.currentStage ? "ring-4 ring-purple-400/50" : ""}`}>
-                                                    {isUnlocked && (
-                                                        <span className="animate-ping absolute -inset-2 hidden rounded-full bg-purple-400/20 lg:inline-block"></span>
-                                                    )}
-                                                    {getStageIcon(stageId)}
-                                                </div>
-
-                                                <div
-                                                    className={`group relative rounded-lg border p-6 transition-all duration-300 hover:shadow-lg ${
-                                                        isUnlocked
-                                                            ? "border-purple-700/30 bg-purple-900/20 hover:border-purple-600/50 hover:bg-purple-900/30"
-                                                            : "border-gray-800/20 bg-gray-900/10"
-                                                    } ${index % 2 === 0 ? "lg:ml-auto lg:mr-12" : "lg:ml-12 lg:mr-auto"} w-full lg:w-5/12`}>
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="flex items-center">
-                                                            {/* Show stage icon inline on mobile */}
-                                                            <div className="relative mr-3 lg:hidden">
-                                                                <div
-                                                                    className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                                                                        isUnlocked
-                                                                            ? "bg-gradient-to-br from-purple-500 to-purple-700"
-                                                                            : "bg-gray-700"
-                                                                    }`}>
-                                                                    {getStageIcon(stageId)}
-                                                                </div>
-                                                                {isUnlocked && (
-                                                                    <span className="animate-ping absolute -inset-1 rounded-full bg-purple-400/20"></span>
-                                                                )}
-                                                            </div>
-                                                            <h3
-                                                                className={`text-lg font-bold sm:text-xl ${
-                                                                    isUnlocked ? "text-white" : "text-gray-500"
-                                                                }`}>
-                                                                {stageData.name}
-                                                            </h3>
-                                                        </div>
-                                                        <div
-                                                            className={`flex items-center text-xs sm:text-sm ${
-                                                                isUnlocked ? "text-purple-400" : "text-gray-500"
-                                                            }`}>
-                                                            <div className="flex items-center">
-                                                                {completedLevels}/{totalLevels}
-                                                                <Award className="ml-1 h-4 w-4" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Stage progress bar */}
-                                                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-purple-900/40">
-                                                        <div
-                                                            className="h-full bg-gradient-to-r from-purple-500 to-purple-300 transition-all duration-700"
-                                                            style={{ width: `${progressPercent}%` }}></div>
-                                                    </div>
-
-                                                    <p
-                                                        className={`mt-3 text-sm sm:text-base ${
-                                                            isUnlocked ? "text-purple-200" : "text-gray-500"
-                                                        }`}>
-                                                        {stageData.description}
-                                                    </p>
-
-                                                    <div className="mt-4 flex flex-wrap gap-2">
-                                                        {Object.entries(stageData.levels).map(([levelId]) => {
-                                                            const level = parseInt(levelId);
-                                                            const levelUnlocked = isLevelUnlocked(stageId, level);
-                                                            const levelCompleted = isLevelCompleted(stageId, level);
-
-                                                            return (
-                                                                <div
-                                                                    key={levelId}
-                                                                    className={
-                                                                        levelUnlocked
-                                                                            ? "transition-transform hover:scale-105"
-                                                                            : "pointer-events-none"
-                                                                    }
-                                                                    onClick={() =>
-                                                                        levelUnlocked && navigateToLevel(stageId, level)
-                                                                    }>
-                                                                    <Button
-                                                                        variant="outline"
-                                                                        size="sm"
-                                                                        className={`group flex cursor-pointer items-center ${
-                                                                            levelUnlocked
-                                                                                ? levelCompleted
-                                                                                    ? "border-green-700 bg-green-900/20 text-green-300 hover:bg-green-900/40"
-                                                                                    : "border-purple-700 bg-purple-900/10 text-purple-300 hover:border-purple-600 hover:bg-purple-900/30 hover:text-purple-100"
-                                                                                : "border-gray-800 bg-gray-900/20 text-gray-500"
-                                                                        }`}>
-                                                                        {levelCompleted ? (
-                                                                            <CheckCircle2 className="mr-1 h-3 w-3 text-green-400 transition-transform duration-300 group-hover:scale-110" />
-                                                                        ) : !levelUnlocked ? (
-                                                                            <LockIcon className="mr-1 h-3 w-3" />
-                                                                        ) : (
-                                                                            <Star className="mr-1 h-3 w-3 text-purple-400 transition-transform duration-300 group-hover:rotate-45" />
-                                                                        )}
-                                                                        Level {levelId}
-                                                                    </Button>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-
-                                                    {/* Arrow to next stage */}
-                                                    {isUnlocked && index < Object.keys(stages).length - 1 && (
-                                                        <div className="absolute bottom-4 right-4 hidden text-purple-500 lg:block">
-                                                            <ChevronRight className="animate-bounce h-6 w-6" />
-                                                        </div>
-                                                    )}
-                                                </div>
+                                        <div className="relative" key={stageId}>
+                                            {/* Stage Node on the spine */}
+                                            <div
+                                                className={`group hidden h-12 w-12 transform items-center justify-center rounded-full lg:absolute lg:top-0 lg:left-1/2 lg:flex lg:-translate-x-1/2 lg:-translate-y-1/2 ${
+                                                    isUnlocked
+                                                        ? "bg-gradient-to-br from-purple-500 to-fuchsia-600 shadow-lg shadow-purple-900/50"
+                                                        : "bg-gray-700"
+                                                } ${stageId === progress.currentStage ? "ring-4 ring-purple-400/50" : ""}`}>
+                                                {isUnlocked && (
+                                                    <span className="absolute -inset-2 hidden animate-ping rounded-full bg-purple-400/20 lg:inline-block"></span>
+                                                )}
+                                                {getStageIcon(stageId)}
                                             </div>
-                                        </AnimatedElement>
+
+                                            <div
+                                                data-stage-card
+                                                className={`group relative rounded-2xl border p-6 backdrop-blur-sm transition-all duration-300 ${
+                                                    isUnlocked
+                                                        ? "border-purple-700/30 bg-gradient-to-b from-purple-900/25 to-purple-950/20 hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-950/50"
+                                                        : "border-gray-800/20 bg-gray-900/10"
+                                                } ${index % 2 === 0 ? "lg:mr-12 lg:ml-auto" : "lg:mr-auto lg:ml-12"} w-full lg:w-5/12`}>
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center">
+                                                        {/* Show stage icon inline on mobile */}
+                                                        <div className="relative mr-3 lg:hidden">
+                                                            <div
+                                                                className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                                                                    isUnlocked
+                                                                        ? "bg-gradient-to-br from-purple-500 to-fuchsia-600"
+                                                                        : "bg-gray-700"
+                                                                }`}>
+                                                                {getStageIcon(stageId)}
+                                                            </div>
+                                                            {isUnlocked && (
+                                                                <span className="absolute -inset-1 animate-ping rounded-full bg-purple-400/20"></span>
+                                                            )}
+                                                        </div>
+                                                        <h3
+                                                            className={`text-lg font-bold sm:text-xl ${
+                                                                isUnlocked ? "text-white" : "text-gray-500"
+                                                            }`}>
+                                                            {stageData.name}
+                                                        </h3>
+                                                    </div>
+                                                    <div
+                                                        className={`flex items-center text-xs sm:text-sm ${
+                                                            isUnlocked ? "text-purple-400" : "text-gray-500"
+                                                        }`}>
+                                                        <div className="flex items-center">
+                                                            {completedLevels}/{totalLevels}
+                                                            <Award className="ml-1 h-4 w-4" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Stage progress bar */}
+                                                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-purple-900/40">
+                                                    <div
+                                                        className="h-full bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-300 transition-all duration-700"
+                                                        style={{ width: `${progressPercent}%` }}></div>
+                                                </div>
+
+                                                <p
+                                                    className={`mt-3 text-sm sm:text-base ${
+                                                        isUnlocked ? "text-purple-200" : "text-gray-500"
+                                                    }`}>
+                                                    {stageData.description}
+                                                </p>
+
+                                                <div className="mt-4 flex flex-wrap gap-2">
+                                                    {Object.entries(stageData.levels).map(([levelId]) => {
+                                                        const level = parseInt(levelId);
+                                                        const levelUnlocked = isLevelUnlocked(stageId, level);
+                                                        const levelCompleted = isLevelCompleted(stageId, level);
+
+                                                        return (
+                                                            <div
+                                                                key={levelId}
+                                                                className={
+                                                                    levelUnlocked
+                                                                        ? "transition-transform hover:scale-105"
+                                                                        : "pointer-events-none"
+                                                                }
+                                                                onClick={() =>
+                                                                    levelUnlocked && navigateToLevel(stageId, level)
+                                                                }>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className={`group flex cursor-pointer items-center ${
+                                                                        levelUnlocked
+                                                                            ? levelCompleted
+                                                                                ? "border-green-700 bg-green-900/20 text-green-300 hover:bg-green-900/40"
+                                                                                : "border-purple-700 bg-purple-900/10 text-purple-300 hover:border-purple-600 hover:bg-purple-900/30 hover:text-purple-100"
+                                                                            : "border-gray-800 bg-gray-900/20 text-gray-500"
+                                                                    }`}>
+                                                                    {levelCompleted ? (
+                                                                        <CheckCircle2 className="mr-1 h-3 w-3 text-green-400 transition-transform duration-300 group-hover:scale-110" />
+                                                                    ) : !levelUnlocked ? (
+                                                                        <LockIcon className="mr-1 h-3 w-3" />
+                                                                    ) : (
+                                                                        <Star className="mr-1 h-3 w-3 text-purple-400 transition-transform duration-300 group-hover:rotate-45" />
+                                                                    )}
+                                                                    Level {levelId}
+                                                                </Button>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+
+                                                {/* Arrow to next stage */}
+                                                {isUnlocked && index < Object.keys(stages).length - 1 && (
+                                                    <div className="absolute right-4 bottom-4 hidden text-purple-500 lg:block">
+                                                        <ChevronRight className="h-6 w-6 animate-bounce" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     );
                                 })}
                             </div>
@@ -559,102 +739,93 @@ export default function Home() {
                     </ClientOnly>
                 </section>
 
-                {/* Enhanced Learning Statistics & Gamification Section */}
+                {/* ── Features ──────────────────────────────────────────────── */}
                 <section className="container mx-auto px-4 py-8 sm:py-16">
-                    <AnimatedElement>
-                        <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl">
-                            <span className="relative">
-                                {t("home.gameFeatures")}
-                                <span className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-purple-500 to-purple-300"></span>
-                            </span>
-                        </h2>
-                    </AnimatedElement>
+                    <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl" data-reveal>
+                        <span className="relative">
+                            {t("home.gameFeatures")}
+                            <span className="absolute -bottom-1 left-0 h-1 w-full rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-300"></span>
+                        </span>
+                    </h2>
 
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        <AnimatedElement delay={200}>
-                            <Card className="group relative overflow-hidden border-green-800/30 bg-gradient-to-br from-green-900/20 to-emerald-900/10 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/10">
-                                <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                                <CardContent className="relative p-8 text-center">
-                                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg">
-                                        <Activity className="h-8 w-8 text-white" />
-                                    </div>
-                                    <h3 className="mb-4 text-xl font-bold text-white">{t("home.feature1.title")}</h3>
-                                    <p className="leading-relaxed text-purple-200">{t("home.feature1.description")}</p>
-                                    <div className="mt-6 flex justify-center">
-                                        <div className="flex space-x-1">
-                                            <div className="h-1 w-8 rounded-full bg-green-400"></div>
-                                            <div className="h-1 w-4 rounded-full bg-green-400/50"></div>
-                                            <div className="h-1 w-2 rounded-full bg-green-400/25"></div>
+                        {[
+                            {
+                                icon: <Activity className="h-8 w-8 text-white" />,
+                                gradient: "from-green-500 to-emerald-600",
+                                border: "border-green-800/30",
+                                bg: "from-green-900/20 to-emerald-900/10",
+                                glow: "hover:shadow-green-500/10",
+                                bar: "bg-green-400",
+                                title: t("home.feature1.title"),
+                                description: t("home.feature1.description"),
+                            },
+                            {
+                                icon: <Gamepad2 className="h-8 w-8 text-white" />,
+                                gradient: "from-purple-500 to-indigo-600",
+                                border: "border-purple-800/30",
+                                bg: "from-purple-900/20 to-indigo-900/10",
+                                glow: "hover:shadow-purple-500/10",
+                                bar: "bg-purple-400",
+                                title: t("home.feature2.title"),
+                                description: t("home.feature2.description"),
+                            },
+                            {
+                                icon: <ShoppingCart className="h-8 w-8 text-white" />,
+                                gradient: "from-yellow-500 to-amber-600",
+                                border: "border-yellow-800/30",
+                                bg: "from-yellow-900/20 to-amber-900/10",
+                                glow: "hover:shadow-yellow-500/10",
+                                bar: "bg-yellow-400",
+                                title: t("home.feature3.title"),
+                                description: t("home.feature3.description"),
+                            },
+                        ].map((feature, i) => (
+                            <div key={i} data-reveal>
+                                <Card
+                                    className={`group relative overflow-hidden ${feature.border} bg-gradient-to-br ${feature.bg} backdrop-blur-sm transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${feature.glow}`}>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+                                    <CardContent className="relative p-8 text-center">
+                                        <div
+                                            className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                                            {feature.icon}
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </AnimatedElement>
-
-                        <AnimatedElement delay={400}>
-                            <Card className="group relative overflow-hidden border-purple-800/30 bg-gradient-to-br from-purple-900/20 to-indigo-900/10 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/10">
-                                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                                <CardContent className="relative p-8 text-center">
-                                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
-                                        <Gamepad2 className="h-8 w-8 text-white" />
-                                    </div>
-                                    <h3 className="mb-4 text-xl font-bold text-white">{t("home.feature2.title")}</h3>
-                                    <p className="leading-relaxed text-purple-200">{t("home.feature2.description")}</p>
-                                    <div className="mt-6 flex justify-center">
-                                        <div className="flex space-x-1">
-                                            <div className="h-1 w-8 rounded-full bg-purple-400"></div>
-                                            <div className="h-1 w-4 rounded-full bg-purple-400/50"></div>
-                                            <div className="h-1 w-2 rounded-full bg-purple-400/25"></div>
+                                        <h3 className="mb-4 text-xl font-bold text-white">{feature.title}</h3>
+                                        <p className="leading-relaxed text-purple-200">{feature.description}</p>
+                                        <div className="mt-6 flex justify-center">
+                                            <div className="flex space-x-1">
+                                                <div className={`h-1 w-8 rounded-full ${feature.bar}`}></div>
+                                                <div className={`h-1 w-4 rounded-full ${feature.bar} opacity-50`}></div>
+                                                <div className={`h-1 w-2 rounded-full ${feature.bar} opacity-25`}></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </AnimatedElement>
-
-                        <AnimatedElement delay={600}>
-                            <Card className="group relative overflow-hidden border-yellow-800/30 bg-gradient-to-br from-yellow-900/20 to-amber-900/10 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/10">
-                                <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                                <CardContent className="relative p-8 text-center">
-                                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-yellow-500 to-amber-600 shadow-lg">
-                                        <ShoppingCart className="h-8 w-8 text-white" />
-                                    </div>
-                                    <h3 className="mb-4 text-xl font-bold text-white">{t("home.feature3.title")}</h3>
-                                    <p className="leading-relaxed text-purple-200">{t("home.feature3.description")}</p>
-                                    <div className="mt-6 flex justify-center">
-                                        <div className="flex space-x-1">
-                                            <div className="h-1 w-8 rounded-full bg-yellow-400"></div>
-                                            <div className="h-1 w-4 rounded-full bg-yellow-400/50"></div>
-                                            <div className="h-1 w-2 rounded-full bg-yellow-400/25"></div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </AnimatedElement>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ))}
                     </div>
                 </section>
 
-                {/* Call to action at the bottom */}
-                <AnimatedElement>
-                    <section className="container mx-auto px-4 py-12 text-center">
-                        <div className="mx-auto max-w-3xl rounded-lg border border-purple-700/30 bg-purple-900/20 p-8">
-                            <BookMarked className="mx-auto mb-4 h-12 w-12 text-purple-400" />
-                            <h2 className="mb-4 text-2xl font-bold text-white">{t("home.startLearning")}</h2>
-                            <p className="mb-6 text-purple-200">{t("home.subtitle")}</p>
-                            <Link href="/intro">
-                                <Button
-                                    size="lg"
-                                    className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-purple-700 text-white transition-all duration-300 hover:from-purple-700 hover:to-purple-800">
-                                    <span className="relative z-10 flex items-center">
-                                        <Code className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
-                                        {t("home.startLearning")}
-                                        <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                                    </span>
-                                    <span className="absolute bottom-0 left-0 h-1 w-0 bg-white/20 transition-all duration-300 group-hover:w-full"></span>
-                                </Button>
-                            </Link>
-                        </div>
-                    </section>
-                </AnimatedElement>
+                {/* ── Bottom CTA ────────────────────────────────────────────── */}
+                <section className="container mx-auto px-4 py-12 text-center" data-reveal>
+                    <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-purple-700/30 bg-gradient-to-b from-purple-900/30 to-[#171126] p-8 sm:p-12">
+                        <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-96 -translate-x-1/2 rounded-full bg-purple-500/20 blur-3xl"></div>
+                        <BookMarked className="mx-auto mb-4 h-12 w-12 text-purple-400" />
+                        <h2 className="mb-4 text-2xl font-bold text-white sm:text-3xl">{t("home.startLearning")}</h2>
+                        <p className="mb-6 text-purple-200">{t("home.subtitle")}</p>
+                        <Link href="/intro">
+                            <Button
+                                size="lg"
+                                className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white shadow-lg shadow-purple-900/40 transition-all duration-300 hover:brightness-110">
+                                <span className="relative z-10 flex items-center">
+                                    <Code className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
+                                    {t("home.startLearning")}
+                                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                </span>
+                            </Button>
+                        </Link>
+                    </div>
+                </section>
             </div>
 
             {/* New Gamification Dialogs */}

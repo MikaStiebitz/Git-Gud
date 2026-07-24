@@ -26,12 +26,12 @@ describe("Merge Stage Levels", () => {
     });
 
     describe("All Levels", () => {
-        it("should have exactly 3 levels", () => {
+        it("should have exactly 4 levels", () => {
             const stage = allStages.Merge;
             const levelIds = Object.keys(stage.levels).map(Number);
 
-            expect(levelIds.length).toBe(3);
-            expect(levelIds).toEqual([1, 2, 3]);
+            expect(levelIds.length).toBe(4);
+            expect(levelIds).toEqual([1, 2, 3, 4]);
         });
 
         it("should load and setup each level without errors", () => {

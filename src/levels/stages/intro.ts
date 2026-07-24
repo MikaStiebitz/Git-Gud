@@ -47,7 +47,7 @@ const introLevel2 = createLevel({
             command: "git status",
             description: "intro.level2.requirement1.description",
             successMessage: "intro.level2.requirement1.success",
-            id: "status"
+            id: "status",
         }),
     ],
     story: createStory({
@@ -105,8 +105,67 @@ const introLevel3 = createLevel({
     }),
 });
 
+const introLevel4 = createLevel({
+    id: 4,
+    name: "intro.level4.name",
+    description: "intro.level4.description",
+    objectives: ["intro.level4.objective1", "intro.level4.objective2"],
+    hints: ["intro.level4.hint1", "intro.level4.hint2", "intro.level4.hint3"],
+    requirementLogic: "all",
+    requirements: [
+        createRequirement({
+            id: "check-status",
+            command: "git status",
+            description: "intro.level4.requirement1.description",
+            successMessage: "intro.level4.requirement1.success",
+        }),
+        createRequirement({
+            id: "inspect-changes",
+            command: "git diff",
+            description: "intro.level4.requirement2.description",
+            successMessage: "intro.level4.requirement2.success",
+        }),
+    ],
+    story: createStory({
+        title: "intro.level4.story.title",
+        narrative: "intro.level4.story.narrative",
+        realWorldContext: "intro.level4.story.realWorldContext",
+        taskIntroduction: "intro.level4.story.taskIntroduction",
+    }),
+    initialState: createInitialState({
+        files: [
+            createFileStructure("/README.md", "# TechStart Website\n\nThe company website project."),
+            createFileStructure("/src/app.js", 'console.log("Welcome to TechStart!");'),
+            createFileStructure(
+                "/src/config.js",
+                'const config = {\n    appName: "TechStart Website",\n    version: "1.0.0",\n    debugMode: false,\n};\n\nmodule.exports = config;',
+            ),
+        ],
+        git: createGitState({
+            initialized: true,
+            currentBranch: "main",
+            commits: [
+                {
+                    message: "Initial project setup",
+                    files: ["/README.md", "/src/app.js", "/src/config.js"],
+                },
+            ],
+            // Sarah's mysterious last-minute change: debug mode was switched on
+            fileChanges: [
+                {
+                    path: "/src/config.js",
+                    content:
+                        'const config = {\n    appName: "TechStart Website",\n    version: "1.0.0",\n    debugMode: true,\n};\n\nmodule.exports = config;',
+                    status: "modified",
+                },
+            ],
+        }),
+    }),
+});
+
 export const introLevels = {
     1: introLevel1,
     2: introLevel2,
     3: introLevel3,
+    4: introLevel4,
 };

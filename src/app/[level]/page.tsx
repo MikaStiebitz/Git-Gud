@@ -21,12 +21,14 @@ import {
     ChevronRight,
     FileIcon,
     Folder,
+    GitGraph as GitGraphIcon,
 } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ClientOnly } from "~/components/ClientOnly";
 import { useLanguage } from "~/contexts/LanguageContext";
 import { StoryDialog } from "~/components/StoryDialog";
 import { GitMascot } from "~/components/GitMascot";
+import { LevelVisualizer } from "~/components/LevelVisualizer";
 import dynamic from "next/dynamic";
 import { TerminalSkeleton } from "~/components/ui/TerminalSkeleton";
 import { CommitDialog } from "~/components/CommitDialog";
@@ -83,6 +85,7 @@ function LevelPageContent() {
     const [userClosedStoryDialog, setUserClosedStoryDialog] = useState(false);
     const [urlParamsProcessed, setUrlParamsProcessed] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
+    const [activePanel, setActivePanel] = useState<"challenge" | "graph">("challenge");
 
     // Helper function to convert flat file list to tree structure
     const getFileTree = (files: Array<{ name: string; path: string }>): FileTreeNode => {
@@ -521,10 +524,36 @@ function LevelPageContent() {
                         {/* Challenge Card - Always show first on mobile for context */}
                         <Card className="order-1 flex flex-col overflow-hidden border-purple-900/20 bg-purple-900/10 lg:order-2 lg:h-[580px]">
                             <CardHeader className="shrink-0 p-3 sm:p-6 sm:pb-0">
-                                <CardTitle className="flex items-center justify-between text-base text-white sm:text-lg">
-                                    <div className="flex items-center">
-                                        <Shield className="mr-2 h-4 w-4 text-purple-400 sm:h-5 sm:w-5" />
-                                        {t("level.currentChallenge")}
+                                <CardTitle className="flex items-center justify-between gap-2 text-base text-white sm:text-lg">
+                                    {/* Tab switcher: Challenge ⟷ Visual Git Graph */}
+                                    <div
+                                        role="tablist"
+                                        aria-label={t("level.currentChallenge")}
+                                        className="flex items-center rounded-lg border border-purple-800/40 bg-[#151022]/70 p-0.5">
+                                        <button
+                                            role="tab"
+                                            aria-selected={activePanel === "challenge"}
+                                            onClick={() => setActivePanel("challenge")}
+                                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3 sm:text-sm ${
+                                                activePanel === "challenge"
+                                                    ? "bg-purple-600/40 text-white shadow-sm"
+                                                    : "text-purple-400 hover:text-purple-200"
+                                            }`}>
+                                            <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                            {t("level.tab.challenge")}
+                                        </button>
+                                        <button
+                                            role="tab"
+                                            aria-selected={activePanel === "graph"}
+                                            onClick={() => setActivePanel("graph")}
+                                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3 sm:text-sm ${
+                                                activePanel === "graph"
+                                                    ? "bg-purple-600/40 text-white shadow-sm"
+                                                    : "text-purple-400 hover:text-purple-200"
+                                            }`}>
+                                            <GitGraphIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                            {t("level.tab.graph")}
+                                        </button>
                                     </div>
                                     {/* Mode Toggle in top right corner */}
                                     <div className="group relative">
@@ -551,8 +580,17 @@ function LevelPageContent() {
                                     </div>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="flex-grow overflow-auto p-3 pb-4 sm:p-6">
-                                {renderLevelChallenge()}
+                            <CardContent
+                                className={`flex-grow p-3 pb-4 sm:p-6 ${
+                                    activePanel === "graph" ? "flex flex-col overflow-hidden" : "overflow-auto"
+                                }`}>
+                                {activePanel === "challenge" ? (
+                                    renderLevelChallenge()
+                                ) : (
+                                    <ClientOnly>
+                                        <LevelVisualizer className="min-h-[320px]" />
+                                    </ClientOnly>
+                                )}
                             </CardContent>
                         </Card>
 

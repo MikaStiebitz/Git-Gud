@@ -37,6 +37,10 @@ type StageSolutions = Record<number, LevelSolution>;
 const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
     // ========== INTRO STAGE ==========
     intro: {
+        4: {
+            commands: ["git status", "git diff"],
+            description: "Find the modified file with status, then inspect the change with diff",
+        },
         1: {
             commands: ["git init"],
             description: "Initialize a new Git repository",
@@ -46,16 +50,17 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
             description: "Check the status of the repository",
         },
         3: {
-            commands: [
-                "git clone https://github.com/example/repo.git",
-                "cd repo",
-            ],
+            commands: ["git clone https://github.com/example/repo.git", "cd repo"],
             description: "Clone a repository and navigate into it",
         },
     },
 
     // ========== FILES STAGE ==========
     files: {
+        4: {
+            commands: ["git mv src/app-config.js src/config.js", "git commit -m 'Rename app-config.js to config.js'"],
+            description: "Rename a file with git mv and commit the rename",
+        },
         1: {
             commands: ["git add ."],
             description: "Stage all files for commit",
@@ -72,6 +77,10 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== BRANCHES STAGE ==========
     branches: {
+        6: {
+            commands: ["git branch -d feature/search-filters", "git branch -D experiment/new-ui"],
+            description: "Delete a merged branch safely with -d, then force-delete an unmerged branch with -D",
+        },
         1: {
             commands: ["git branch"],
             description: "List all branches",
@@ -96,6 +105,18 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== MERGE STAGE ==========
     merge: {
+        4: {
+            commands: ["git status", "git add .", "git commit -m 'Resolve merge conflict in api.js'"],
+            preActions: (fs, git, cmd) => {
+                // Resolve the conflict markers in the file (combines both branches' changes)
+                fs.writeFile(
+                    "/src/api.js",
+                    "// API request handler\nconst RATE_LIMIT = 100;\nconst TIMEOUT_MS = 8000;\n\nfunction handleRequest(req) {\n  if (isRateLimited(req)) {\n    return reject(req);\n  }\n  return respond(req);\n}\n\nmodule.exports = { handleRequest };",
+                );
+                git.updateFileStatus("src/api.js", "modified");
+            },
+            description: "Resolve a merge conflict and complete the merge",
+        },
         1: {
             commands: ["git merge feature/user-auth"],
             description: "Merge a feature branch",
@@ -112,6 +133,10 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== REBASE STAGE ==========
     rebase: {
+        5: {
+            commands: ["git rebase main feature/payment-api"],
+            description: "Rebase a branch onto main without checking it out first (two-argument form)",
+        },
         1: {
             commands: ["git rebase main"],
             description: "Rebase current branch onto main",
@@ -132,6 +157,16 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== REMOTE STAGE ==========
     remote: {
+        4: {
+            commands: [
+                "git push -u origin login-form",
+                "git add .",
+                "git commit -m 'Polish login error messages'",
+                "git push",
+            ],
+            description:
+                "Upstream tracking workflow: publish branch with -u, commit the pending polish, push again without arguments",
+        },
         1: {
             commands: ["git remote add origin https://github.com/user/repo.git"],
             description: "Add a remote repository",
@@ -148,20 +183,16 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== RESET STAGE ==========
     reset: {
+        4: {
+            commands: ["git log --oneline", "git revert HEAD"],
+            description: "Safely undo a public commit with revert",
+        },
         1: {
-            commands: [
-                "git reset --soft HEAD~1",
-                "git reset --soft HEAD",
-                "git reset --soft HEAD~2",
-            ],
+            commands: ["git reset --soft HEAD~1", "git reset --soft HEAD", "git reset --soft HEAD~2"],
             description: "Soft reset progression",
         },
         2: {
-            commands: [
-                "git reset --hard HEAD~1",
-                "git reset --hard HEAD",
-                "git reset --hard HEAD~2",
-            ],
+            commands: ["git reset --hard HEAD~1", "git reset --hard HEAD", "git reset --hard HEAD~2"],
             description: "Hard reset progression",
         },
         3: {
@@ -181,13 +212,12 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== STASH STAGE ==========
     stash: {
+        4: {
+            commands: ["git stash", "git stash apply", "git add .", "git commit -m 'Finish fuzzy search experiment'"],
+            description: "Stash, apply (keeping backup), then commit",
+        },
         1: {
-            commands: [
-                "git stash",
-                "git switch hotfix",
-                "git switch feature",
-                "git stash pop",
-            ],
+            commands: ["git stash", "git switch hotfix", "git switch feature", "git stash pop"],
             description: "Stash workflow - save, switch, restore",
         },
         2: {
@@ -213,6 +243,11 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== WORKFLOW STAGE ==========
     workflow: {
+        4: {
+            commands: ["git add .", "git commit --amend -m 'Fix login timeout'", "git push origin main"],
+            description:
+                "Amend workflow - stage the forgotten file, fold it into the last commit with a corrected message, then push",
+        },
         1: {
             preActions: (fs, git, cmd) => {
                 // Modify a file to stage
@@ -262,6 +297,10 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== TEAMWORK STAGE ==========
     teamwork: {
+        4: {
+            commands: ["git diff", "git add .", "git diff --staged", "git commit -m 'Add email validation to profile'"],
+            description: "Self-review workflow with git diff before committing",
+        },
         1: {
             preActions: (fs, git, cmd) => {
                 // Modify the team file before starting
@@ -291,15 +330,15 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
             ],
             postPullAction: (fs, git, cmd) => {
                 // After git pull, modify the file to simulate conflict resolution
-                fs.writeFile("/src/auth/login.js", "// Authentication module\nfunction validateLogin(username, password) {\n  // Merged solution combining both approaches\n  if (!username || !password) return false;\n  const isValidEmail = username.includes('@');\n  return isValidEmail && username.length >= 5 && password.length >= 10;\n}");
+                fs.writeFile(
+                    "/src/auth/login.js",
+                    "// Authentication module\nfunction validateLogin(username, password) {\n  // Merged solution combining both approaches\n  if (!username || !password) return false;\n  const isValidEmail = username.includes('@');\n  return isValidEmail && username.length >= 5 && password.length >= 10;\n}",
+                );
                 git.updateFileStatus("src/auth/login.js", "modified");
                 // Trigger state-based check
                 cmd.processCommand("git status");
             },
-            commandsAfterStateCheck: [
-                "git add .",
-                "git commit -m 'Resolve merge conflict'",
-            ],
+            commandsAfterStateCheck: ["git add .", "git commit -m 'Resolve merge conflict'"],
             description: "Handle merge conflicts during pull",
         },
         3: {
@@ -319,20 +358,16 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== ADVANCED STAGE ==========
     advanced: {
+        4: {
+            commands: ["git bisect start", "git bisect bad", "git bisect good", "git bisect reset"],
+            description: "Full bisect session: start, mark bad/good, reset",
+        },
         1: {
-            commands: [
-                "git tag -a v1.0.0 -m 'Release v1.0.0'",
-                "git tag",
-                "git push --tags",
-            ],
+            commands: ["git tag -a v1.0.0 -m 'Release v1.0.0'", "git tag", "git push --tags"],
             description: "Git tags workflow",
         },
         2: {
-            commands: [
-                "git log --oneline",
-                "git log --author=admin",
-                "git log --grep='feature 2'",
-            ],
+            commands: ["git log --oneline", "git log --author=admin", "git log --grep='feature 2'"],
             description: "Advanced log searching",
         },
         3: {
@@ -351,20 +386,16 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
 
     // ========== ARCHAEOLOGY STAGE ==========
     archaeology: {
+        4: {
+            commands: ["git restore --staged config.js", "git restore notes.md"],
+            description: "Unstage a file and discard working-tree changes with restore",
+        },
         1: {
-            commands: [
-                "git blame src/utils/validator.js",
-                "git log --oneline",
-                "git show HEAD",
-            ],
+            commands: ["git blame src/utils/validator.js", "git log --oneline", "git show HEAD"],
             description: "Code archaeology - blame and log",
         },
         2: {
-            commands: [
-                "git log --grep=security",
-                "git log -S password",
-                "git log --author=Sarah",
-            ],
+            commands: ["git log --grep=security", "git log -S password", "git log --author=Sarah"],
             description: "Advanced log searching",
         },
         3: {
@@ -372,28 +403,31 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
                 // Do a reset to create reflog entries
                 cmd.processCommand("git reset --hard HEAD~1");
             },
-            commands: [
-                "git reflog",
-                "git reset --hard HEAD@{0}",
-                "git branch recovery HEAD@{1}",
-            ],
+            commands: ["git reflog", "git reset --hard HEAD@{0}", "git branch recovery HEAD@{1}"],
             description: "Reflog and recovery",
         },
     },
 
     // ========== MASTERY STAGE ==========
     mastery: {
+        4: {
+            commands: [
+                "git add .",
+                "git commit --amend -m 'Prepare release v3.0.0 with notes'",
+                "git tag -a v3.0.0 -m 'Release v3.0.0'",
+            ],
+            description: "Amend the release commit and tag it",
+        },
         1: {
             preActions: (fs, git, cmd) => {
                 // Resolve the conflict markers
-                fs.writeFile("/src/utils/shared.js", "// Resolved shared utilities\nfunction formatDate(date) {\n  return date.toISOString();\n}");
+                fs.writeFile(
+                    "/src/utils/shared.js",
+                    "// Resolved shared utilities\nfunction formatDate(date) {\n  return date.toISOString();\n}",
+                );
                 git.updateFileStatus("src/utils/shared.js", "modified");
             },
-            commands: [
-                "git merge feature/auth",
-                "git add .",
-                "git commit -m 'Merge all features'",
-            ],
+            commands: ["git merge feature/auth", "git add .", "git commit -m 'Merge all features'"],
             description: "Multi-branch merge with conflict resolution",
         },
         2: {
@@ -402,11 +436,7 @@ const LEVEL_SOLUTIONS: Record<string, StageSolutions> = {
                 fs.writeFile("/src/main.js", "// Main application\nconsole.log('App starting safely...');");
                 git.updateFileStatus("src/main.js", "modified");
             },
-            commands: [
-                "git status",
-                "git add .",
-                "git commit -m 'Clean code for quality checks'",
-            ],
+            commands: ["git status", "git add .", "git commit -m 'Clean code for quality checks'"],
             description: "Git hooks and quality automation",
         },
         3: {
@@ -435,11 +465,7 @@ function createTestEnvironment() {
     const gitRepository = new GitRepository(fileSystem);
     const progressManager = new ProgressManager();
     const levelManager = new LevelManager();
-    const commandProcessor = new CommandProcessor(
-        fileSystem,
-        gitRepository,
-        progressManager
-    );
+    const commandProcessor = new CommandProcessor(fileSystem, gitRepository, progressManager);
 
     return {
         fileSystem,
@@ -454,7 +480,7 @@ function executeCommandAndCheckCompletion(
     command: string,
     stageId: string,
     levelId: number,
-    env: ReturnType<typeof createTestEnvironment>
+    env: ReturnType<typeof createTestEnvironment>,
 ): { output: string[]; isCompleted: boolean } {
     const { commandProcessor, levelManager, gitRepository } = env;
 
@@ -467,21 +493,10 @@ function executeCommandAndCheckCompletion(
     const args = parts.slice(1);
 
     // Check if this command completes any requirement
-    const isCompleted = levelManager.checkLevelCompletion(
-        stageId,
-        levelId,
-        baseCommand,
-        args,
-        gitRepository
-    );
+    const isCompleted = levelManager.checkLevelCompletion(stageId, levelId, baseCommand, args, gitRepository);
 
     // Also check state-based requirements
-    levelManager.checkStateBasedRequirements(
-        stageId,
-        levelId,
-        gitRepository,
-        env.fileSystem
-    );
+    levelManager.checkStateBasedRequirements(stageId, levelId, gitRepository, env.fileSystem);
 
     return { output, isCompleted };
 }
@@ -489,7 +504,7 @@ function executeCommandAndCheckCompletion(
 function isLevelFullyCompleted(
     stageId: string,
     levelId: number,
-    env: ReturnType<typeof createTestEnvironment>
+    env: ReturnType<typeof createTestEnvironment>,
 ): boolean {
     const { levelManager } = env;
     const level = levelManager.getLevel(stageId, levelId);
@@ -497,9 +512,7 @@ function isLevelFullyCompleted(
     if (!level) return false;
 
     // Check if all requirements are completed
-    const allCompleted = level.requirements.every(
-        (req) => !req.id || level.completedRequirements?.includes(req.id)
-    );
+    const allCompleted = level.requirements.every(req => !req.id || level.completedRequirements?.includes(req.id));
 
     return allCompleted;
 }
@@ -517,12 +530,14 @@ describe("E2E Level Tests - Full User Simulation", () => {
         commands?: string[];
     }[] = [];
 
-    describe.each(stageKeys)("Stage: %s", (stageKey) => {
+    describe.each(stageKeys)("Stage: %s", stageKey => {
         const stage = allStages[stageKey as keyof typeof allStages];
         const stageId = stage.id;
-        const levelIds = Object.keys(stage.levels).map(Number).sort((a, b) => a - b);
+        const levelIds = Object.keys(stage.levels)
+            .map(Number)
+            .sort((a, b) => a - b);
 
-        describe.each(levelIds)("Level %i", (levelId) => {
+        describe.each(levelIds)("Level %i", levelId => {
             let env: ReturnType<typeof createTestEnvironment>;
 
             beforeEach(() => {
@@ -530,12 +545,7 @@ describe("E2E Level Tests - Full User Simulation", () => {
             });
 
             it(`should setup level ${stageId}/${levelId} without errors`, () => {
-                const success = env.levelManager.setupLevel(
-                    stageId,
-                    levelId,
-                    env.fileSystem,
-                    env.gitRepository
-                );
+                const success = env.levelManager.setupLevel(stageId, levelId, env.fileSystem, env.gitRepository);
 
                 expect(success).toBe(true);
             });
@@ -548,7 +558,7 @@ describe("E2E Level Tests - Full User Simulation", () => {
                 expect(level?.requirements.length).toBeGreaterThan(0);
 
                 // Each requirement should have an id
-                level?.requirements.forEach((req) => {
+                level?.requirements.forEach(req => {
                     expect(req.id).toBeDefined();
                     expect(req.description).toBeDefined();
                 });
@@ -563,31 +573,19 @@ describe("E2E Level Tests - Full User Simulation", () => {
                 }
 
                 // Setup the level
-                const setupSuccess = env.levelManager.setupLevel(
-                    stageId,
-                    levelId,
-                    env.fileSystem,
-                    env.gitRepository
-                );
+                const setupSuccess = env.levelManager.setupLevel(stageId, levelId, env.fileSystem, env.gitRepository);
                 expect(setupSuccess).toBe(true);
 
                 // Run pre-actions if defined
                 if (solution.preActions) {
-                    solution.preActions(
-                        env.fileSystem,
-                        env.gitRepository,
-                        env.commandProcessor
-                    );
+                    solution.preActions(env.fileSystem, env.gitRepository, env.commandProcessor);
                 }
 
                 // Get commands (possibly modified by preActions)
                 let commands = [...solution.commands];
 
                 // Handle dynamic commit hash requirement for specific levels
-                if (
-                    stageId === "reset" && levelId === 3 ||
-                    stageId === "advanced" && levelId === 3
-                ) {
+                if ((stageId === "reset" && levelId === 3) || (stageId === "advanced" && levelId === 3)) {
                     const hash = (env.gitRepository as any)._testCommitHash;
                     if (hash) {
                         if (stageId === "reset" && levelId === 3) {
@@ -603,34 +601,23 @@ describe("E2E Level Tests - Full User Simulation", () => {
                 const executionResults: string[] = [];
                 for (const command of commands) {
                     try {
-                        const result = executeCommandAndCheckCompletion(
-                            command,
-                            stageId,
-                            levelId,
-                            env
-                        );
-                        executionResults.push(
-                            `✓ ${command} → ${result.isCompleted ? "COMPLETED" : "pending"}`
-                        );
+                        const result = executeCommandAndCheckCompletion(command, stageId, levelId, env);
+                        executionResults.push(`✓ ${command} → ${result.isCompleted ? "COMPLETED" : "pending"}`);
 
                         // Check for postPullAction after git pull
                         if (command === "git pull" && (solution as any).postPullAction) {
-                            (solution as any).postPullAction(
-                                env.fileSystem,
-                                env.gitRepository,
-                                env.commandProcessor
-                            );
+                            (solution as any).postPullAction(env.fileSystem, env.gitRepository, env.commandProcessor);
                             // Check state-based requirements after file modification
                             env.levelManager.checkStateBasedRequirements(
                                 stageId,
                                 levelId,
                                 env.gitRepository,
-                                env.fileSystem
+                                env.fileSystem,
                             );
                         }
                     } catch (error) {
                         executionResults.push(
-                            `✗ ${command} → ERROR: ${error instanceof Error ? error.message : "Unknown"}`
+                            `✗ ${command} → ERROR: ${error instanceof Error ? error.message : "Unknown"}`,
                         );
                     }
                 }
@@ -639,18 +626,11 @@ describe("E2E Level Tests - Full User Simulation", () => {
                 if ((solution as any).commandsAfterStateCheck) {
                     for (const command of (solution as any).commandsAfterStateCheck) {
                         try {
-                            const result = executeCommandAndCheckCompletion(
-                                command,
-                                stageId,
-                                levelId,
-                                env
-                            );
-                            executionResults.push(
-                                `✓ ${command} → ${result.isCompleted ? "COMPLETED" : "pending"}`
-                            );
+                            const result = executeCommandAndCheckCompletion(command, stageId, levelId, env);
+                            executionResults.push(`✓ ${command} → ${result.isCompleted ? "COMPLETED" : "pending"}`);
                         } catch (error) {
                             executionResults.push(
-                                `✗ ${command} → ERROR: ${error instanceof Error ? error.message : "Unknown"}`
+                                `✗ ${command} → ERROR: ${error instanceof Error ? error.message : "Unknown"}`,
                             );
                         }
                     }
@@ -658,23 +638,21 @@ describe("E2E Level Tests - Full User Simulation", () => {
 
                 // Log execution for debugging
                 console.log(`\n📋 ${stageId}/${levelId} - ${solution.description}:`);
-                executionResults.forEach((r) => console.log(`   ${r}`));
+                executionResults.forEach(r => console.log(`   ${r}`));
 
                 // Final check - is the level completed?
                 const level = env.levelManager.getLevel(stageId, levelId);
                 const completedCount = level?.completedRequirements?.length || 0;
                 const totalCount = level?.requirements.length || 0;
 
-                console.log(
-                    `   📊 Progress: ${completedCount}/${totalCount} requirements completed`
-                );
+                console.log(`   📊 Progress: ${completedCount}/${totalCount} requirements completed`);
 
                 if (completedCount < totalCount) {
                     const missingReqs = level?.requirements.filter(
-                        (req) => !level.completedRequirements?.includes(req.id)
+                        req => !level.completedRequirements?.includes(req.id),
                     );
                     console.log(`   ❌ Missing requirements:`);
-                    missingReqs?.forEach((req) => {
+                    missingReqs?.forEach(req => {
                         console.log(`      - ${req.id}: ${req.command}`);
                     });
                 }
@@ -710,20 +688,10 @@ describe("Level Logic Edge Cases", () => {
             const stageId = "reset";
             const levelId = 1;
 
-            env.levelManager.setupLevel(
-                stageId,
-                levelId,
-                env.fileSystem,
-                env.gitRepository
-            );
+            env.levelManager.setupLevel(stageId, levelId, env.fileSystem, env.gitRepository);
 
             // Try executing commands out of order - should not complete
-            executeCommandAndCheckCompletion(
-                "git reset --soft HEAD~2",
-                stageId,
-                levelId,
-                env
-            );
+            executeCommandAndCheckCompletion("git reset --soft HEAD~2", stageId, levelId, env);
 
             const level = env.levelManager.getLevel(stageId, levelId);
             // Should not have completed req 3 before req 1 and 2
@@ -737,20 +705,10 @@ describe("Level Logic Edge Cases", () => {
             const stageId = "branches";
             const levelId = 3;
 
-            env.levelManager.setupLevel(
-                stageId,
-                levelId,
-                env.fileSystem,
-                env.gitRepository
-            );
+            env.levelManager.setupLevel(stageId, levelId, env.fileSystem, env.gitRepository);
 
             // Use checkout instead of switch
-            executeCommandAndCheckCompletion(
-                "git checkout feature",
-                stageId,
-                levelId,
-                env
-            );
+            executeCommandAndCheckCompletion("git checkout feature", stageId, levelId, env);
 
             const level = env.levelManager.getLevel(stageId, levelId);
             expect(level?.completedRequirements?.length).toBeGreaterThan(0);
@@ -761,20 +719,10 @@ describe("Level Logic Edge Cases", () => {
             const stageId = "branches";
             const levelId = 2;
 
-            env.levelManager.setupLevel(
-                stageId,
-                levelId,
-                env.fileSystem,
-                env.gitRepository
-            );
+            env.levelManager.setupLevel(stageId, levelId, env.fileSystem, env.gitRepository);
 
             // Use checkout -b instead of switch -c
-            executeCommandAndCheckCompletion(
-                "git checkout -b new-feature",
-                stageId,
-                levelId,
-                env
-            );
+            executeCommandAndCheckCompletion("git checkout -b new-feature", stageId, levelId, env);
 
             const level = env.levelManager.getLevel(stageId, levelId);
             expect(level?.completedRequirements?.length).toBeGreaterThan(0);
@@ -787,12 +735,7 @@ describe("Level Logic Edge Cases", () => {
             const stageId = "teamwork";
             const levelId = 1;
 
-            env.levelManager.setupLevel(
-                stageId,
-                levelId,
-                env.fileSystem,
-                env.gitRepository
-            );
+            env.levelManager.setupLevel(stageId, levelId, env.fileSystem, env.gitRepository);
 
             // Complete first two requirements
             executeCommandAndCheckCompletion("git pull origin main", stageId, levelId, env);
@@ -803,12 +746,7 @@ describe("Level Logic Edge Cases", () => {
             env.gitRepository.updateFileStatus("team.md", "modified");
 
             // Check state-based requirements
-            env.levelManager.checkStateBasedRequirements(
-                stageId,
-                levelId,
-                env.gitRepository,
-                env.fileSystem
-            );
+            env.levelManager.checkStateBasedRequirements(stageId, levelId, env.gitRepository, env.fileSystem);
 
             const level = env.levelManager.getLevel(stageId, levelId);
             expect(level?.completedRequirements).toContain("edit-team-file");
@@ -822,7 +760,7 @@ describe("Level Coverage Summary", () => {
         const stageKeys = Object.keys(allStages);
         const coverageReport: { stage: string; levels: number; covered: number }[] = [];
 
-        stageKeys.forEach((stageKey) => {
+        stageKeys.forEach(stageKey => {
             const stage = allStages[stageKey as keyof typeof allStages];
             const stageId = stage.id;
             const levelCount = Object.keys(stage.levels).length;
@@ -836,7 +774,7 @@ describe("Level Coverage Summary", () => {
         });
 
         console.log("\n📊 E2E Test Coverage Report:");
-        console.log("=" .repeat(50));
+        console.log("=".repeat(50));
 
         let totalLevels = 0;
         let totalCovered = 0;
@@ -849,7 +787,7 @@ describe("Level Coverage Summary", () => {
             totalCovered += covered;
         });
 
-        console.log("=" .repeat(50));
+        console.log("=".repeat(50));
         const totalPercentage = ((totalCovered / totalLevels) * 100).toFixed(0);
         console.log(`📈 Total: ${totalCovered}/${totalLevels} levels covered (${totalPercentage}%)`);
 
