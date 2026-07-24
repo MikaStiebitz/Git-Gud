@@ -56,9 +56,13 @@ export const metadata: Metadata = {
         images: ["/home-screen.png"],
     },
     icons: [
-        { rel: "icon", url: "/gitBranch-favicon.svg", type: "image/svg+xml" },
-        { rel: "icon", url: "/gitBranch.svg", type: "image/svg+xml", sizes: "any" },
-        { rel: "apple-touch-icon", url: "/gitBranch-favicon.svg" },
+        // PNG set first — Google Search prefers raster icons at 48px multiples
+        { rel: "icon", url: "/icon-48.png", type: "image/png", sizes: "48x48" },
+        { rel: "icon", url: "/icon-96.png", type: "image/png", sizes: "96x96" },
+        { rel: "icon", url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+        { rel: "icon", url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
+        { rel: "shortcut icon", url: "/favicon.ico" },
+        { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
     ],
 };
 

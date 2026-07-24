@@ -1,29 +1,35 @@
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next";
 
-export const dynamic = 'force-static'
+export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
-  return {
-    name: 'GitMastery - Interactive Git Learning Platform',
-    short_name: 'GitMastery',
-    description: 'Learn Git commands and concepts through fun, interactive challenges',
-    start_url: '/',
-    display: 'standalone',
-    background_color: '#0f0f0f',
-    theme_color: '#f1f5f9',
-    icons: [
-      {
-        src: '/gitBranch.svg',
-        sizes: 'any',
-        type: 'image/svg+xml',
-      },
-      {
-        src: '/gitIcon.ico',
-        sizes: '16x16 32x32',
-        type: 'image/x-icon',
-      },
-    ],
-    categories: ['education', 'developer'],
-    lang: 'en',
-  }
+    return {
+        name: "GitMastery - Interactive Git Learning Platform",
+        short_name: "GitMastery",
+        description: "Learn Git commands and concepts through fun, interactive challenges",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#120d1e",
+        theme_color: "#120d1e",
+        icons: [
+            {
+                src: "/icon-192.png",
+                sizes: "192x192",
+                type: "image/png",
+            },
+            {
+                src: "/icon-512.png",
+                sizes: "512x512",
+                type: "image/png",
+                purpose: "any",
+            },
+            {
+                src: "/icon.svg",
+                sizes: "any",
+                type: "image/svg+xml",
+            },
+        ],
+        categories: ["education", "developer"],
+        lang: "en",
+    };
 }

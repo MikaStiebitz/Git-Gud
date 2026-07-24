@@ -5,7 +5,6 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
 import {
     GitBranch,
     GitCommit,
@@ -19,8 +18,8 @@ import {
     Activity,
     Award,
     Star,
-    BookMarked,
     ArrowRight,
+    ArrowUpRight,
     Github,
     Settings,
     ShoppingCart,
@@ -37,6 +36,59 @@ import { Shop } from "~/components/Shop";
 import { Minigames } from "~/components/Minigames";
 import { getAvailableStagesForDifficulty } from "~/config/difficulties";
 import type { DifficultyLevel } from "~/types";
+
+/** SVG film grain as data-URI — kills the flat gradient look. */
+const NOISE_URI =
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E\")";
+
+const MARQUEE_COMMANDS = [
+    "git init",
+    "git add .",
+    "git commit",
+    "git branch",
+    "git switch",
+    "git merge",
+    "git rebase",
+    "git stash",
+    "git cherry-pick",
+    "git bisect",
+    "git revert",
+    "git push",
+];
+
+/** Split a string into per-char spans for staggered clip reveals. */
+const SplitChars = ({ text }: { text: string }) => (
+    <>
+        {text.split("").map((ch, i) => (
+            <span key={i} className="inline-block overflow-hidden align-bottom">
+                <span data-char className="inline-block">
+                    {ch === " " ? " " : ch}
+                </span>
+            </span>
+        ))}
+    </>
+);
+
+/** Editorial section header: ghost index + char-revealed heading. */
+const SectionHeader = ({ index, title }: { index: string; title: string }) => (
+    <div className="section-head relative mb-10 sm:mb-14">
+        <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-10 left-0 -z-10 font-mono text-[7rem] leading-none font-bold text-transparent select-none sm:-top-16 sm:text-[11rem]"
+            style={{ WebkitTextStroke: "1.5px rgba(168,85,247,0.16)" }}>
+            {index}
+        </span>
+        <div className="flex items-end gap-4">
+            <h2 data-chars className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
+                <SplitChars text={title} />
+            </h2>
+            <span className="mb-2 hidden h-px flex-1 bg-gradient-to-r from-purple-500/60 to-transparent sm:block"></span>
+            <span className="mb-1 hidden font-mono text-xs tracking-[0.3em] text-purple-500/80 uppercase sm:block">
+                /{index}
+            </span>
+        </div>
+    </div>
+);
 
 /**
  * Animated hero commit-graph: draws itself on load and gently pulses.
@@ -127,7 +179,7 @@ export default function Home() {
         setIsMounted(true);
     }, []);
 
-    // ── GSAP: hero timeline, scroll reveals, parallax, counters ─────────────
+    // ── GSAP: hero timeline, marquee, scroll reveals, parallax, counters ────
     useEffect(() => {
         if (!rootRef.current) return;
         gsap.registerPlugin(ScrollTrigger);
@@ -138,11 +190,11 @@ export default function Home() {
             mm.add("(prefers-reduced-motion: no-preference)", () => {
                 // Hero entrance
                 const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-                tl.from(".hero-badge", { y: 24, opacity: 0, duration: 0.6 })
+                tl.from(".hero-overline > *", { y: 18, opacity: 0, duration: 0.5, stagger: 0.06 })
                     .from(
                         ".hero-word > span",
                         { yPercent: 120, duration: 0.9, stagger: 0.08, ease: "power4.out" },
-                        "-=0.3",
+                        "-=0.25",
                     )
                     .from(".hero-sub", { y: 20, opacity: 0, duration: 0.7 }, "-=0.5")
                     .from(".hero-cta > *", { y: 18, opacity: 0, duration: 0.5, stagger: 0.08 }, "-=0.45")
@@ -180,12 +232,41 @@ export default function Home() {
                     1.7,
                 );
 
+                // Blinking terminal cursor in the overline
+                gsap.to(".hero-cursor", { opacity: 0, duration: 0.55, repeat: -1, yoyo: true, ease: "steps(1)" });
+
+                // Ghost word behind the hero drifts on scroll
+                gsap.to(".hero-ghost", {
+                    yPercent: 35,
+                    scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 1 },
+                });
+
                 // Floating glow orbs — slow drift + scroll parallax
                 gsap.to(".orb-a", { y: -40, x: 30, duration: 8, yoyo: true, repeat: -1, ease: "sine.inOut" });
                 gsap.to(".orb-b", { y: 50, x: -20, duration: 10, yoyo: true, repeat: -1, ease: "sine.inOut" });
-                gsap.to(".orb-a", {
-                    yPercent: -30,
-                    scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 1 },
+
+                // Command marquee: endless drift + skew that follows scroll velocity
+                const track = document.querySelector<HTMLElement>(".marquee-track");
+                if (track) {
+                    gsap.to(track, { xPercent: -50, ease: "none", duration: 30, repeat: -1 });
+                    const skewTo = gsap.quickTo(track, "skewX", { duration: 0.4, ease: "power2.out" });
+                    ScrollTrigger.create({
+                        trigger: ".marquee-band",
+                        start: "top bottom",
+                        end: "bottom top",
+                        onUpdate: self => skewTo(gsap.utils.clamp(-8, 8, self.getVelocity() / -220)),
+                    });
+                }
+
+                // Char-level clip reveals for section headings
+                gsap.utils.toArray<HTMLElement>("[data-chars]").forEach(el => {
+                    gsap.from(el.querySelectorAll("[data-char]"), {
+                        yPercent: 115,
+                        duration: 0.7,
+                        stagger: 0.022,
+                        ease: "power4.out",
+                        scrollTrigger: { trigger: el, start: "top 88%" },
+                    });
                 });
 
                 // Generic scroll reveals
@@ -243,17 +324,41 @@ export default function Home() {
                         },
                     });
                 });
+
+                // Giant CTA: fill sweep on hover
+                const cta = document.querySelector<HTMLElement>(".giant-cta");
+                if (cta) {
+                    const fill = cta.querySelector<HTMLElement>(".giant-cta-fill");
+                    const arrow = cta.querySelector<HTMLElement>(".giant-cta-arrow");
+                    if (fill && arrow) {
+                        const enter = () => {
+                            gsap.to(fill, { scaleX: 1, duration: 0.5, ease: "power3.out" });
+                            gsap.to(arrow, { x: 10, y: -10, duration: 0.4, ease: "power3.out" });
+                        };
+                        const leave = () => {
+                            gsap.to(fill, { scaleX: 0, duration: 0.5, ease: "power3.inOut" });
+                            gsap.to(arrow, { x: 0, y: 0, duration: 0.4, ease: "power3.inOut" });
+                        };
+                        cta.addEventListener("mouseenter", enter);
+                        cta.addEventListener("mouseleave", leave);
+                        return () => {
+                            cta.removeEventListener("mouseenter", enter);
+                            cta.removeEventListener("mouseleave", leave);
+                        };
+                    }
+                }
             });
 
-            // Pointer parallax on the hero glow (all motion preferences: very subtle)
+            // Cursor spotlight over the hero — all motion preferences (very subtle)
             const hero = document.querySelector<HTMLElement>(".hero-section");
-            if (hero) {
-                const xTo = gsap.quickTo(".orb-a", "xPercent", { duration: 0.8, ease: "power3.out" });
-                const yTo = gsap.quickTo(".orb-a", "yPercent", { duration: 0.8, ease: "power3.out" });
+            const spot = document.querySelector<HTMLElement>(".hero-spot");
+            if (hero && spot) {
+                const xTo = gsap.quickTo(spot, "x", { duration: 0.55, ease: "power3.out" });
+                const yTo = gsap.quickTo(spot, "y", { duration: 0.55, ease: "power3.out" });
                 const onMove = (e: PointerEvent) => {
                     const r = hero.getBoundingClientRect();
-                    xTo(((e.clientX - r.left) / r.width - 0.5) * 8);
-                    yTo(((e.clientY - r.top) / r.height - 0.5) * 8);
+                    xTo(e.clientX - r.left - 300);
+                    yTo(e.clientY - r.top - 300);
                 };
                 hero.addEventListener("pointermove", onMove);
                 return () => hero.removeEventListener("pointermove", onMove);
@@ -416,9 +521,15 @@ export default function Home() {
     return (
         <PageLayout>
             <div ref={rootRef} className="min-h-screen overflow-x-clip bg-[#120d1e] text-purple-100">
+                {/* Film grain over everything */}
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none fixed inset-0 z-[60] opacity-[0.05] mix-blend-overlay"
+                    style={{ backgroundImage: NOISE_URI }}></div>
+
                 {/* ── Hero ─────────────────────────────────────────────────── */}
                 <section className="hero-section relative overflow-hidden">
-                    {/* Layered background: Higgsfield nebula + glow orbs + grid */}
+                    {/* Layered background: Higgsfield nebula + glow orbs + grid + spotlight */}
                     <div className="pointer-events-none absolute inset-0 -z-10">
                         <img
                             src="/hero-nebula.webp"
@@ -429,16 +540,29 @@ export default function Home() {
                         <div className="orb-a absolute top-10 -left-24 h-96 w-96 rounded-full bg-purple-600/25 blur-3xl"></div>
                         <div className="orb-b absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-fuchsia-600/15 blur-3xl"></div>
                         <div className="absolute inset-0 [background-image:linear-gradient(rgba(167,139,250,0.35)_1px,transparent_1px),linear-gradient(90deg,rgba(167,139,250,0.35)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_35%,black,transparent)] [background-size:56px_56px] opacity-[0.15]"></div>
+                        {/* cursor spotlight */}
+                        <div className="hero-spot absolute top-0 left-0 h-[600px] w-[600px] rounded-full bg-purple-500/12 mix-blend-screen blur-[90px]"></div>
+                        {/* giant ghost word */}
+                        <span
+                            aria-hidden="true"
+                            className="hero-ghost absolute -bottom-10 left-0 hidden font-mono text-[16rem] leading-none font-bold text-transparent select-none xl:block"
+                            style={{ WebkitTextStroke: "1.5px rgba(168,85,247,0.09)" }}>
+                            branch
+                        </span>
                     </div>
 
                     <div className="container mx-auto grid items-center gap-10 px-4 py-16 sm:py-24 lg:grid-cols-[1.15fr_0.85fr] lg:gap-6 lg:py-28">
                         <div className="text-center lg:text-left">
-                            <div className="hero-badge mb-6 inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-xs font-medium tracking-wide text-purple-200 backdrop-blur-sm sm:text-sm">
-                                <GitBranch className="h-3.5 w-3.5 text-purple-400" />
-                                {t("home.badge")}
+                            {/* Overline: terminal-style label instead of a pill */}
+                            <div className="hero-overline mb-7 flex items-center justify-center gap-3 lg:justify-start">
+                                <span className="h-px w-10 bg-purple-500/70"></span>
+                                <span className="font-mono text-[11px] tracking-[0.35em] text-purple-300/90 uppercase sm:text-xs">
+                                    {t("home.badge")}
+                                </span>
+                                <span className="hero-cursor inline-block h-3.5 w-[7px] bg-purple-400"></span>
                             </div>
 
-                            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
+                            <h1 className="text-5xl font-bold tracking-[-0.03em] text-white sm:text-6xl md:text-7xl xl:text-[5.4rem] xl:leading-[0.95]">
                                 {t("home.title")
                                     .split(" ")
                                     .map((word, i) => (
@@ -483,31 +607,29 @@ export default function Home() {
                                 </Link>
                             </div>
 
-                            <div className="hero-cta mt-4 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-                                <Button
-                                    size="sm"
-                                    variant="outline"
+                            {/* Secondary actions as understated text links */}
+                            <div className="hero-cta mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 lg:justify-start">
+                                <button
                                     onClick={() => setShowDifficultySelector(true)}
-                                    className="border-purple-800/60 bg-transparent text-purple-300 transition-all duration-300 hover:border-purple-600 hover:bg-purple-900/40 hover:text-purple-100">
-                                    <Settings className="mr-1.5 h-3.5 w-3.5" />
+                                    className="group flex items-center gap-1.5 font-mono text-xs tracking-wide text-purple-400 uppercase transition-colors hover:text-purple-200">
+                                    <Settings className="h-3.5 w-3.5" />
                                     Difficulty
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
+                                    <ArrowUpRight className="h-3 w-3 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                                </button>
+                                <button
                                     onClick={() => setShowShop(true)}
-                                    className="border-yellow-800/60 bg-transparent text-yellow-300/90 transition-all duration-300 hover:border-yellow-600 hover:bg-yellow-900/30 hover:text-yellow-200">
-                                    <ShoppingCart className="mr-1.5 h-3.5 w-3.5" />
+                                    className="group flex items-center gap-1.5 font-mono text-xs tracking-wide text-yellow-500/80 uppercase transition-colors hover:text-yellow-300">
+                                    <ShoppingCart className="h-3.5 w-3.5" />
                                     Shop
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
+                                    <ArrowUpRight className="h-3 w-3 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                                </button>
+                                <button
                                     onClick={() => setShowMinigames(true)}
-                                    className="border-green-800/60 bg-transparent text-green-300/90 transition-all duration-300 hover:border-green-600 hover:bg-green-900/30 hover:text-green-200">
-                                    <Gamepad2 className="mr-1.5 h-3.5 w-3.5" />
+                                    className="group flex items-center gap-1.5 font-mono text-xs tracking-wide text-green-500/80 uppercase transition-colors hover:text-green-300">
+                                    <Gamepad2 className="h-3.5 w-3.5" />
                                     Mini Games
-                                </Button>
+                                    <ArrowUpRight className="h-3 w-3 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                                </button>
                             </div>
                         </div>
 
@@ -531,6 +653,26 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
+
+                {/* ── Command marquee ──────────────────────────────────────── */}
+                <div className="marquee-band relative -rotate-1 border-y border-purple-800/40 bg-[#171126]/70 py-3 backdrop-blur-sm sm:py-4">
+                    <div className="marquee-track flex w-max items-center whitespace-nowrap will-change-transform">
+                        {[0, 1].map(copy => (
+                            <div key={copy} className="flex items-center" aria-hidden={copy === 1}>
+                                {MARQUEE_COMMANDS.map((cmd, i) => (
+                                    <span key={`${copy}-${i}`} className="flex items-center">
+                                        <span
+                                            className="px-6 font-mono text-xl font-bold text-transparent sm:text-2xl"
+                                            style={{ WebkitTextStroke: "1px rgba(196,181,253,0.55)" }}>
+                                            {cmd}
+                                        </span>
+                                        <Star className="h-3 w-3 fill-fuchsia-500/70 text-fuchsia-500/70" />
+                                    </span>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
                 {/* Difficulty Completion Celebration */}
                 {isMounted && isDifficultyCompleted() && getNextDifficulty() && (
@@ -560,49 +702,39 @@ export default function Home() {
                     </section>
                 )}
 
-                {/* ── Stats ─────────────────────────────────────────────────── */}
-                <section className="container mx-auto px-4 py-6" data-reveal>
+                {/* ── Stats: hairline editorial band ───────────────────────── */}
+                <section className="container mx-auto px-4 py-12 sm:py-16" data-reveal>
                     <ClientOnly>
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+                        <div className="grid grid-cols-2 divide-purple-800/40 border-y border-purple-800/40 sm:grid-cols-4 sm:divide-x">
                             {[
-                                { label: t("home.points"), value: progress.score },
-                                { label: t("home.completed"), value: completedCount },
-                                { label: t("level.level"), value: progress.currentLevel },
+                                { label: t("home.points"), value: progress.score, counter: true },
+                                { label: t("home.completed"), value: completedCount, counter: true },
+                                { label: t("level.level"), value: progress.currentLevel, counter: true },
+                                { label: t("level.branch"), value: progress.currentStage, counter: false },
                             ].map((stat, i) => (
-                                <div
-                                    key={i}
-                                    className="rounded-xl border border-purple-800/30 bg-gradient-to-b from-purple-900/25 to-purple-900/10 p-3 text-center backdrop-blur-sm sm:p-5">
-                                    <h3 className="text-xs text-purple-400 sm:text-sm">{stat.label}</h3>
+                                <div key={i} className="px-4 py-6 text-center sm:py-8">
                                     <p
-                                        className="text-2xl font-bold text-white tabular-nums sm:text-3xl"
-                                        data-counter={stat.value}>
+                                        className="truncate text-4xl font-bold text-white tabular-nums sm:text-5xl"
+                                        {...(stat.counter ? { "data-counter": stat.value } : {})}>
                                         {stat.value}
                                     </p>
+                                    <h3 className="mt-2 font-mono text-[10px] tracking-[0.3em] text-purple-400 uppercase sm:text-xs">
+                                        {stat.label}
+                                    </h3>
                                 </div>
                             ))}
-                            <div className="rounded-xl border border-purple-800/30 bg-gradient-to-b from-purple-900/25 to-purple-900/10 p-3 text-center backdrop-blur-sm sm:p-5">
-                                <h3 className="text-xs text-purple-400 sm:text-sm">{t("level.branch")}</h3>
-                                <p className="truncate text-2xl font-bold text-white sm:text-3xl">
-                                    {progress.currentStage}
-                                </p>
-                            </div>
                         </div>
                     </ClientOnly>
                 </section>
 
                 {/* ── Learning Path ─────────────────────────────────────────── */}
                 <section className="path-section container mx-auto px-4 py-8 sm:py-16">
-                    <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl" data-reveal>
-                        <span className="relative">
-                            {learningPathHeading()}
-                            <span className="absolute -bottom-1 left-0 h-1 w-full rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-300"></span>
-                        </span>
-                    </h2>
+                    <SectionHeader index="01" title={learningPathHeading()} />
 
                     <ClientOnly>
                         <div className="relative">
                             {/* Central spine that fills as you scroll */}
-                            <div className="absolute left-1/2 hidden h-full w-1 -translate-x-1/2 overflow-hidden rounded-full bg-purple-900/40 lg:block">
+                            <div className="absolute left-1/2 hidden h-full w-px -translate-x-1/2 overflow-hidden bg-purple-900/40 lg:block">
                                 <div className="path-line-fill h-full w-full bg-gradient-to-b from-purple-400 via-fuchsia-500 to-purple-700"></div>
                             </div>
 
@@ -630,106 +762,121 @@ export default function Home() {
 
                                             <div
                                                 data-stage-card
-                                                className={`group relative rounded-2xl border p-6 backdrop-blur-sm transition-all duration-300 ${
+                                                className={`group relative overflow-hidden rounded-xl p-px ${
                                                     isUnlocked
-                                                        ? "border-purple-700/30 bg-gradient-to-b from-purple-900/25 to-purple-950/20 hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-950/50"
-                                                        : "border-gray-800/20 bg-gray-900/10"
+                                                        ? "bg-gradient-to-b from-purple-500/40 via-purple-800/20 to-transparent"
+                                                        : "bg-gray-800/40"
                                                 } ${index % 2 === 0 ? "lg:mr-12 lg:ml-auto" : "lg:mr-auto lg:ml-12"} w-full lg:w-5/12`}>
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center">
-                                                        {/* Show stage icon inline on mobile */}
-                                                        <div className="relative mr-3 lg:hidden">
-                                                            <div
-                                                                className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                                                                    isUnlocked
-                                                                        ? "bg-gradient-to-br from-purple-500 to-fuchsia-600"
-                                                                        : "bg-gray-700"
-                                                                }`}>
-                                                                {getStageIcon(stageId)}
-                                                            </div>
-                                                            {isUnlocked && (
-                                                                <span className="absolute -inset-1 animate-ping rounded-full bg-purple-400/20"></span>
-                                                            )}
-                                                        </div>
-                                                        <h3
-                                                            className={`text-lg font-bold sm:text-xl ${
-                                                                isUnlocked ? "text-white" : "text-gray-500"
-                                                            }`}>
-                                                            {stageData.name}
-                                                        </h3>
-                                                    </div>
-                                                    <div
-                                                        className={`flex items-center text-xs sm:text-sm ${
-                                                            isUnlocked ? "text-purple-400" : "text-gray-500"
-                                                        }`}>
-                                                        <div className="flex items-center">
-                                                            {completedLevels}/{totalLevels}
-                                                            <Award className="ml-1 h-4 w-4" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Stage progress bar */}
-                                                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-purple-900/40">
-                                                    <div
-                                                        className="h-full bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-300 transition-all duration-700"
-                                                        style={{ width: `${progressPercent}%` }}></div>
-                                                </div>
-
-                                                <p
-                                                    className={`mt-3 text-sm sm:text-base ${
-                                                        isUnlocked ? "text-purple-200" : "text-gray-500"
+                                                <div
+                                                    className={`relative rounded-[calc(0.75rem-1px)] p-6 transition-colors duration-300 ${
+                                                        isUnlocked
+                                                            ? "bg-[#171126]/95 group-hover:bg-[#1b1430]/95"
+                                                            : "bg-gray-900/60"
                                                     }`}>
-                                                    {stageData.description}
-                                                </p>
+                                                    {/* index watermark */}
+                                                    <span
+                                                        aria-hidden="true"
+                                                        className="pointer-events-none absolute -top-3 right-3 font-mono text-6xl font-bold text-transparent select-none"
+                                                        style={{ WebkitTextStroke: "1px rgba(168,85,247,0.14)" }}>
+                                                        {String(index + 1).padStart(2, "0")}
+                                                    </span>
 
-                                                <div className="mt-4 flex flex-wrap gap-2">
-                                                    {Object.entries(stageData.levels).map(([levelId]) => {
-                                                        const level = parseInt(levelId);
-                                                        const levelUnlocked = isLevelUnlocked(stageId, level);
-                                                        const levelCompleted = isLevelCompleted(stageId, level);
-
-                                                        return (
-                                                            <div
-                                                                key={levelId}
-                                                                className={
-                                                                    levelUnlocked
-                                                                        ? "transition-transform hover:scale-105"
-                                                                        : "pointer-events-none"
-                                                                }
-                                                                onClick={() =>
-                                                                    levelUnlocked && navigateToLevel(stageId, level)
-                                                                }>
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    className={`group flex cursor-pointer items-center ${
-                                                                        levelUnlocked
-                                                                            ? levelCompleted
-                                                                                ? "border-green-700 bg-green-900/20 text-green-300 hover:bg-green-900/40"
-                                                                                : "border-purple-700 bg-purple-900/10 text-purple-300 hover:border-purple-600 hover:bg-purple-900/30 hover:text-purple-100"
-                                                                            : "border-gray-800 bg-gray-900/20 text-gray-500"
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center">
+                                                            {/* Show stage icon inline on mobile */}
+                                                            <div className="relative mr-3 lg:hidden">
+                                                                <div
+                                                                    className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                                                                        isUnlocked
+                                                                            ? "bg-gradient-to-br from-purple-500 to-fuchsia-600"
+                                                                            : "bg-gray-700"
                                                                     }`}>
-                                                                    {levelCompleted ? (
-                                                                        <CheckCircle2 className="mr-1 h-3 w-3 text-green-400 transition-transform duration-300 group-hover:scale-110" />
-                                                                    ) : !levelUnlocked ? (
-                                                                        <LockIcon className="mr-1 h-3 w-3" />
-                                                                    ) : (
-                                                                        <Star className="mr-1 h-3 w-3 text-purple-400 transition-transform duration-300 group-hover:rotate-45" />
-                                                                    )}
-                                                                    Level {levelId}
-                                                                </Button>
+                                                                    {getStageIcon(stageId)}
+                                                                </div>
+                                                                {isUnlocked && (
+                                                                    <span className="absolute -inset-1 animate-ping rounded-full bg-purple-400/20"></span>
+                                                                )}
                                                             </div>
-                                                        );
-                                                    })}
-                                                </div>
-
-                                                {/* Arrow to next stage */}
-                                                {isUnlocked && index < Object.keys(stages).length - 1 && (
-                                                    <div className="absolute right-4 bottom-4 hidden text-purple-500 lg:block">
-                                                        <ChevronRight className="h-6 w-6 animate-bounce" />
+                                                            <h3
+                                                                className={`text-lg font-bold sm:text-xl ${
+                                                                    isUnlocked ? "text-white" : "text-gray-500"
+                                                                }`}>
+                                                                {stageData.name}
+                                                            </h3>
+                                                        </div>
+                                                        <div
+                                                            className={`flex items-center font-mono text-xs sm:text-sm ${
+                                                                isUnlocked ? "text-purple-400" : "text-gray-500"
+                                                            }`}>
+                                                            <div className="flex items-center">
+                                                                {completedLevels}/{totalLevels}
+                                                                <Award className="ml-1 h-4 w-4" />
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                )}
+
+                                                    {/* Stage progress bar */}
+                                                    <div className="mt-3 h-px w-full overflow-hidden bg-purple-900/50">
+                                                        <div
+                                                            className="h-full bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-300 transition-all duration-700"
+                                                            style={{ width: `${progressPercent}%` }}></div>
+                                                    </div>
+
+                                                    <p
+                                                        className={`mt-3 text-sm sm:text-base ${
+                                                            isUnlocked ? "text-purple-200" : "text-gray-500"
+                                                        }`}>
+                                                        {stageData.description}
+                                                    </p>
+
+                                                    <div className="mt-4 flex flex-wrap gap-2">
+                                                        {Object.entries(stageData.levels).map(([levelId]) => {
+                                                            const level = parseInt(levelId);
+                                                            const levelUnlocked = isLevelUnlocked(stageId, level);
+                                                            const levelCompleted = isLevelCompleted(stageId, level);
+
+                                                            return (
+                                                                <div
+                                                                    key={levelId}
+                                                                    className={
+                                                                        levelUnlocked
+                                                                            ? "transition-transform hover:-translate-y-0.5"
+                                                                            : "pointer-events-none"
+                                                                    }
+                                                                    onClick={() =>
+                                                                        levelUnlocked && navigateToLevel(stageId, level)
+                                                                    }>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        className={`group flex cursor-pointer items-center rounded-md font-mono text-xs ${
+                                                                            levelUnlocked
+                                                                                ? levelCompleted
+                                                                                    ? "border-green-700/60 bg-green-950/30 text-green-300 hover:bg-green-900/40"
+                                                                                    : "border-purple-700/60 bg-transparent text-purple-300 hover:border-purple-400 hover:bg-purple-900/30 hover:text-purple-100"
+                                                                                : "border-gray-800 bg-transparent text-gray-600"
+                                                                        }`}>
+                                                                        {levelCompleted ? (
+                                                                            <CheckCircle2 className="mr-1 h-3 w-3 text-green-400 transition-transform duration-300 group-hover:scale-110" />
+                                                                        ) : !levelUnlocked ? (
+                                                                            <LockIcon className="mr-1 h-3 w-3" />
+                                                                        ) : (
+                                                                            <Star className="mr-1 h-3 w-3 text-purple-400 transition-transform duration-300 group-hover:rotate-45" />
+                                                                        )}
+                                                                        L{levelId}
+                                                                    </Button>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+
+                                                    {/* Arrow to next stage */}
+                                                    {isUnlocked && index < Object.keys(stages).length - 1 && (
+                                                        <div className="absolute right-4 bottom-4 hidden text-purple-500 lg:block">
+                                                            <ChevronRight className="h-6 w-6 animate-bounce" />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     );
@@ -741,90 +888,70 @@ export default function Home() {
 
                 {/* ── Features ──────────────────────────────────────────────── */}
                 <section className="container mx-auto px-4 py-8 sm:py-16">
-                    <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl" data-reveal>
-                        <span className="relative">
-                            {t("home.gameFeatures")}
-                            <span className="absolute -bottom-1 left-0 h-1 w-full rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-300"></span>
-                        </span>
-                    </h2>
+                    <SectionHeader index="02" title={t("home.gameFeatures")} />
 
-                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-px overflow-hidden rounded-xl border border-purple-800/40 bg-purple-800/40 md:grid-cols-3">
                         {[
                             {
-                                icon: <Activity className="h-8 w-8 text-white" />,
-                                gradient: "from-green-500 to-emerald-600",
-                                border: "border-green-800/30",
-                                bg: "from-green-900/20 to-emerald-900/10",
-                                glow: "hover:shadow-green-500/10",
-                                bar: "bg-green-400",
+                                icon: <Activity className="h-6 w-6 text-green-400" />,
+                                accent: "text-green-400",
+                                bar: "from-green-400/80 to-emerald-500/0",
                                 title: t("home.feature1.title"),
                                 description: t("home.feature1.description"),
                             },
                             {
-                                icon: <Gamepad2 className="h-8 w-8 text-white" />,
-                                gradient: "from-purple-500 to-indigo-600",
-                                border: "border-purple-800/30",
-                                bg: "from-purple-900/20 to-indigo-900/10",
-                                glow: "hover:shadow-purple-500/10",
-                                bar: "bg-purple-400",
+                                icon: <Gamepad2 className="h-6 w-6 text-purple-400" />,
+                                accent: "text-purple-400",
+                                bar: "from-purple-400/80 to-fuchsia-500/0",
                                 title: t("home.feature2.title"),
                                 description: t("home.feature2.description"),
                             },
                             {
-                                icon: <ShoppingCart className="h-8 w-8 text-white" />,
-                                gradient: "from-yellow-500 to-amber-600",
-                                border: "border-yellow-800/30",
-                                bg: "from-yellow-900/20 to-amber-900/10",
-                                glow: "hover:shadow-yellow-500/10",
-                                bar: "bg-yellow-400",
+                                icon: <ShoppingCart className="h-6 w-6 text-yellow-400" />,
+                                accent: "text-yellow-400",
+                                bar: "from-yellow-400/80 to-amber-500/0",
                                 title: t("home.feature3.title"),
                                 description: t("home.feature3.description"),
                             },
                         ].map((feature, i) => (
-                            <div key={i} data-reveal>
-                                <Card
-                                    className={`group relative overflow-hidden ${feature.border} bg-gradient-to-br ${feature.bg} backdrop-blur-sm transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${feature.glow}`}>
-                                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                                    <CardContent className="relative p-8 text-center">
-                                        <div
-                                            className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}>
-                                            {feature.icon}
-                                        </div>
-                                        <h3 className="mb-4 text-xl font-bold text-white">{feature.title}</h3>
-                                        <p className="leading-relaxed text-purple-200">{feature.description}</p>
-                                        <div className="mt-6 flex justify-center">
-                                            <div className="flex space-x-1">
-                                                <div className={`h-1 w-8 rounded-full ${feature.bar}`}></div>
-                                                <div className={`h-1 w-4 rounded-full ${feature.bar} opacity-50`}></div>
-                                                <div className={`h-1 w-2 rounded-full ${feature.bar} opacity-25`}></div>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                            <div key={i} data-reveal className="group relative bg-[#151022] p-8 sm:p-10">
+                                {/* hover sweep line */}
+                                <span
+                                    className={`absolute top-0 left-0 h-0.5 w-full origin-left scale-x-0 bg-gradient-to-r ${feature.bar} transition-transform duration-500 group-hover:scale-x-100`}></span>
+                                <div className="mb-6 flex items-center justify-between">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-purple-700/50 bg-purple-950/40 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+                                        {feature.icon}
+                                    </div>
+                                    <span
+                                        aria-hidden="true"
+                                        className={`font-mono text-xs tracking-[0.3em] uppercase opacity-60 ${feature.accent}`}>
+                                        0{i + 1}
+                                    </span>
+                                </div>
+                                <h3 className="mb-3 text-xl font-bold text-white">{feature.title}</h3>
+                                <p className="leading-relaxed text-purple-200/90">{feature.description}</p>
                             </div>
                         ))}
                     </div>
                 </section>
 
-                {/* ── Bottom CTA ────────────────────────────────────────────── */}
-                <section className="container mx-auto px-4 py-12 text-center" data-reveal>
-                    <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-purple-700/30 bg-gradient-to-b from-purple-900/30 to-[#171126] p-8 sm:p-12">
-                        <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-96 -translate-x-1/2 rounded-full bg-purple-500/20 blur-3xl"></div>
-                        <BookMarked className="mx-auto mb-4 h-12 w-12 text-purple-400" />
-                        <h2 className="mb-4 text-2xl font-bold text-white sm:text-3xl">{t("home.startLearning")}</h2>
-                        <p className="mb-6 text-purple-200">{t("home.subtitle")}</p>
-                        <Link href="/intro">
-                            <Button
-                                size="lg"
-                                className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white shadow-lg shadow-purple-900/40 transition-all duration-300 hover:brightness-110">
-                                <span className="relative z-10 flex items-center">
-                                    <Code className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
-                                    {t("home.startLearning")}
-                                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                                </span>
-                            </Button>
-                        </Link>
-                    </div>
+                {/* ── Giant CTA ─────────────────────────────────────────────── */}
+                <section className="container mx-auto px-4 py-16 sm:py-24" data-reveal>
+                    <Link
+                        href="/intro"
+                        className="giant-cta group relative block overflow-hidden border-y border-purple-800/40 py-10 sm:py-14">
+                        {/* fill sweep */}
+                        <span className="giant-cta-fill absolute inset-0 origin-left scale-x-0 bg-gradient-to-r from-purple-600 to-fuchsia-600 will-change-transform"></span>
+                        <span className="relative z-10 flex items-center justify-between gap-4 px-2 sm:px-6">
+                            <span className="text-4xl font-bold tracking-tight text-white transition-colors duration-300 sm:text-6xl lg:text-7xl">
+                                {t("home.startLearning")}
+                            </span>
+                            <ArrowUpRight className="giant-cta-arrow h-10 w-10 shrink-0 text-purple-400 transition-colors duration-300 group-hover:text-white sm:h-16 sm:w-16" />
+                        </span>
+                        <span className="relative z-10 mt-2 block px-2 font-mono text-xs tracking-[0.3em] text-purple-400 uppercase transition-colors duration-300 group-hover:text-purple-100 sm:px-6">
+                            gitmastery.me — {t("home.badge")}
+                        </span>
+                    </Link>
                 </section>
             </div>
 
