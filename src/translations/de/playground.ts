@@ -4,6 +4,7 @@ const playground = {
     "playground.subtitle": "Experimentiere frei mit Git-Befehlen und lerne aus dem Spickzettel",
     "playground.gitTerminal": "Git Terminal (Freier Modus)",
     "playground.gitCheatSheet": "Git Spickzettel",
+    "playground.printCheatSheet": "Drucken",
     "playground.searchCommands": "Suche nach Git-Befehlen...",
     "playground.usage": "Verwendung:",
     "playground.example": "Beispiel:",

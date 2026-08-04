@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
-import { TerminalIcon, Search, BookOpen, Command, ChevronUp, ChevronDown } from "lucide-react";
+import { TerminalIcon, Search, BookOpen, Command, ChevronUp, ChevronDown,Printer } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -418,14 +418,25 @@ export default function Playground() {
                         </div>
 
                         {/* Cheat Sheet Side */}
-                        <Card
+                        <Card 
+                            id="cheat-sheet-print-area"
                             className={`border-purple-900/20 bg-purple-900/10 ${cheatSheetCollapsed ? "hidden md:block" : ""}`}>
                             <CardHeader>
                                 <CardTitle className="mb-2 flex items-center text-white">
-                                    <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
-                                    {t("playground.gitCheatSheet")}
+                                    <span className="flex items-center">
+                                        <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
+                                        {t("playground.gitCheatSheet")}
+                                    </span>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="no-print text-purple-300 hover:text-purple-100"
+                                        onClick={() => window.print()}>
+                                        <Printer className="mr-1 h-4 w-4" />
+                                        {t("playground.printCheatSheet")}
+                                    </Button>
                                 </CardTitle>
-                                <div className="relative">
+                                <div className="relative no-print">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-purple-400" />
                                     <Input
                                         placeholder={t("playground.searchCommands")}
@@ -436,7 +447,7 @@ export default function Playground() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="h-[350px] overflow-y-auto pr-2 md:h-[420px]">
+                                <div className="h-[350px] overflow-y-auto pr-2 md:h-[420px] print:h-auto print:overflow-visible">
                                     {filteredCommands.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-12 text-center">
                                             <Search className="mb-2 h-8 w-8 text-purple-500" />

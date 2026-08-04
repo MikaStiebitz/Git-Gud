@@ -30,3 +30,22 @@
 :root {
     scroll-behavior: smooth;
 }
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #cheat-sheet-print-area,
+    #cheat-sheet-print-area * {
+        visibility: visible;
+    }
+    #cheat-sheet-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    .no-print {
+        display: none !important;
+    }
+}
