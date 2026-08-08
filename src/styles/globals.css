@@ -48,4 +48,8 @@
     .no-print {
         display: none !important;
     }
+    #cheat-sheet-print-area * {
+        animation: none !important;
+        transition: none !important;
+    }
 }
