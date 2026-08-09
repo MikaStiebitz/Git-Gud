@@ -127,23 +127,30 @@ export default function Home() {
         setIsMounted(true);
     }, []);
 
-    // ── GSAP: hero timeline, scroll reveals, parallax, counters ─────────────
+    // ── GSAP: hero entrance ────────────────────────────────────────────────
+    // Set up exactly once. The hero markup is server-rendered and never depends on
+    // `isMounted`, so it deliberately does NOT share the mount-gated effect below:
+    // reverting and rebuilding the context while the entrance timeline was mid-flight
+    // used to strand the secondary CTA row (Difficulty / Shop / Mini Games) at
+    // opacity 0, making those buttons invisible on the live site.
     useEffect(() => {
         if (!rootRef.current) return;
         gsap.registerPlugin(ScrollTrigger);
+
+        const heroTargets = ".hero-word > span, .hero-sub, .hero-cta > *, .hero-panel";
 
         const ctx = gsap.context(() => {
             const mm = gsap.matchMedia();
 
             mm.add("(prefers-reduced-motion: no-preference)", () => {
                 // Hero entrance
-                const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-                tl.from(".hero-badge", { y: 24, opacity: 0, duration: 0.6 })
-                    .from(
-                        ".hero-word > span",
-                        { yPercent: 120, duration: 0.9, stagger: 0.08, ease: "power4.out" },
-                        "-=0.3",
-                    )
+                const tl = gsap.timeline({
+                    defaults: { ease: "power3.out" },
+                    // Belt and braces: drop the inline styles the entrance wrote so no
+                    // interruption can leave a hero control stuck at opacity 0.
+                    onComplete: () => gsap.set(heroTargets, { clearProps: "all" }),
+                });
+                tl.from(".hero-word > span", { yPercent: 120, duration: 0.9, stagger: 0.08, ease: "power4.out" })
                     .from(".hero-sub", { y: 20, opacity: 0, duration: 0.7 }, "-=0.5")
                     .from(".hero-cta > *", { y: 18, opacity: 0, duration: 0.5, stagger: 0.08 }, "-=0.45")
                     .from(
@@ -187,7 +194,38 @@ export default function Home() {
                     yPercent: -30,
                     scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 1 },
                 });
+            });
 
+            // Pointer parallax on the hero glow (all motion preferences: very subtle)
+            const hero = document.querySelector<HTMLElement>(".hero-section");
+            if (hero) {
+                const xTo = gsap.quickTo(".orb-a", "xPercent", { duration: 0.8, ease: "power3.out" });
+                const yTo = gsap.quickTo(".orb-a", "yPercent", { duration: 0.8, ease: "power3.out" });
+                const onMove = (e: PointerEvent) => {
+                    const r = hero.getBoundingClientRect();
+                    xTo(((e.clientX - r.left) / r.width - 0.5) * 8);
+                    yTo(((e.clientY - r.top) / r.height - 0.5) * 8);
+                };
+                hero.addEventListener("pointermove", onMove);
+                return () => hero.removeEventListener("pointermove", onMove);
+            }
+        }, rootRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    // ── GSAP: scroll reveals, stage cards, stat counters ────────────────────
+    // Gated on `isMounted` because everything below lives inside <ClientOnly> and
+    // only exists after hydration. The guard means this runs once, on the mounted
+    // pass, instead of being torn down and rebuilt.
+    useEffect(() => {
+        if (!isMounted || !rootRef.current) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const ctx = gsap.context(() => {
+            const mm = gsap.matchMedia();
+
+            mm.add("(prefers-reduced-motion: no-preference)", () => {
                 // Generic scroll reveals
                 gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(el => {
                     gsap.from(el, {
@@ -244,20 +282,6 @@ export default function Home() {
                     });
                 });
             });
-
-            // Pointer parallax on the hero glow (all motion preferences: very subtle)
-            const hero = document.querySelector<HTMLElement>(".hero-section");
-            if (hero) {
-                const xTo = gsap.quickTo(".orb-a", "xPercent", { duration: 0.8, ease: "power3.out" });
-                const yTo = gsap.quickTo(".orb-a", "yPercent", { duration: 0.8, ease: "power3.out" });
-                const onMove = (e: PointerEvent) => {
-                    const r = hero.getBoundingClientRect();
-                    xTo(((e.clientX - r.left) / r.width - 0.5) * 8);
-                    yTo(((e.clientY - r.top) / r.height - 0.5) * 8);
-                };
-                hero.addEventListener("pointermove", onMove);
-                return () => hero.removeEventListener("pointermove", onMove);
-            }
         }, rootRef);
 
         return () => ctx.revert();
@@ -433,11 +457,6 @@ export default function Home() {
 
                     <div className="container mx-auto grid items-center gap-10 px-4 py-16 sm:py-24 lg:grid-cols-[1.15fr_0.85fr] lg:gap-6 lg:py-28">
                         <div className="text-center lg:text-left">
-                            <div className="hero-badge mb-6 inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-xs font-medium tracking-wide text-purple-200 backdrop-blur-sm sm:text-sm">
-                                <GitBranch className="h-3.5 w-3.5 text-purple-400" />
-                                {t("home.badge")}
-                            </div>
-
                             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
                                 {t("home.title")
                                     .split(" ")
@@ -483,30 +502,36 @@ export default function Home() {
                                 </Link>
                             </div>
 
+                            {/* Secondary actions. These are the only entry points to the shop
+                                and the difficulty picker, so they get solid fills instead of
+                                transparent outlines — on the nebula backdrop the ghost variant
+                                was effectively invisible. */}
                             <div className="hero-cta mt-4 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                                 <Button
-                                    size="sm"
                                     variant="outline"
                                     onClick={() => setShowDifficultySelector(true)}
-                                    className="border-purple-800/60 bg-transparent text-purple-300 transition-all duration-300 hover:border-purple-600 hover:bg-purple-900/40 hover:text-purple-100">
-                                    <Settings className="mr-1.5 h-3.5 w-3.5" />
-                                    Difficulty
+                                    className="border-purple-400/60 bg-purple-600/30 text-purple-50 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-purple-300 hover:bg-purple-600/50 hover:text-white">
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    {t("home.difficulty")}
+                                    <ClientOnly>
+                                        <span className="ml-1.5 rounded-full bg-purple-950/60 px-2 py-0.5 text-xs font-medium text-purple-100">
+                                            {t(`difficulty.${currentDifficulty}`)}
+                                        </span>
+                                    </ClientOnly>
                                 </Button>
                                 <Button
-                                    size="sm"
                                     variant="outline"
                                     onClick={() => setShowShop(true)}
-                                    className="border-yellow-800/60 bg-transparent text-yellow-300/90 transition-all duration-300 hover:border-yellow-600 hover:bg-yellow-900/30 hover:text-yellow-200">
-                                    <ShoppingCart className="mr-1.5 h-3.5 w-3.5" />
-                                    Shop
+                                    className="border-amber-400/60 bg-amber-500/25 text-amber-50 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-amber-300 hover:bg-amber-500/40 hover:text-white">
+                                    <ShoppingCart className="mr-2 h-4 w-4" />
+                                    {t("home.shop")}
                                 </Button>
                                 <Button
-                                    size="sm"
                                     variant="outline"
                                     onClick={() => setShowMinigames(true)}
-                                    className="border-green-800/60 bg-transparent text-green-300/90 transition-all duration-300 hover:border-green-600 hover:bg-green-900/30 hover:text-green-200">
-                                    <Gamepad2 className="mr-1.5 h-3.5 w-3.5" />
-                                    Mini Games
+                                    className="border-emerald-400/60 bg-emerald-500/25 text-emerald-50 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-emerald-300 hover:bg-emerald-500/40 hover:text-white">
+                                    <Gamepad2 className="mr-2 h-4 w-4" />
+                                    {t("home.miniGames")}
                                 </Button>
                             </div>
                         </div>

@@ -2,13 +2,15 @@ const home = {
     // Home Page
     "home.title": "Meistere Git durch",
     "home.title2": "Spielen",
-    "home.badge": "Der spielerische Weg, Versionskontrolle zu meistern",
     "home.heroTerminalTitle": "dein-erstes-repo",
     "home.stats.commits": "Gemeisterte Commits",
     "home.subtitle":
         "Lerne Git-Befehle und Konzepte durch ein interaktives Spiel. Schreite durch Level fort, löse Herausforderungen und werde ein Git-Experte.",
     "home.startLearning": "Starte Lernen",
     "home.cheatSheet": "Spickzettel",
+    "home.difficulty": "Schwierigkeit",
+    "home.shop": "Shop",
+    "home.miniGames": "Minispiele",
     "home.learningPath.beginner": "Dein Anfänger-Lernpfad 🌱",
     "home.learningPath.advanced": "Dein Fortgeschrittenen-Lernpfad ⚡",
     "home.learningPath.pro": "Dein Pro-Lernpfad 🚀",

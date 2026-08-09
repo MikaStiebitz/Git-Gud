@@ -41,8 +41,8 @@ export const metadata: Metadata = {
         images: [
             {
                 url: "/home-screen.png",
-                width: 1200,
-                height: 630,
+                width: 1849,
+                height: 960,
                 alt: "GitMastery - Learn Git Through Play",
             },
         ],
@@ -55,10 +55,16 @@ export const metadata: Metadata = {
         description: "Learn Git commands and concepts through fun, interactive challenges",
         images: ["/home-screen.png"],
     },
+    // Google renders favicons on a white search-results background, so every icon
+    // below is an opaque tile rather than a bare transparent glyph. Only one SVG is
+    // declared: two competing `image/svg+xml` links made the picked icon ambiguous.
     icons: [
-        { rel: "icon", url: "/gitBranch-favicon.svg", type: "image/svg+xml" },
-        { rel: "icon", url: "/gitBranch.svg", type: "image/svg+xml", sizes: "any" },
-        { rel: "apple-touch-icon", url: "/gitBranch-favicon.svg" },
+        { rel: "icon", url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+        { rel: "icon", url: "/logo.svg", type: "image/svg+xml", sizes: "any" },
+        { rel: "icon", url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+        { rel: "icon", url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+        // iOS ignores SVG here, so this has to stay a raster asset.
+        { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
     ],
 };
 
@@ -87,6 +93,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                             name: "GitMastery - Learn Git Through Play",
                             description: "An interactive Git learning platform with hands-on practice",
                             url: getPageUrl(),
+                            image: getPageUrl("/icon-512.png"),
                             applicationCategory: "EducationalApplication",
                             operatingSystem: "Web",
                             inLanguage: "en",
@@ -94,6 +101,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                                 "@type": "Organization",
                                 name: "GitMastery",
                                 url: getPageUrl(),
+                                // Required for Google to associate a logo with the site.
+                                logo: {
+                                    "@type": "ImageObject",
+                                    url: getPageUrl("/icon-512.png"),
+                                    width: 512,
+                                    height: 512,
+                                },
                             },
                             offers: {
                                 "@type": "Offer",
