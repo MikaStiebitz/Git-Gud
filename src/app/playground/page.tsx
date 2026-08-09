@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
-import { TerminalIcon, Search, BookOpen, Command, ChevronUp, ChevronDown } from "lucide-react";
+import { TerminalIcon, Search, BookOpen, Command, ChevronUp, ChevronDown,Printer } from "lucide-react";
 import { useGameContext } from "~/contexts/GameContext";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { useLanguage } from "~/contexts/LanguageContext";
@@ -418,14 +418,25 @@ export default function Playground() {
                         </div>
 
                         {/* Cheat Sheet Side */}
-                        <Card
+                        <Card 
+                            id="cheat-sheet-print-area"
                             className={`border-purple-900/20 bg-purple-900/10 ${cheatSheetCollapsed ? "hidden md:block" : ""}`}>
                             <CardHeader>
                                 <CardTitle className="mb-2 flex items-center text-white">
-                                    <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
-                                    {t("playground.gitCheatSheet")}
+                                    <span className="flex items-center">
+                                        <BookOpen className="mr-2 h-5 w-5 text-purple-400" />
+                                        {t("playground.gitCheatSheet")}
+                                    </span>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="no-print text-purple-300 hover:text-purple-100"
+                                        onClick={() => window.print()}>
+                                        <Printer className="mr-1 h-4 w-4" />
+                                        {t("playground.printCheatSheet")}
+                                    </Button>
                                 </CardTitle>
-                                <div className="relative">
+                                <div className="relative no-print">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-purple-400" />
                                     <Input
                                         placeholder={t("playground.searchCommands")}
@@ -436,7 +447,7 @@ export default function Playground() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="h-[350px] overflow-y-auto pr-2 md:h-[420px]">
+                                <div className="h-[350px] overflow-y-auto pr-2 md:h-[420px] print:h-auto print:overflow-visible">
                                     {filteredCommands.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-12 text-center">
                                             <Search className="mb-2 h-8 w-8 text-purple-500" />
@@ -452,32 +463,81 @@ export default function Playground() {
                                             </Button>
                                         </div>
                                     ) : (
-                                        <Accordion type="single" collapsible className="space-y-4">
+                                        <>
+                                            <Accordion type="single" collapsible className="space-y-4 no-print">
+                                                {filteredCommands.map((category, index) => (
+                                                    <div key={index} className="mb-6">
+                                                        <h3 className="mb-2 font-medium text-purple-300">
+                                                            {category.category}
+                                                        </h3>
+                                                        <div className="space-y-2">
+                                                            {category.commands.map((command, cmdIndex) => (
+                                                                <AccordionItem
+                                                                    key={cmdIndex}
+                                                                    value={`${index}-${cmdIndex}`}
+                                                                    className="overflow-hidden rounded-md border border-purple-800/40">
+                                                                    <AccordionTrigger className="px-3 py-2 hover:bg-purple-800/20 hover:no-underline">
+                                                                        <div>
+                                                                            <div className="flex items-center justify-between">
+                                                                                <span className="flex items-center font-mono text-sm font-semibold text-white">
+                                                                                    <Command className="mr-1.5 h-3.5 w-3.5 text-purple-400" />
+                                                                                    {command.name}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="mt-1 text-sm text-purple-300">
+                                                                                {command.description}
+                                                                            </div>
+                                                                        </div>
+                                                                    </AccordionTrigger>
+                                                                    <AccordionContent className="border-t border-purple-800/30 bg-purple-900/20 px-3 py-3">
+                                                                        <div className="mb-2">
+                                                                            <span className="text-xs font-medium text-purple-400">
+                                                                                {t("playground.usage")}
+                                                                            </span>
+                                                                            <pre className="mt-1 overflow-x-auto rounded bg-black/20 p-1.5 font-mono text-xs text-green-400">
+                                                                                {command.usage}
+                                                                            </pre>
+                                                                        </div>
+                                                                        <div className="mb-2">
+                                                                            <span className="text-xs font-medium text-purple-400">
+                                                                                {t("playground.example")}
+                                                                            </span>
+                                                                            <pre className="mt-1 overflow-x-auto rounded bg-black/20 p-1.5 font-mono text-xs text-green-400">
+                                                                                {command.example}
+                                                                            </pre>
+                                                                        </div>
+                                                                        <div>
+                                                                            <span className="text-xs font-medium text-purple-400">
+                                                                                {t("playground.explanation")}
+                                                                            </span>
+                                                                            <p className="mt-1 text-xs text-purple-200">
+                                                                                {command.explanation}
+                                                                            </p>
+                                                                        </div>
+                                                                    </AccordionContent>
+                                                                </AccordionItem>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                            ))}
+                                        </Accordion>
+                                        <div className="hidden print:block">
                                             {filteredCommands.map((category, index) => (
                                                 <div key={index} className="mb-6">
-                                                    <h3 className="mb-2 font-medium text-purple-300">
-                                                        {category.category}
-                                                    </h3>
+                                                    <h3 className="mb-2 font-medium text-purple-300">{category.category}</h3>
                                                     <div className="space-y-2">
                                                         {category.commands.map((command, cmdIndex) => (
-                                                            <AccordionItem
+                                                            <div
                                                                 key={cmdIndex}
-                                                                value={`${index}-${cmdIndex}`}
                                                                 className="overflow-hidden rounded-md border border-purple-800/40">
-                                                                <AccordionTrigger className="px-3 py-2 hover:bg-purple-800/20 hover:no-underline">
-                                                                    <div>
-                                                                        <div className="flex items-center justify-between">
-                                                                            <span className="flex items-center font-mono text-sm font-semibold text-white">
-                                                                                <Command className="mr-1.5 h-3.5 w-3.5 text-purple-400" />
-                                                                                {command.name}
-                                                                            </span>
-                                                                        </div>
-                                                                        <div className="mt-1 text-sm text-purple-300">
-                                                                            {command.description}
-                                                                        </div>
-                                                                    </div>
-                                                                </AccordionTrigger>
-                                                                <AccordionContent className="border-t border-purple-800/30 bg-purple-900/20 px-3 py-3">
+                                                                <div className="px-3 py-2">
+                                                                    <span className="flex items-center font-mono text-sm font-semibold text-white">
+                                                                        <Command className="mr-1.5 h-3.5 w-3.5 text-purple-400" />
+                                                                        {command.name}
+                                                                    </span>
+                                                                    <div className="mt-1 text-sm text-purple-300">{command.description}</div>
+                                                                </div>
+                                                                <div className="border-t border-purple-800/30 bg-purple-900/20 px-3 py-3">
                                                                     <div className="mb-2">
                                                                         <span className="text-xs font-medium text-purple-400">
                                                                             {t("playground.usage")}
@@ -498,20 +558,19 @@ export default function Playground() {
                                                                         <span className="text-xs font-medium text-purple-400">
                                                                             {t("playground.explanation")}
                                                                         </span>
-                                                                        <p className="mt-1 text-xs text-purple-200">
-                                                                            {command.explanation}
-                                                                        </p>
+                                                                        <p className="mt-1 text-xs text-purple-200">{command.explanation}</p>
                                                                     </div>
-                                                                </AccordionContent>
-                                                            </AccordionItem>
+                                                                </div>
+                                                            </div>
                                                         ))}
                                                     </div>
                                                 </div>
                                             ))}
-                                        </Accordion>
-                                    )}
-                                </div>
-                            </CardContent>
+                                        </div> 
+                                    </>
+                                )}
+                            </div>
+                        </CardContent>
                         </Card>
                     </div>
 

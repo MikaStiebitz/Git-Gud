@@ -4,6 +4,7 @@ const playground = {
     "playground.subtitle": "Freely experiment with Git commands and learn from the cheat sheet",
     "playground.gitTerminal": "Git Terminal (Free Mode)",
     "playground.gitCheatSheet": "Git Cheat Sheet",
+    "playground.printCheatSheet": "Print",
     "playground.searchCommands": "Search Git commands...",
     "playground.usage": "Usage:",
     "playground.example": "Example:",
