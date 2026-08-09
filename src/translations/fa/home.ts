@@ -2,13 +2,15 @@ const home = {
     // Home Page
     "home.title": "تسلط بر Git از طریق",
     "home.title2": "بازی",
-    "home.badge": "راه بازی‌گونه برای تسلط بر کنترل نسخه",
     "home.heroTerminalTitle": "اولین-مخزن-شما",
     "home.stats.commits": "کامیت‌های مسلط‌شده",
     "home.subtitle":
         "دستورات و مفاهیم Git را از طریق یک بازی تعاملی یاد بگیرید. از سطوح پیش بروید، چالش‌ها را حل کنید و یک متخصص Git شوید.",
     "home.startLearning": "شروع یادگیری",
     "home.cheatSheet": "راهنمای تقلب",
+    "home.difficulty": "سطح دشواری",
+    "home.shop": "فروشگاه",
+    "home.miniGames": "بازی‌های کوچک",
     "home.learningPath.beginner": "مسیر یادگیری مبتدی شما 🌱",
     "home.learningPath.advanced": "مسیر یادگیری پیشرفته شما ⚡",
     "home.learningPath.pro": "مسیر یادگیری حرفه‌ای شما 🚀",

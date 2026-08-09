@@ -8,7 +8,7 @@
 
 <div align="center">
   <a href="https://gitmastery.me">
-    <img src="./public/gitBranch.svg" alt="GitMastery Logo" width="140" height="140" />
+    <img src="./public/logo.svg" alt="GitMastery Logo" width="140" height="140" />
   </a>
 
   <h3 align="center">An interactive Git learning platform that makes mastering Git fun</h3>

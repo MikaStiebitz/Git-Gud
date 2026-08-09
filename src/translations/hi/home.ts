@@ -2,13 +2,15 @@ const home = {
     // Home Page
     "home.title": "खेल के माध्यम से Git में महारत हासिल करें",
     "home.title2": "खेल",
-    "home.badge": "वर्ज़न कंट्रोल में महारत का खेल भरा तरीका",
     "home.heroTerminalTitle": "आपका-पहला-repo",
     "home.stats.commits": "महारत हासिल Commits",
     "home.subtitle":
         "एक इंटरैक्टिव गेम के माध्यम से Git कमांड और अवधारणाओं को सीखें। स्तरों के माध्यम से आगे बढ़ें, चुनौतियों को हल करें और एक Git विशेषज्ञ बनें।",
     "home.startLearning": "सीखना शुरू करें",
     "home.cheatSheet": "चीट शीट",
+    "home.difficulty": "कठिनाई",
+    "home.shop": "शॉप",
+    "home.miniGames": "मिनी गेम्स",
     "home.learningPath.beginner": "आपका शुरुआती लर्निंग पाथ 🌱",
     "home.learningPath.advanced": "आपका एडवांस्ड लर्निंग पाथ ⚡",
     "home.learningPath.pro": "आपका प्रो लर्निंग पाथ 🚀",
